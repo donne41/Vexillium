@@ -1,11 +1,32 @@
-<script setup></script>
+<script setup>
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
-</template>
+  <div class="app">
+    <header class="navbar">
+      <h1>VEXILLIUM</h1>
 
-<style scoped></style>
+      <nav>
+        <a href="#">Hem</a>
+        <a href="#">Quiz</a>
+        <a href="#">Topplista</a>
+        <button>Logga in</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p>EXPLORE THE WORLD</p>
+
+        <h2>Hur bra känner du världens länder?</h2>
+
+        <p>
+          Testa dina kunskaper om flaggor, länder och huvudstäder.
+          Spela direkt - inget konto behövs.
+        </p>
+
+        <button>Starta quiz</button>
+      </section>
+    </main>
+  </div>
+</template>
