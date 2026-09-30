@@ -10,21 +10,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static('public'));
 
-const db = mysql.createConnection({
+const pool = mysql.createPool({
     host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT
+    database: process.env.DB_NAME
 });
 
-db.connect((err) => {
+pool.query('SELECT 1', (err, results) => {
     if (err) {
-        console.error('Database connection failed:', err);
+        console.error('Database test failed:', err);
         return;
     }
 
-    console.log('Connected to MySQL!');
+    console.log('Database connected:', results);
 });
 
 const port = process.env.PORT || 3000;
