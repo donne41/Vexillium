@@ -1,0 +1,41 @@
+
+/* Gemensamma färger */
+
+:root {
+    --background: #15181C;
+    --section: #1A1F26;
+    --card: #1E222A;
+    --border: #2F3643;
+    --teal: #00B8C8;
+    --green: #4CAF50;
+    --text: #FFFFFF;
+    --muted: #939EA9;
+}
+
+/* Grundinställningar */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background);
+    color: var(--text);
+}
+
+#app,
+.app {
+    min-height: 100vh;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
