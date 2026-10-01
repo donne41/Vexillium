@@ -1,0 +1,257 @@
+
+/* Hero */
+
+.hero {
+    padding: 80px 32px;
+}
+
+.hero-content {
+    max-width: 1300px;
+    min-height: 420px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 60px;
+}
+
+.hero-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.hero-label {
+    display: inline-block;
+    padding: 7px 12px;
+    color: var(--green);
+    border: 1px solid var(--green);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.hero h2 {
+    max-width: 650px;
+    margin: 20px 0;
+    color: var(--teal);
+    font-size: 56px;
+    line-height: 1.1;
+}
+
+.hero-description {
+    max-width: 570px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.play-button {
+    margin-top: 20px;
+    padding: 14px 28px;
+    background: var(--green);
+    color: var(--background);
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.play-button:hover {
+    background: #62c566;
+}
+
+/* Quizkategorier */
+
+.quiz-categories {
+    max-width: 420px;
+    margin-top: 24px;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.quiz-categories h3 {
+    margin: 0 0 16px;
+    font-size: 20px;
+}
+
+.category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-buttons button {
+    padding: 12px 20px;
+    background: var(--teal);
+    color: var(--background);
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.category-buttons button:hover {
+    background: #00d0df;
+}
+
+/* Cirkelgrafik */
+
+.hero-graphic {
+    position: relative;
+    width: 400px;
+    height: 470px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 25px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.circle {
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.circle-one {
+    width: 300px;
+    height: 300px;
+    border: 1px solid var(--border);
+}
+
+.circle-two {
+    width: 220px;
+    height: 220px;
+    border: 1px solid var(--teal);
+}
+
+.circle-three {
+    width: 140px;
+    height: 140px;
+    border: 1px solid var(--green);
+}
+
+.circle-center {
+    width: 12px;
+    height: 12px;
+    background: #3DF066;
+    border-radius: 50%;
+    box-shadow: 0 0 20px #3DF066;
+}
+
+/* Informationsruta */
+
+.graphic-stats {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    background: #242933;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-item span {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.stat-item strong {
+    color: var(--teal);
+    font-size: 22px;
+}
+
+/* Surfplatta */
+
+@media (max-width: 900px) {
+    .hero-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 40px;
+    }
+
+    .hero h2 {
+        font-size: 44px;
+    }
+
+    .hero-graphic {
+        width: 100%;
+        max-width: 400px;
+        margin: auto;
+    }
+}
+
+/* Mobil */
+
+@media (max-width: 600px) {
+    .hero {
+        padding: 48px 20px;
+    }
+
+    .hero h2 {
+        font-size: 36px;
+    }
+
+    .hero-description {
+        font-size: 15px;
+    }
+
+    .hero-graphic {
+        height: 410px;
+    }
+
+    .circle-one {
+        width: 260px;
+        height: 260px;
+    }
+
+    .circle-two {
+        width: 190px;
+        height: 190px;
+    }
+
+    .circle-three {
+        width: 120px;
+        height: 120px;
+    }
+
+    .quiz-categories {
+        padding: 16px;
+    }
+
+    .category-buttons {
+        flex-direction: column;
+    }
+
+    .category-buttons button {
+        width: 100%;
+    }
+
+    .graphic-stats {
+        padding: 14px;
+    }
+
+    .stat-item span {
+        font-size: 9px;
+    }
+}
