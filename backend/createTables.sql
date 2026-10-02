@@ -47,5 +47,6 @@ create table AccountsRooms
     AccRoomsID int auto_increment primary key,
     AccountID  int,
     RoomID     int,
-    foreign key (AccountID) references Accounts (AccountID)
+    foreign key (AccountID) references Accounts (AccountID),
+    foreign key (RoomID) references Rooms (RoomID)
 );
