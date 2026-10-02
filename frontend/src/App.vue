@@ -1,6 +1,7 @@
-<script setup>
+§<script setup>
 import Navbar from './components/Navbar.vue'
 import HeroSection from './components/HeroSection.vue'
+import QuizCategories from './components/QuizCategories.vue'
 </script>
 
 <template>
@@ -9,6 +10,8 @@ import HeroSection from './components/HeroSection.vue'
 
     <main>
       <HeroSection />
+      <QuizCategories />
     </main>
+
   </div>
 </template>
