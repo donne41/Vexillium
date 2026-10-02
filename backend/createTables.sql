@@ -1,13 +1,20 @@
 create database if not exists vexilliumDB;
 use vexilliumDB;
 
+create table Regions
+(
+    RegionsID  int auto_increment primary key,
+    Regionname varchar(100)
+);
+
 create table Countries
 (
     CountryID   int auto_increment primary key,
     Countryname VARCHAR(250),
     Flag        varchar(100),
     Capital     varchar(250),
-    Region    varchar(100)
+    RegionID    int,
+    Foreign KEY (RegionID) REFERENCES Regions (RegionsID)
 );
 
 create table Questions
