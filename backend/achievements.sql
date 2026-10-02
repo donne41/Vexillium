@@ -17,5 +17,7 @@ CREATE TABLE achievements (
                               code VARCHAR(50) NOT NULL UNIQUE,
                               name VARCHAR(255) NOT NULL,
                               description TEXT NOT NULL,
-                              icon VARCHAR(100)
+                              icon VARCHAR(100),
+                              image VARCHAR(100)
 );
+
