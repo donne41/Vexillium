@@ -116,4 +116,16 @@ table {
   width: 100%;
   border-collapse: collapse;
 }
+
+@media (max-width: 600px) {
+  .leaderboard {
+    width: 95%;
+  }
+
+  th,
+  td {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+}
 </style>
