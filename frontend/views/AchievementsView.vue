@@ -72,6 +72,25 @@ export default {
 
 
 <style scoped>
+:root {
+  --background: #15181C;
+  --section: #1A1F26;
+  --card: #1E222A;
+  --border: #2F3643;
+  --teal: #00B8C8;
+  --green: #4CAF50;
+  --text: #FFFFFF;
+  --muted: #939EA9;
+}
+
+  body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+  }
+
 .achievements {
   max-width: 800px;
   margin: 0 auto;
