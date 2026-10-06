@@ -13,7 +13,20 @@ function getCountries() {
     });
 }
 
+function getCountriesByRegion(regionId) {
+    return new Promise((resolve, reject) => {
+        let sql = "SELECT * FROM Countries WHERE RegionID = ?";
+        dbConnect.query(sql, [regionId], (error, rows) => {
+            if(error)
+                reject(error);
+            else
+                resolve(rows);
+        })
+    })
+}
+
 module.exports = {
     getCountries,
-
+    getCountriesByRegion,
+    
 }

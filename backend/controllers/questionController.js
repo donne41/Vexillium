@@ -14,3 +14,16 @@ exports.getCountries = (async (req, res) => {
     }
 });
 
+exports.getCountriesByRegion = (async (req, res) => {
+    const regionId = req.params.regionId;
+    try {
+        console.log("qController calling region: " + regionId);
+        const countries = await questionService.getCountriesByRegion(regionId);
+        res.json({ countries });
+    } catch (error) {
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+});
+
