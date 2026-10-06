@@ -1,0 +1,16 @@
+const questionService = require("../services/questionService");
+
+
+
+exports.getCountries = (async (req, res) => {
+    try {
+        console.log("Question controller calling for questions");
+        const countries = await questionService.getCountries();
+        res.json({ countries });
+    } catch (error) {
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+});
+
