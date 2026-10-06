@@ -5,6 +5,7 @@ import HeroSection from './components/HeroSection.vue'
 import QuizCategories from './components/QuizCategories.vue'
 import RecentGames from './components/RecentGames.vue'
 import Leaderboard from './components/Leaderboard.vue'
+import QuizRoom from './components/QuizRoom.vue'
 </script>
 
 <template>
@@ -25,6 +26,8 @@ import Leaderboard from './components/Leaderboard.vue'
         <RecentGames />
         <Leaderboard />
       </div>
+
+      <QuizRoom />
 
     </main>
 
