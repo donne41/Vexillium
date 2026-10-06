@@ -19,6 +19,7 @@ CREATE TABLE achievements (
                               description TEXT NOT NULL,
                               icon VARCHAR(100),
                               image VARCHAR(100)
+
 );
 
 CREATE TABLE game_results (
@@ -45,3 +46,7 @@ CREATE TABLE users (
                        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE achievements
+    ADD COLUMN trigger_type VARCHAR(50) NOT NULL,
+    ADD COLUMN threshold INT NOT NULL,
+    ADD COLUMN category VARCHAR(50) NULL;
