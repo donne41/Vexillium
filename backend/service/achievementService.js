@@ -12,6 +12,7 @@ async function getUserAchievements(userId) {
         'SELECT * FROM user_achievements WHERE user_id = ?',
         [userId]
     );
+
 }
 
 async function evaluateAchievements(userId, event) {
