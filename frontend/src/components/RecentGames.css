@@ -1,0 +1,105 @@
+/* Senaste spel */
+
+.recent-games {
+    min-width: 0;
+    height: 100%;
+    padding: 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.recent-games-header {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.recent-games-label {
+    margin: 0 0 8px;
+    color: var(--green);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+.recent-games h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 24px;
+}
+
+/* Tomt tillstånd */
+
+.recent-games-empty {
+    min-height: 230px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.recent-games-icon {
+    margin-bottom: 16px;
+    color: var(--teal);
+    font-size: 42px;
+}
+
+.recent-games-empty h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+
+.recent-games-empty p {
+    max-width: 290px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Framtida spelresultat */
+
+.recent-games-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.recent-game-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--section);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.recent-game-item h3 {
+    margin: 0 0 6px;
+    font-size: 15px;
+}
+
+.recent-game-item p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.recent-game-item strong {
+    color: var(--green);
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .recent-games {
+        padding: 20px;
+    }
+
+    .recent-games h2 {
+        font-size: 21px;
+    }
+}

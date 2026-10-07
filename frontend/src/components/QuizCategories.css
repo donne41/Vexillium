@@ -1,0 +1,103 @@
+
+/* Quizsektionen */
+
+.quiz-section {
+    padding: 70px 32px;
+    background: var(--section);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.quiz-container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.quiz-container h2 {
+    margin: 0 0 12px;
+    color: var(--teal);
+    font-size: 32px;
+}
+
+.quiz-intro {
+    margin: 0 0 36px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* Kategorikorten */
+
+.quiz-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.quiz-card {
+    min-height: 190px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: border-color 0.2s;
+}
+
+.quiz-card:hover {
+    border-color: var(--teal);
+}
+
+.quiz-tag {
+    padding: 6px 10px;
+    background: var(--green);
+    color: var(--background);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.quiz-card p {
+    margin: 18px 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.quiz-link {
+    margin-top: auto;
+    color: var(--green);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Surfplatta */
+
+@media (max-width: 900px) {
+    .quiz-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobil */
+
+@media (max-width: 600px) {
+    .quiz-section {
+        padding: 48px 20px;
+    }
+
+    .quiz-container h2 {
+        font-size: 26px;
+    }
+
+    .quiz-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quiz-card {
+        min-height: 170px;
+        padding: 20px;
+    }
+}

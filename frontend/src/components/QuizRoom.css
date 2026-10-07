@@ -1,0 +1,252 @@
+/* Quizrum */
+
+.quiz-room-section {
+    padding: 70px 32px;
+    background: var(--section);
+    border-top: 1px solid var(--border);
+}
+
+.quiz-room-container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.quiz-room-heading {
+    margin-bottom: 32px;
+}
+
+.quiz-room-heading h2 {
+    margin: 0 0 12px;
+    color: var(--teal);
+    font-size: 32px;
+}
+
+.quiz-room-heading p {
+    max-width: 700px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+
+/* Layout */
+
+.quiz-room-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+}
+
+.quiz-room-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+
+/* Bläddra-knapp */
+
+.browse-rooms-button {
+    margin-bottom: 16px;
+    padding: 12px 20px;
+    background: var(--teal);
+    color: var(--background);
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.browse-rooms-button:hover {
+    opacity: 0.9;
+}
+
+
+/* Gå med i rum */
+
+.join-room-card {
+    width: 100%;
+    height: 390px;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.join-room-card h3 {
+    margin: 0 0 22px;
+    color: var(--teal);
+    font-size: 17px;
+}
+
+.join-room-card label {
+    display: block;
+    margin: 16px 0 8px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.join-room-card input {
+    width: 100%;
+    padding: 14px;
+    background: #242933;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+}
+
+.join-room-card input:focus {
+    border-color: var(--teal);
+}
+
+.join-room-card input::placeholder {
+    color: var(--muted);
+}
+
+.join-room-button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: var(--green);
+    color: var(--background);
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.join-room-button:hover {
+    opacity: 0.9;
+}
+
+
+/* Tillgängliga rum */
+
+.available-rooms-card {
+    height: 390px;
+    margin-top: 55px;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.available-rooms-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.available-rooms-header h3 {
+    margin: 0;
+    color: var(--teal);
+    font-size: 16px;
+}
+
+.available-rooms-header span {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+
+/* Tomt läge */
+
+.rooms-empty {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.rooms-empty p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+
+/* Lista med quizrum */
+
+.rooms-list {
+    flex: 1;
+    min-height: 0;
+    margin-top: 16px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    overflow-y: auto;
+}
+
+.room-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px;
+    background: #242933;
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 13px;
+}
+
+
+/* Surfplatta */
+
+@media (max-width: 900px) {
+    .quiz-room-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .available-rooms-card {
+        margin-top: 0;
+    }
+}
+
+
+/* Mobil */
+
+@media (max-width: 600px) {
+    .quiz-room-section {
+        padding: 48px 20px;
+    }
+
+    .quiz-room-heading h2 {
+        font-size: 26px;
+    }
+
+    .join-room-card,
+    .available-rooms-card {
+        height: auto;
+        min-height: 350px;
+        padding: 20px;
+    }
+
+    .available-rooms-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .browse-rooms-button,
+    .join-room-button {
+        width: 100%;
+    }
+
+    .rooms-list {
+        max-height: 280px;
+    }
+}

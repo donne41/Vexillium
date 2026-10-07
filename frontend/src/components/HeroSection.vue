@@ -1,6 +1,7 @@
-
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
+import globe from '../assets/globe.png'
+import vexilliumOverlay from '../assets/vexillium-overlay.png'
 import './HeroSection.css'
 
 const showCategories = ref(false)
@@ -20,8 +21,8 @@ const showCategories = ref(false)
         <h2>Hur väl känner du till världen?</h2>
 
         <p class="hero-description">
-          Välj en utmaning och börja klättra direkt. Ingen registrering krävs för att köra de
-          dagliga länderna. Snabbt, kaxigt och beroendeframkallande.
+          Testa dina kunskaper om flaggor, länder och huvudstäder.
+          Spela direkt – inget konto behövs.
         </p>
 
         <button
@@ -31,7 +32,7 @@ const showCategories = ref(false)
           Välj quiz
         </button>
 
-        <!-- Visas endast när användaren klickar -->
+        <!-- Visas när användaren klickar -->
         <div v-if="showCategories" class="quiz-categories">
 
           <h3>Välj kategori</h3>
@@ -43,31 +44,25 @@ const showCategories = ref(false)
           </div>
 
         </div>
+
       </div>
 
-      <!-- Cirkelgrafik till höger -->
+      <!-- Logotyp till höger -->
       <div class="hero-graphic">
 
-        <div class="circle circle-one">
-          <div class="circle circle-two">
-            <div class="circle circle-three">
-              <div class="circle-center"></div>
-            </div>
-          </div>
-        </div>
+        <div class="animated-logo">
 
-        <!-- Informationsruta utan teststatistik -->
-        <div class="graphic-stats">
+          <img
+              :src="globe"
+              alt=""
+              class="hero-globe"
+          />
 
-          <div class="stat-item">
-            <span>ACTIVE NODES</span>
-            <strong>–</strong>
-          </div>
-
-          <div class="stat-item">
-            <span>GLOBAL LOBBIES</span>
-            <strong>–</strong>
-          </div>
+          <img
+              :src="vexilliumOverlay"
+              alt="Vexillium"
+              class="hero-overlay"
+          />
 
         </div>
 
