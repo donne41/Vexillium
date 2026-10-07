@@ -33,7 +33,10 @@ pool.query('SELECT 1', (err, results) => {
     console.log('Database connected:', results);
 });
 
-const port = process.env.PORT || 3000;
+const questionRoutes = require("./routes/questionroutes");
+app.use(questionRoutes);
+
+const port = 3000;
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

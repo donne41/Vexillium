@@ -7,7 +7,9 @@ import './Navbar.css'
   <header class="navbar">
     <div class="navbar-content">
 
-      <h1>VEXILLIUM</h1>
+      <RouterLink to="/" class="navbar-logo">
+        <h1>VEXILLIUM</h1>
+      </RouterLink>
 
       <nav>
         <a href="#">Hem</a>
@@ -15,9 +17,9 @@ import './Navbar.css'
         <a href="#">Topplista</a>
       </nav>
 
-      <button class="login-button">
+      <RouterLink to="/login" class="login-button">
         Logga in
-      </button>
+      </RouterLink>
 
     </div>
   </header>

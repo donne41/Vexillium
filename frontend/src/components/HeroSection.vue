@@ -1,7 +1,7 @@
-
 <script setup>
-import { ref } from 'vue'
-import logoQuiz from '../assets/logoquiz.png'
+import {ref} from 'vue'
+import globe from '../assets/globe.png'
+import vexilliumOverlay from '../assets/vexillium-overlay.png'
 import './HeroSection.css'
 
 const showCategories = ref(false)
@@ -50,11 +50,21 @@ const showCategories = ref(false)
       <!-- Logotyp till höger -->
       <div class="hero-graphic">
 
-        <img
-            :src="logoQuiz"
-            alt="Vexillium Quiz"
-            class="hero-logo"
-        />
+        <div class="animated-logo">
+
+          <img
+              :src="globe"
+              alt=""
+              class="hero-globe"
+          />
+
+          <img
+              :src="vexilliumOverlay"
+              alt="Vexillium"
+              class="hero-overlay"
+          />
+
+        </div>
 
       </div>
 
