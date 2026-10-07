@@ -11,9 +11,16 @@
 
       <button class="achievement-item">
         <div class="award-item-img-container">
+          <img class="award-item-img" width="140" height="140" src="../achievement-images/login-achievement.jpg" alt="Achievement Icon">
+        </div>
+        <span class="achievement-name">Login for the first time</span>
+      </button>
+
+      <button class="achievement-item">
+        <div class="award-item-img-container">
           <img class="award-item-img" width="140" height="140" src="../achievement-images/Vexillium.jpg" alt="Achievement Icon">
         </div>
-        <span class="achievement-name">Avatar👨🏻‍🦲</span>
+        <span class="achievement-name">Change your avatar👨🏻‍🦲</span>
       </button>
 
       <button class="achievement-item">
@@ -24,13 +31,13 @@
       </button>
       <button class="achievement-item">
         <div class="award-item-img-container">
-          <img class="award-item-img" width="140" height="140" src="../achievement-images/Vexillium.jpg"alt="Achievement Icon">
+          <img class="award-item-img" width="140" height="140" src="../achievement-images/birthday-achievement.jpg"alt="Achievement Icon">
         </div>
         <span class="achievement-name">Anniversity🎂</span>
       </button>
       <button class="achievement-item">
         <div class="award-item-img-container">
-          <img class="award-item-img" width="140" height="140" src="../achievement-images/Vexillium.jpg" alt="Achievement Icon">
+          <img class="award-item-img" width="140" height="140" src="../achievement-images/vexillium-master.png" alt="Achievement Icon">
         </div>
         <span class="achievement-name">Vexillium master🥇</span>
         <span class="achievement-count">0/1</span>

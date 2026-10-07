@@ -3,5 +3,6 @@
   <component name="DataSourcePerFileMappings">
     <file url="file://$PROJECT_DIR$/backend/db/01_schema.sql" value="729cca5e-e97e-437a-ac2d-49616e58ef6d" />
     <file url="file://$PROJECT_DIR$/backend/db/02_seed.sql" value="729cca5e-e97e-437a-ac2d-49616e58ef6d" />
+    <file url="file://$PROJECT_DIR$/backend/service/achievementService.js" value="729cca5e-e97e-437a-ac2d-49616e58ef6d" />
   </component>
 </project>
