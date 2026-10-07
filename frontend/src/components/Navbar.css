@@ -46,7 +46,7 @@
     font-size: 15px;
 }
 
-.login-button:hover {
+.navbar .login-button:hover {
     background: var(--teal);
     color: var(--background);
 }
