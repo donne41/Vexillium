@@ -2,8 +2,12 @@
 <script setup>
 import { ref } from 'vue'
 import './HeroSection.css'
+import QuizGame from "./QuizGame.vue"
 
 const showCategories = ref(false)
+function openQuiz(quizType){
+  
+}
 </script>
 
 <template>
@@ -37,7 +41,7 @@ const showCategories = ref(false)
           <h3>Välj kategori</h3>
 
           <div class="category-buttons">
-            <button>Flaggor</button>
+            <button @click="openQuiz(flags)">Flaggor</button>
             <button>Huvudstäder</button>
             <button>Länder</button>
           </div>
