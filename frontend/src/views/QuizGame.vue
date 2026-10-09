@@ -1,6 +1,9 @@
+<script setup>
+import QuizGame from "@/components/QuizGame.vue"
+</script>
 <template>
     <div>
-        <h1>Quiz Game</h1>
+        <QuizGame />
     </div>
 
 </template>

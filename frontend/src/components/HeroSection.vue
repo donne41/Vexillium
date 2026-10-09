@@ -1,13 +1,16 @@
 <script setup>
 import {ref} from 'vue'
+import { useRouter } from "vue-router"
 import globe from '../assets/globe.png'
 import vexilliumOverlay from '../assets/vexillium-overlay.png'
 import './HeroSection.css'
-import QuizGame from "./QuizGame.vue"
+
+const router = useRouter()
 
 const showCategories = ref(false)
 function openQuiz(quizType){
-  
+  console.log("button pressed for quiz type: " + quizType)
+  router.push(`/quiz/${quizType}`)
 }
 </script>
 
@@ -42,7 +45,7 @@ function openQuiz(quizType){
           <h3>Välj kategori</h3>
 
           <div class="category-buttons">
-            <button @click="openQuiz(flags)">Flaggor</button>
+            <button @click="openQuiz('flags')">Flaggor</button>
             <button>Huvudstäder</button>
             <button>Länder</button>
           </div>
