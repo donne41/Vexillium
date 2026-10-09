@@ -34,7 +34,7 @@ function getRandom(regionId) {
             else {
                 let quizContent = {
                     "correctIndex": Math.floor(Math.random() * 4),
-                    "countries": [rows]
+                    "countries": rows
                 }
                 resolve(quizContent);
             }
@@ -51,7 +51,7 @@ function getRandomAllCountries() {
             else{
                 let quizContent = {
                     "correctIndex": Math.floor(Math.random() * 4),
-                    "countries": [rows]
+                    "countries": rows
                 }
                 resolve(quizContent);
             }
