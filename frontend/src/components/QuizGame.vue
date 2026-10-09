@@ -12,6 +12,12 @@ const quizLength = 10
 let isLoading = ref(true)
 let quizCount = ref(quizLength)
 let correctAnswers = ref(0)
+let quizStatsData = ref({
+    totalQuestions: 0,
+    correctAnswers: 0,
+    correctCountries: [],
+    incorrectCountries: []
+});
 
 async function getQuiz() {
     try {
@@ -31,21 +37,36 @@ async function getQuiz() {
     }
 }
 
-async function submit(answer) {
+function submit(answer) {
     if (answer === quizContent.value.countries[quizContent.value.correctIndex].Countryname) {
-        correctAnswers.value++
+        quizStatsData.value.correctAnswers++
+        quizStatsData.value.correctCountries.push(answer)
+        quizStatsData.value.totalQuestions++
         alert("Correct answer!")
     } else {
+        quizStatsData.value.totalQuestions++
+        quizStatsData.value.incorrectCountries.push(quizContent.value.countries[quizContent.value.correctIndex].Countryname)
         alert("Wrong answer!");
     }
     if(quizCount.value > 1){
         quizCount.value--
     } else {
-        alert(`Quiz finished! You got ${correctAnswers.value} out of ${quizLength} correct.`)
+        alert(`Quiz finished! You got ${quizStatsData.value.correctAnswers} out of ${quizLength} correct.`)
         quizCount.value = quizLength
-        correctAnswers.value = 0
+        let list = loadFromLocal("quizData") || [];
+        console.log("loaded from local")
+        list.push(quizStatsData);
+        saveToLocal("quizData", list);
     }
     getQuiz()
+}
+
+function loadFromLocal(name){
+    return JSON.parse(localStorage.getItem(name))
+}
+
+function saveToLocal(name, content){
+    localStorage.setItem(name, JSON.stringify(content))
 }
 
 onMounted(() => {
