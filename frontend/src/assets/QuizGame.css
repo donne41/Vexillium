@@ -4,6 +4,9 @@
     align-items: center;
     margin: 0 auto;
 }
+.captialname {
+    color: var(--teal);
+}
 
 .button-container {
     display: grid;
@@ -12,11 +15,8 @@
 
 }
 
-.captialname {
-    color: var(--teal);
-}
 
-button {
+.button-container button, .default {
     transition: 0.3s;
     margin-top: 20px;
     padding: 14px 28px;
@@ -28,9 +28,14 @@ button {
     font-weight: bold;
 }
 
-.wrong {
+.button-container .wrong {
     background: red;
 
+}
+.button-container .dimmed {
+    border: 1px solid var(--green);
+    background: var(--background);
+    color: white;
 }
 
 .text-green {
@@ -40,11 +45,7 @@ button {
     color: red;
 }
 
-.dimmed {
-    border: 1px solid var(--green);
-    background: var(--background);
-    color: white;
-}
+
 
 .result-container {
     display: flex;

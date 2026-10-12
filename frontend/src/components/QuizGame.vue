@@ -79,8 +79,13 @@ function submit(answer) {
         if (quizStatsData.value.totalQuestions >= quizLength) {
             let list = loadFromLocal("quizData") || [];
             list.push(quizStatsData.value);
-            saveToLocal("quizData", list);
-            gameOn = false
+            try {
+                saveToLocal("quizData", list);
+            } catch (error) {
+                console.error(`Error saving to local: ${error}`)
+            } finally {
+                gameOn = false
+            }
         } else {
             gameOn = true
             await getQuiz()
@@ -99,7 +104,7 @@ function getButtonClass(option) {
 
     return 'dimmed'
 }
-function restartGame(){
+function restartGame() {
     quizStatsData.value = {
         totalQuestions: 0,
         correctAnswers: 0,
@@ -128,7 +133,7 @@ onMounted(() => {
 
             <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
             <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
-            }}</span>?</h1>
+                    }}</span>?</h1>
             <div class="button-container">
                 <button v-for="option in buttonChoise" :key="option.Countryname"
                     :class="getButtonClass(option.Countryname)" @click="submit(option.Countryname)">{{
@@ -145,10 +150,11 @@ onMounted(() => {
             <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ quizLength }}</p>
             <ol>
                 <li v-for="(item, index) in quizStatsData.history" :key="index">
-                    <p>Du svarade <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer }}</span> rätt svar var {{ item.correctCountry }}</p>
+                    <p>Du svarade <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer
+                            }}</span> rätt svar var {{ item.correctCountry }}</p>
                 </li>
             </ol>
-            <button @click="restartGame">Spela igen</button>
+            <button @click="restartGame" class="default">Spela igen</button>
         </div>
     </div>
 </template>
