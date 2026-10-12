@@ -9,12 +9,13 @@ let flagurl = ref(null)
 let capitalName = ref(null)
 let buttonChoise = ref(null)
 const quizType = route.params.quizType
-const quizLength = 10
+const quizLength = 2
+const selectedAnswer = ref(null)
+const isChecking = ref(false)
 let isLoading = ref(true)
 let showFlagQuiz = ref(false)
-let showCaptialQuiz = ref(false)
+let showCaptialQuiz = ref(false)    
 let quizCount = ref(quizLength)
-let correctAnswers = ref(0)
 let quizStatsData = ref({
     totalQuestions: 0,
     correctAnswers: 0,
@@ -58,16 +59,24 @@ function flagQuiz() {
 }
 
 function submit(answer) {
-    if (answer === quizContent.value.countries[quizContent.value.correctIndex].Countryname) {
+    if (isChecking.value) return
+    isChecking.value = true
+    selectedAnswer.value = answer
+    const correctAnswer = quizContent.value.countries[quizContent.value.correctIndex].Countryname
+
+    if (selectedAnswer === correctAnswer) {
         quizStatsData.value.correctAnswers++
         quizStatsData.value.correctCountries.push(answer)
         quizStatsData.value.totalQuestions++
-        alert("Correct answer!")
     } else {
         quizStatsData.value.totalQuestions++
         quizStatsData.value.incorrectCountries.push(quizContent.value.countries[quizContent.value.correctIndex].Countryname)
-        alert("Wrong answer!");
     }
+    setTimeout(async () => {
+        selectedAnswer.value = null
+        isChecking.value = false
+        await getQuiz()
+    }, 3000)
     if (quizCount.value > 1) {
         quizCount.value--
     } else {
@@ -77,7 +86,18 @@ function submit(answer) {
         list.push(quizStatsData);
         saveToLocal("quizData", list);
     }
-    getQuiz()
+}
+
+function getButtonClass(option) {
+    if (!selectedAnswer.value) return '';
+    const correctCountryname = quizContent.value.countries[quizContent.value.correctIndex].Countryname
+    const isOptionCorrect = option === correctCountryname
+    const isSelected = selectedAnswer.value === option
+
+    if (isOptionCorrect) return 'correct'
+    if (isSelected && !isOptionCorrect) return 'wrong'
+
+    return 'dimmed'
 }
 
 function loadFromLocal(name) {
@@ -98,16 +118,12 @@ onMounted(() => {
         <div v-if="!isLoading" class="quiz-content">
 
             <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
-            <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName }}</span>?</h1>
+            <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
+                    }}</span>?</h1>
             <div class="button-container">
-                <button class="play-button" @click="submit(buttonChoise[0].Countryname)"> {{ buttonChoise[0].Countryname
-                }}</button>
-                <button class="play-button" @click="submit(buttonChoise[1].Countryname)"> {{ buttonChoise[1].Countryname
-                }}</button>
-                <button class="play-button" @click="submit(buttonChoise[2].Countryname)"> {{ buttonChoise[2].Countryname
-                }}</button>
-                <button class="play-button" @click="submit(buttonChoise[3].Countryname)"> {{ buttonChoise[3].Countryname
-                }}</button>
+                <button v-for="option in buttonChoise" :key="option.Countryname"
+                    :class="getButtonClass(option.Countryname)" @click="submit(option.Countryname)">{{
+                        option.Countryname }}</button>
             </div>
         </div>
         <div v-else>

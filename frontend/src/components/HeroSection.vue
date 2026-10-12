@@ -9,7 +9,6 @@ const router = useRouter()
 
 const showCategories = ref(false)
 function openQuiz(quizType){
-  console.log("button pressed for quiz type: " + quizType)
   router.push(`/quiz/${quizType}`)
 }
 </script>

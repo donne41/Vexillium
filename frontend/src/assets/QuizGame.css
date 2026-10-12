@@ -1,5 +1,3 @@
-
-
 .quiz-content {
     display: flex;
     flex-direction: column;
@@ -18,3 +16,25 @@
     color: var(--teal);
 }
 
+button {
+    transition: 0.3s;
+    margin-top: 20px;
+    padding: 14px 28px;
+    background: var(--green);
+    color: var(--background);
+    border: 1px solid var(--background);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.wrong {
+    background: red;
+
+}
+
+.dimmed {
+    border: 1px solid var(--green);
+    background: var(--background);
+    color: white;
+}
