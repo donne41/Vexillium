@@ -46,7 +46,7 @@ function openQuiz(quizType){
 
           <div class="category-buttons">
             <button @click="openQuiz('flags')">Flaggor</button>
-            <button>Huvudstäder</button>
+            <button @click="openQuiz('capitals')">Huvudstäder</button>
             <button>Länder</button>
           </div>
 
