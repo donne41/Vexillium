@@ -1,0 +1,56 @@
+.quiz-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+}
+.captialname {
+    color: var(--teal);
+}
+
+.button-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+
+}
+
+
+.button-container button, .default {
+    transition: 0.3s;
+    margin-top: 20px;
+    padding: 14px 28px;
+    background: var(--green);
+    color: var(--background);
+    border: 1px solid var(--background);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.button-container .wrong {
+    background: red;
+
+}
+.button-container .dimmed {
+    border: 1px solid var(--green);
+    background: var(--background);
+    color: white;
+}
+
+.text-green {
+    color: green;
+}
+.text-red {
+    color: red;
+}
+
+
+
+.result-container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 50%;
+
+}
