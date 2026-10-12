@@ -1,10 +1,19 @@
 <script setup>
 import {ref} from 'vue'
+import { useRouter } from "vue-router"
 import globe from '../assets/globe.png'
 import vexilliumOverlay from '../assets/vexillium-overlay.png'
 import './HeroSection.css'
 
+const router = useRouter()
+
 const showCategories = ref(false)
+function openQuiz(quizType, length = 10){
+  router.push({
+    path: `/quiz/${quizType}`,
+    query: { diff: length }
+  })
+}
 </script>
 
 <template>
@@ -38,8 +47,8 @@ const showCategories = ref(false)
           <h3>Välj kategori</h3>
 
           <div class="category-buttons">
-            <button>Flaggor</button>
-            <button>Huvudstäder</button>
+            <button @click="openQuiz('flags')">Flaggor</button>
+            <button @click="openQuiz('capitals')">Huvudstäder</button>
             <button>Länder</button>
           </div>
 
