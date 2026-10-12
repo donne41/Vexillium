@@ -11,8 +11,8 @@ let buttonChoise = ref(null)
 const quizType = route.params.quizType
 const quizLength = 10
 let isLoading = ref(true)
-let showflagQuiz = ref(false)
-let showcapitalQuiz = ref(false)
+let showFlagQuiz = ref(false)
+let showCaptialQuiz = ref(false)
 let quizCount = ref(quizLength)
 let correctAnswers = ref(0)
 let quizStatsData = ref({
@@ -28,17 +28,16 @@ async function getQuiz() {
         if (!resp.ok)
             throw new Error(`Error fetching quiz data: ${resp.status}. Message: ${resp.statusText}`)
         const data = await resp.json()
-        console.log("-- Data is fine --", data)
         quizContent.value = data
 
         if (quizType === "flags") {
             flagQuiz()
-            showflagQuiz = true
-            showcapitalQuiz = false
+            showFlagQuiz = true
+            showCaptialQuiz = false
         } else {
             capitalQuiz()
-            showcapitalQuiz = true
-            showflagQuiz = false
+            showCaptialQuiz = true
+            showFlagQuiz = false
         }
 
         isLoading.value = false
@@ -49,13 +48,13 @@ async function getQuiz() {
 }
 
 function capitalQuiz() {
-    buttonChoise.value = quizContent.value.countries.sort((a, b) => a.countryname.localeCompare(b.countryname))
-    capitalName = quizContent.value.countries[quizContent.correctIndex].Capital
+    buttonChoise.value = quizContent.value.countries.sort((a, b) => a.Countryname.localeCompare(b.Countryname))
+    capitalName = quizContent.value.countries[quizContent.value.correctIndex].Capital
 }
 
 function flagQuiz() {
     buttonChoise.value = quizContent.value.countries.sort((a, b) => a.Countryname.localeCompare(b.Countryname))
-    flagurl.value = data.countries[data.correctIndex].Flag
+    flagurl.value = quizContent.value.countries[quizContent.value.correctIndex].Flag
 }
 
 function submit(answer) {
@@ -75,7 +74,6 @@ function submit(answer) {
         alert(`Quiz finished! You got ${quizStatsData.value.correctAnswers} out of ${quizLength} correct.`)
         quizCount.value = quizLength
         let list = loadFromLocal("quizData") || [];
-        console.log("loaded from local")
         list.push(quizStatsData);
         saveToLocal("quizData", list);
     }
@@ -98,10 +96,9 @@ onMounted(() => {
 <template class="main">
     <div>
         <div v-if="!isLoading" class="quiz-content">
-            <h1>Quiz Game</h1>
 
-            <img v-if="showflagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
-            <h3 v-if="showcaptialQuiz"> Vilket land tillhör huvudstaden {{ capitalName }}?</h3>
+            <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
+            <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName }}</span>?</h1>
             <div class="button-container">
                 <button class="play-button" @click="submit(buttonChoise[0].Countryname)"> {{ buttonChoise[0].Countryname
                 }}</button>
