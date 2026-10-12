@@ -9,18 +9,17 @@ let flagurl = ref(null)
 let capitalName = ref(null)
 let buttonChoise = ref(null)
 const quizType = route.params.quizType
-const quizLength = 2
-const selectedAnswer = ref(null)
+const quizLength = Number(route.query.diff) || 10;
 const isChecking = ref(false)
+let selectedAnswer = ref(null)
+let gameOn = ref(true)
 let isLoading = ref(true)
 let showFlagQuiz = ref(false)
-let showCaptialQuiz = ref(false)    
-let quizCount = ref(quizLength)
+let showCaptialQuiz = ref(false)
 let quizStatsData = ref({
     totalQuestions: 0,
     correctAnswers: 0,
-    correctCountries: [],
-    incorrectCountries: []
+    history: []
 });
 
 async function getQuiz() {
@@ -63,29 +62,27 @@ function submit(answer) {
     isChecking.value = true
     selectedAnswer.value = answer
     const correctAnswer = quizContent.value.countries[quizContent.value.correctIndex].Countryname
-
-    if (selectedAnswer === correctAnswer) {
+    quizStatsData.value.totalQuestions++;
+    if (selectedAnswer.value === correctAnswer) {
         quizStatsData.value.correctAnswers++
-        quizStatsData.value.correctCountries.push(answer)
-        quizStatsData.value.totalQuestions++
-    } else {
-        quizStatsData.value.totalQuestions++
-        quizStatsData.value.incorrectCountries.push(quizContent.value.countries[quizContent.value.correctIndex].Countryname)
     }
+    quizStatsData.value.history.push({
+        userAnswer: answer,
+        correctCountry: correctAnswer
+    })
     setTimeout(async () => {
         selectedAnswer.value = null
         isChecking.value = false
-        await getQuiz()
+        if (quizStatsData.value.totalQuestions >= quizLength) {
+            let list = loadFromLocal("quizData") || [];
+            list.push(quizStatsData.value);
+            saveToLocal("quizData", list);
+            gameOn = false
+        } else {
+            gameOn = true
+            await getQuiz()
+        }
     }, 3000)
-    if (quizCount.value > 1) {
-        quizCount.value--
-    } else {
-        alert(`Quiz finished! You got ${quizStatsData.value.correctAnswers} out of ${quizLength} correct.`)
-        quizCount.value = quizLength
-        let list = loadFromLocal("quizData") || [];
-        list.push(quizStatsData);
-        saveToLocal("quizData", list);
-    }
 }
 
 function getButtonClass(option) {
@@ -98,6 +95,15 @@ function getButtonClass(option) {
     if (isSelected && !isOptionCorrect) return 'wrong'
 
     return 'dimmed'
+}
+function restartGame(){
+    quizStatsData.value = {
+        totalQuestions: 0,
+        correctAnswers: 0,
+        history: []
+    }
+    getQuiz();
+    gameOn = true
 }
 
 function loadFromLocal(name) {
@@ -114,12 +120,12 @@ onMounted(() => {
 </script>
 
 <template class="main">
-    <div>
+    <div v-if="gameOn">
         <div v-if="!isLoading" class="quiz-content">
 
             <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
             <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
-                    }}</span>?</h1>
+            }}</span>?</h1>
             <div class="button-container">
                 <button v-for="option in buttonChoise" :key="option.Countryname"
                     :class="getButtonClass(option.Countryname)" @click="submit(option.Countryname)">{{
@@ -128,6 +134,18 @@ onMounted(() => {
         </div>
         <div v-else>
             <p>Loading quiz content...</p>
+        </div>
+    </div>
+    <div v-else>
+        <div class="result-container">
+            <h2>Quizet är slut!</h2>
+            <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ quizLength }}</p>
+            <ol>
+                <li v-for="(item, index) in quizStatsData.history" :key="index">
+                    <p>Du svarade {{ item.userAnswer }} rätt svar var {{ item.correctCountry }}</p>
+                </li>
+            </ol>
+            <button @click="restartGame">Spela igen</button>
         </div>
     </div>
 </template>
