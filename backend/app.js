@@ -7,7 +7,7 @@ const achievementRoutes =
     require('./routes/achievementRoutes');
 const authRoutes = require('./routes/authRoutes');
 const gameRoutes = require('./routes/gameRoutes');
-const statusCode = err.statusCode || 500;
+
 
 
 
@@ -29,6 +29,11 @@ const pool = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME
 });
+
+pool.on('error', (err) => {
+    console.error('MySQL pool error:', err);
+});
+
 
 pool.query('SELECT 1', (err, results) => {
     if (err) {

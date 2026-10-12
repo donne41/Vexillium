@@ -8,24 +8,63 @@ async function getAchievements() {
 }
 
 async function getUserAchievements(userId) {
-    const [rows] = await connectionMySQL.query(
-        'SELECT * FROM user_achievements WHERE user_id = ?',
+    const [rows] = await pool.query(
+        `
+        SELECT
+            a.id,
+            a.code,
+            a.name,
+            a.description,
+            a.icon,
+            a.trigger_type,
+            a.threshold,
+            a.category,
+            ua.unlocked_at
+        FROM achievements a
+        LEFT JOIN user_achievements ua
+            ON ua.achievement_id = a.id
+            AND ua.user_id = ?
+        `,
         [userId]
     );
 
+
+
+    return rows;
 }
 
 async function evaluateAchievements(userId, event) {
+
     const [achievements] = await connectionMySQL.query(
         `
-        SELECT *
-        FROM achievements
-        WHERE trigger_type = ?
+            SELECT *
+            FROM achievements
+            WHERE trigger_type = ?
         `,
         [event.type]
     );
 
-    return achievements;
+    const unlocked = [];
+
+    for (const achievement of achievements) {
+
+        let qualifies = false;
+
+        if (event.type === 'login') {
+
+        }
+
+        if (event.type === 'game_completed') {
+
+        }
+
+        if (qualifies) {
+
+            unlocked.push(achievement);
+        }
+    }
+
+    return unlocked;
 }
 
 
