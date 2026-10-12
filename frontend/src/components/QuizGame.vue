@@ -11,6 +11,7 @@ let buttonChoise = ref(null)
 const quizType = route.params.quizType
 const quizLength = Number(route.query.diff) || 10;
 const isChecking = ref(false)
+const quizString = quizType === "capitals" ? "huvudstäder" : "flaggor"
 let selectedAnswer = ref(null)
 let gameOn = ref(true)
 let isLoading = ref(true)
@@ -62,13 +63,15 @@ function submit(answer) {
     isChecking.value = true
     selectedAnswer.value = answer
     const correctAnswer = quizContent.value.countries[quizContent.value.correctIndex].Countryname
+    const isCorrect = (answer === correctAnswer)
     quizStatsData.value.totalQuestions++;
     if (selectedAnswer.value === correctAnswer) {
         quizStatsData.value.correctAnswers++
     }
     quizStatsData.value.history.push({
         userAnswer: answer,
-        correctCountry: correctAnswer
+        correctCountry: correctAnswer,
+        isCorrect: isCorrect
     })
     setTimeout(async () => {
         selectedAnswer.value = null
@@ -138,11 +141,11 @@ onMounted(() => {
     </div>
     <div v-else>
         <div class="result-container">
-            <h2>Quizet är slut!</h2>
+            <h2>Quizet för {{ quizString }} är slut!</h2>
             <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ quizLength }}</p>
             <ol>
                 <li v-for="(item, index) in quizStatsData.history" :key="index">
-                    <p>Du svarade {{ item.userAnswer }} rätt svar var {{ item.correctCountry }}</p>
+                    <p>Du svarade <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer }}</span> rätt svar var {{ item.correctCountry }}</p>
                 </li>
             </ol>
             <button @click="restartGame">Spela igen</button>

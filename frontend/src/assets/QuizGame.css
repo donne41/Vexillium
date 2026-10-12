@@ -33,8 +33,23 @@ button {
 
 }
 
+.text-green {
+    color: green;
+}
+.text-red {
+    color: red;
+}
+
 .dimmed {
     border: 1px solid var(--green);
     background: var(--background);
     color: white;
+}
+
+.result-container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 50%;
+
 }
