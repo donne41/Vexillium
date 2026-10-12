@@ -50,7 +50,7 @@ function getRandomAllCountries() {
                 reject(error);
             else{
                 let quizContent = {
-                    "correctIndex": Math.floor(Math.random() * 4),
+                    "correctIndex": Math.floor(Math.random() * rows.length),
                     "countries": rows
                 }
                 resolve(quizContent);
