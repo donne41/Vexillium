@@ -19,7 +19,9 @@ CREATE TABLE game_results (
 
                               INDEX idx_game_results_user_id (user_id),
 
-                              FOREIGN KEY (user_id) REFERENCES users(id)
+                              FOREIGN KEY (user_id)
+                                  REFERENCES users(id)
+                                  ON DELETE CASCADE
 );
 
 CREATE TABLE achievements (
@@ -38,7 +40,9 @@ CREATE TABLE user_achievements (
                             achievement_id INT NOT NULL,
                             unlocked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                            FOREIGN KEY (user_id) REFERENCES users(id),
+                            FOREIGN KEY (user_id)
+                                REFERENCES users(id)
+                                ON DELETE CASCADE,
                             FOREIGN KEY (achievement_id) REFERENCES achievements(id),
 
                             UNIQUE (user_id, achievement_id)
