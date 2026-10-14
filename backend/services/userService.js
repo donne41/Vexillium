@@ -12,3 +12,24 @@ async function createUser(username, password, email) {
     );
     return { id: result.insertId, username };
 }
+
+async function getAllUsers() {
+    const [rows] = await pool.execute(`SELECT ${PUBLIC_COLUMNS} FROM users`);
+    return rows;
+}
+
+async function getUserById(id) {
+    const [rows] = await pool.execute(
+        `SELECT ${PUBLIC_COLUMNS} FROM users WHERE id = ?`,
+        [id]
+    );
+    return rows[0] ?? null;
+}
+
+async function getUserByUsername(username) {
+    const [rows] = await pool.execute(
+        `SELECT ${PUBLIC_COLUMNS} FROM users WHERE username = ?`,
+        [username]
+    );
+    return rows[0] ?? null;
+}
