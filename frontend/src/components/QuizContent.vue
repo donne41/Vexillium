@@ -1,6 +1,14 @@
 <script setup>
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 
+const props = defineProps({
+    settings: {
+        type: Object,
+        required: true
+    }
+})
+
+const emit = defineEmits(["finished"])
 let isLoading = ref(true)
 let showFlagQuiz = ref(false)
 let showCaptialQuiz = ref(false)
@@ -10,6 +18,14 @@ let buttonChoise = ref(null)
 let selectedAnswer = ref(null)
 const isChecking = ref(false)
 let quizData = ref(null)
+
+const quizStatsData = re({
+    totalQuestions: 0,
+    correctAnswers: 0,
+    history: []
+})
+
+
 
 
 async function getQuiz() {
@@ -51,10 +67,13 @@ function submit(answer) {
     if (isChecking.value) return
     isChecking.value = true
     selectedAnswer.value = answer
+
     const correctAnswer = quizData.value.countries[quizData.value.correctIndex].Countryname
     const isCorrect = (answer === correctAnswer)
+    
     quizStatsData.value.totalQuestions++;
-    if (selectedAnswer.value === correctAnswer) {
+    
+    if (isCorrect) {
         quizStatsData.value.correctAnswers++
     }
     quizStatsData.value.history.push({
@@ -65,18 +84,18 @@ function submit(answer) {
     setTimeout(async () => {
         selectedAnswer.value = null
         isChecking.value = false
-        if (quizStatsData.value.totalQuestions >= quizLength) {
+
+        if (maxLen > 0 && quizStatsData.value.totalQuestions >= maxLen) {
             let list = loadFromLocal("quizData") || [];
             list.push(quizStatsData.value);
             try {
                 saveToLocal("quizData", list);
             } catch (error) {
                 console.error(`Error saving to local: ${error}`)
-            } finally {
-                gameOn = false
             }
+            emit("finished", quizStatsData.value)
         } else {
-            gameOn = true
+            isLoading.value = true
             await getQuiz()
         }
     }, 3000)
@@ -93,6 +112,10 @@ function getButtonClass(option) {
 
     return 'dimmed'
 }
+
+onMounted(() => {
+    getQuiz()
+})
 
 </script>
 

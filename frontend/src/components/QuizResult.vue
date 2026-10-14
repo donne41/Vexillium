@@ -2,7 +2,6 @@
 import { ref, onMounted } from "vue"
 import { useRoute } from "vue-router"
 import "@/assets/QuizGame.css"
-import quizContent from "@/components/QuizContent.vue"
 
 const route = useRoute()
 
@@ -42,10 +41,7 @@ onMounted(() => {
 </script>
 
 <template class="main">
-    <div v-if="gameOn">
-        <quizContent />
-    </div>
-    <div v-else>
+    <div>
         <div class="result-container">
             <h2>Quizet för {{ quizString }} är slut!</h2>
             <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ quizLength }}</p>
