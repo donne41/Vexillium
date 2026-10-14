@@ -1,40 +1,29 @@
-<script>
-export default {
-  data() {
-    return {
-      achievements: [
-        {
-          code: 'FIRST_LOGIN',
-          name: 'Du är nu en vexuillare',
-          description: 'Logga in för första gången.',
-          icon: '👋',
-          unlocked: true
-        },
-        {
-          code: 'FIRST_GAME',
-          name: 'First Journey',
-          description: 'Complete your first quiz.',
-          icon: '🌍',
-          unlocked: false
-        },
-        {
-          code: 'PERFECT_GAME',
-          name: 'Perfect Score',
-          description: 'Get every question correct.',
-          icon: '🏆',
-        unlocked: false
-  },
-    {
-      code: 'TEN_CORRECT',
-          name: 'Geography Rookie',
-        description: 'Answer 10 questions correctly.',
-        icon: '🧠',
-        unlocked: false
+<script setup>
+import { ref, onMounted } from 'vue'
+import AchievementCard from '@/components/AchievementCard.vue'
+
+const achievements = ref([])
+const loading = ref(true)
+const errorMessage = ref('')
+
+onMounted(async () => {
+  try {
+    const response = await fetch(
+        'http://localhost:3000/api/achievements'
+    )
+
+    if (!response.ok) {
+      throw new Error('Kunde inte hämta prestationer')
     }
-  ]
+
+    achievements.value = await response.json()
+  } catch (error) {
+    console.error(error)
+    errorMessage.value = 'Kunde inte ladda prestationerna.'
+  } finally {
+    loading.value = false
   }
-  }
-}
+})
 </script>
 
 <template>
@@ -49,7 +38,7 @@ export default {
           :class="{ unlocked: achievement.unlocked }"
       >
         <span class="achievement-icon">
-          {{ achievement.icon }}
+          {{ achievement.image }}
         </span>
 
         <div class="achievement-info">
@@ -63,6 +52,19 @@ export default {
           <span v-else>
             🔒 Locked
           </span>
+          <p v-if="loading">Laddar prestationer...</p>
+
+          <p v-else-if="errorMessage">
+            {{ errorMessage }}
+          </p>
+
+          <div v-else class="achievements-list">
+            <AchievementCard
+                v-for="achievement in achievements"
+                :key="achievement.id"
+                :achievement="achievement"
+            />
+          </div>
         </div>
       </div>
     </div>

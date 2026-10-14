@@ -52,15 +52,28 @@ async function evaluateAchievements(userId, event) {
 
         if (event.type === 'login') {
 
-        }
+            if (achievement.trigger_type === 'login') {
+                currentValue = user.login_count;
 
-        if (event.type === 'game_completed') {
+            }
+        } else if (event.type === 'game_completed') {
 
-        }
+            if (achievement.trigger_type === 'game_completed') {
+                qualifies = event.category === achievement.category;
 
-        if (qualifies) {
+            }
 
-            unlocked.push(achievement);
+            if (achievement.trigger_type === 'high_score') {
+                const percentage =
+                    (event.score / event.maxScore) * 100;
+                qualifies = percentage >= achievement.threshold;
+
+            }
+
+            if (qualifies) {
+
+                unlocked.push(achievement);
+            }
         }
     }
 
