@@ -42,7 +42,7 @@ async function getUserByEmail(email) {
     return rows[0] ?? null;
 }
 
-async function updateUser(id, { username, password }) {
+async function updateUser(id, { username, email, password }) {
     const fields = [];
     const values = [];
 
@@ -50,6 +50,12 @@ async function updateUser(id, { username, password }) {
         fields.push('username = ?');
         values.push(username);
     }
+
+    if (email) {
+        fields.push('email = ?');
+        values.push(email);
+    }
+    
     if (password) {
         fields.push('password_hash = ?');
         values.push(await bcrypt.hash(password, SALT_ROUNDS));
