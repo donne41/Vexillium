@@ -33,3 +33,32 @@ async function getUserByUsername(username) {
     );
     return rows[0] ?? null;
 }
+
+async function getUserByEmail(email) {
+    const [rows] = await pool.execute(
+        `SELECT ${PUBLIC_COLUMNS} FROM users WHERE email = ?`,
+        [email]
+    );
+    return rows[0] ?? null;
+}
+
+async function updateUser(id, { username, password }) {
+    const fields = [];
+    const values = [];
+
+    if (username) {
+        fields.push('username = ?');
+        values.push(username);
+    }
+    if (password) {
+        fields.push('password_hash = ?');
+        values.push(await bcrypt.hash(password, SALT_ROUNDS));
+    }
+
+    values.push(id);
+    const [result] = await pool.execute(
+        `UPDATE users SET ${fields.join(', ')} WHERE id = ?`,
+        values
+    );
+    return result.affectedRows > 0;
+}
