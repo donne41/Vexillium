@@ -55,7 +55,7 @@ async function updateUser(id, { username, email, password }) {
         fields.push('email = ?');
         values.push(email);
     }
-    
+
     if (password) {
         fields.push('password_hash = ?');
         values.push(await bcrypt.hash(password, SALT_ROUNDS));
@@ -68,3 +68,17 @@ async function updateUser(id, { username, email, password }) {
     );
     return result.affectedRows > 0;
 }
+
+async function deleteUser(id) {
+    const [result] = await pool.execute('DELETE FROM users WHERE id = ?', [id]);
+    return result.affectedRows > 0;
+}
+
+module.exports = {
+    createUser,
+    getAllUsers,
+    getUserById,
+    getUserByUsername,
+    updateUser,
+    deleteUser
+};
