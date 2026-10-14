@@ -1,7 +1,12 @@
+
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
 require('dotenv').config();
+const achievementRoutes =
+    require('./routes/achievementRoutes');
+
+
 
 const app = express();
 
@@ -9,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static('public'));
+app.use('/api/achievements', achievementRoutes);
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -27,8 +33,13 @@ pool.query('SELECT 1', (err, results) => {
     console.log('Database connected:', results);
 });
 
-const port = process.env.PORT || 3000;
+const questionRoutes = require("./routes/questionroutes");
+app.use(questionRoutes);
+
+const port = 3000;
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+
+

@@ -1,17 +1,16 @@
-§<script setup>
+<script setup>
 import Navbar from './components/Navbar.vue'
-import HeroSection from './components/HeroSection.vue'
-import QuizCategories from './components/QuizCategories.vue'
+import Footer from './components/Footer.vue'
 </script>
 
 <template>
   <div class="app">
+
     <Navbar />
 
-    <main>
-      <HeroSection />
-      <QuizCategories />
-    </main>
+    <RouterView />
+
+    <Footer />
 
   </div>
 </template>

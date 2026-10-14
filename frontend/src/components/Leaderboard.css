@@ -1,0 +1,116 @@
+
+/* Topplistan */
+
+.leaderboard {
+    min-width: 0;
+    height: 100%;
+    padding: 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.leaderboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.leaderboard-label {
+    margin: 0 0 8px;
+    color: var(--green);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+.leaderboard h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 24px;
+}
+
+/* Tom topplista */
+
+.leaderboard-empty {
+    min-height: 230px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.leaderboard-empty-icon {
+    margin-bottom: 16px;
+    color: var(--teal);
+    font-size: 44px;
+}
+
+.leaderboard-empty h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+
+.leaderboard-empty p {
+    max-width: 300px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Framtida topplistedata */
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.leaderboard-player {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 16px;
+    background: var(--section);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.leaderboard-position {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--border);
+    border-radius: 6px;
+    color: var(--teal);
+    font-weight: bold;
+}
+
+.leaderboard-name {
+    flex: 1;
+    font-size: 14px;
+}
+
+.leaderboard-score {
+    color: var(--green);
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .leaderboard {
+        padding: 20px;
+    }
+
+    .leaderboard h2 {
+        font-size: 21px;
+    }
+}

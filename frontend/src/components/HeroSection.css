@@ -97,88 +97,60 @@
     background: #00d0df;
 }
 
-/* Cirkelgrafik */
+/* Logotyp till höger */
 
 .hero-graphic {
-    position: relative;
     width: 400px;
-    height: 470px;
+    min-height: 400px;
     flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 25px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-}
 
-.circle {
-    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.circle-one {
-    width: 300px;
-    height: 300px;
-    border: 1px solid var(--border);
+.animated-logo {
+    position: relative;
+    width: 400px;
+    height: 400px;
 }
 
-.circle-two {
-    width: 220px;
-    height: 220px;
-    border: 1px solid var(--teal);
-}
-
-.circle-three {
-    width: 140px;
-    height: 140px;
-    border: 1px solid var(--green);
-}
-
-.circle-center {
-    width: 12px;
-    height: 12px;
-    background: #3DF066;
-    border-radius: 50%;
-    box-shadow: 0 0 20px #3DF066;
-}
-
-/* Informationsruta */
-
-.graphic-stats {
+.hero-globe {
     position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 85%;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    background: #242933;
-    border: 1px solid var(--border);
-    border-radius: 12px;
+
+    width: 68%;
+    height: 68%;
+
+    left: 16%;
+    top: 16%;
+
+    object-fit: contain;
+
+    animation: spin-globe 35s linear infinite;
 }
 
-.stat-item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.hero-overlay {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    left: 0;
+    top: 0;
+
+    object-fit: contain;
+
+    z-index: 2;
 }
 
-.stat-item span {
-    color: var(--muted);
-    font-size: 11px;
-    letter-spacing: 1px;
-}
+@keyframes spin-globe {
+    from {
+        transform: rotate(0deg);
+    }
 
-.stat-item strong {
-    color: var(--teal);
-    font-size: 22px;
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Surfplatta */
@@ -197,6 +169,7 @@
     .hero-graphic {
         width: 100%;
         max-width: 400px;
+        min-height: 0;
         margin: auto;
     }
 }
@@ -216,23 +189,8 @@
         font-size: 15px;
     }
 
-    .hero-graphic {
-        height: 410px;
-    }
-
-    .circle-one {
-        width: 260px;
-        height: 260px;
-    }
-
-    .circle-two {
-        width: 190px;
-        height: 190px;
-    }
-
-    .circle-three {
-        width: 120px;
-        height: 120px;
+    .hero-logo {
+        max-width: 300px;
     }
 
     .quiz-categories {
@@ -245,13 +203,5 @@
 
     .category-buttons button {
         width: 100%;
-    }
-
-    .graphic-stats {
-        padding: 14px;
-    }
-
-    .stat-item span {
-        font-size: 9px;
     }
 }
