@@ -49,3 +49,14 @@ exports.getRandomAllCountries = (async (req, res) => {
         });
     }
 });
+
+exports.getRegions = (async (req, res) => {
+    try {
+        const regions = await questionService.getRegions();
+        res.send(regions);
+    }catch(error){
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+})

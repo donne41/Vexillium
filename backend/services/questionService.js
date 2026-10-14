@@ -59,11 +59,26 @@ function getRandomAllCountries() {
     })
 }
 
+function getRegions(){
+    return new Promise((resolve, reject) => {
+        const slq = "SELECT * FROM Regions"
+        dbConnect.query(sql, (error, rows) => {
+            if(error)
+                reject(error)
+            else{
+                resolve(rows)
+            }
+        })
+    })
+}
+
 module.exports = {
     getCountries,
     getCountriesByRegion,
     getRandom,
     getRandomAllCountries,
+    getRegions,
+    
 
 
 
