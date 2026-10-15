@@ -7,28 +7,38 @@ async function getAchievements() {
     return rows;
 }
 
-async function getUserAchievements(userId) {
-    const [rows] = await pool.query(
+async function getUserAchievements(userId, event) {
+    if (!event || !event.type) {
+        throw new Error('Event med giltig "type" måste anges');
+    }
+
+    const triggerTypesByEvent = {
+        login: ['login'],
+        game_completed: ['game_completed', 'high_score']
+    };
+
+    const triggerTypes = triggerTypesByEvent[event.type];
+
+    if (!triggerTypes) {
+        throw new Error(`Unsupported event type: ${event.type}`);
+    }
+
+    const [rows] = await connectionMySQL.query(
         `
-        SELECT
-            a.id,
-            a.code,
-            a.name,
-            a.description,
-            a.icon,
-            a.trigger_type,
-            a.threshold,
-            a.category,
-            ua.unlocked_at
-        FROM achievements a
-        LEFT JOIN user_achievements ua
-            ON ua.achievement_id = a.id
-            AND ua.user_id = ?
+            SELECT
+                id,
+                code,
+                name,
+                description,
+                icon,
+                trigger_type,
+                threshold,
+                category
+            FROM achievements
+            WHERE trigger_type IN (?)
         `,
-        [userId]
+        [triggerTypes]
     );
-
-
 
     return rows;
 }
@@ -50,17 +60,41 @@ async function evaluateAchievements(userId, event) {
 
         let qualifies = false;
 
+
+
         if (event.type === 'login') {
 
-            if (achievement.trigger_type === 'login') {
-                currentValue = user.login_count;
-
+            if (
+                event.type === 'login' &&
+                achievement.trigger_type === 'login' &&
+                achievement.threshold === 1
+            ) {
+                unlocked.push(achievement);
             }
         } else if (event.type === 'game_completed') {
 
-            if (achievement.trigger_type === 'game_completed') {
-                qualifies = event.category === achievement.category;
+            if (
+                event.type === 'game_completed' &&
+                achievement.trigger_type === 'game_completed'
+            ) {
+                let sql = `
+        SELECT COUNT(*) AS completedGames
+        FROM game_results
+        WHERE user_id = ?
+    `;
 
+                const params = [userId];
+
+                if (achievement.category !== null) {
+                    sql += ' AND category = ?';
+                    params.push(achievement.category);
+                }
+
+                const [rows] = await connectionMySQL.query(sql, params);
+
+                const completedGames = Number(rows[0].completedGames);
+
+                qualifies = completedGames >= achievement.threshold;
             }
 
             if (achievement.trigger_type === 'high_score') {
@@ -71,8 +105,18 @@ async function evaluateAchievements(userId, event) {
             }
 
             if (qualifies) {
+                const [result] = await connectionMySQL.query(
+                    `
+        INSERT IGNORE INTO user_achievements
+            (user_id, achievement_id)
+        VALUES (?, ?)
+        `,
+                    [userId, achievement.id]
+                );
 
-                unlocked.push(achievement);
+                if (result.affectedRows === 1) {
+                    unlocked.push(achievement);
+                }
             }
         }
     }
@@ -83,5 +127,6 @@ async function evaluateAchievements(userId, event) {
 
 module.exports = {
     getAchievements,
+    getUserAchievements,
     evaluateAchievements
 };

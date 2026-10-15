@@ -37,7 +37,7 @@ onMounted(async () => {
           class="achievement"
           :class="{ unlocked: achievement.unlocked }"
       >
-        <span class="achievement-icon">
+        <span class="achievement-image">
           {{ achievement.image }}
         </span>
 
@@ -49,10 +49,7 @@ onMounted(async () => {
             ✅ Unlocked
           </span>
 
-          <span v-else>
-            🔒 Locked
-          </span>
-          <p v-if="loading">Laddar prestationer...</p>
+
 
           <p v-else-if="errorMessage">
             {{ errorMessage }}
@@ -65,6 +62,10 @@ onMounted(async () => {
                 :achievement="achievement"
             />
           </div>
+          <span v-else>
+            🔒 Locked
+          </span>
+          <p v-if="loading">Laddar prestationer...</p>
         </div>
       </div>
     </div>
@@ -120,7 +121,7 @@ onMounted(async () => {
   background: #f5f5f5;
 }
 
-.achievement-icon {
+.achievement-image {
   font-size: 2.5rem;
 }
 

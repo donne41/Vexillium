@@ -52,13 +52,18 @@ CREATE TABLE user_achievements (
                                    achievement_id INT NOT NULL,
                                    unlocked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                                   FOREIGN KEY (user_id) REFERENCES users(id),
-                                   FOREIGN KEY (achievement_id) REFERENCES achievements(id),
+                                   CONSTRAINT fk_user_achievements_user
+                                       FOREIGN KEY (user_id)
+                                           REFERENCES users(id)
+                                           ON DELETE CASCADE,
+
+                                   CONSTRAINT fk_user_achievements_achievement
+                                       FOREIGN KEY (achievement_id)
+                                           REFERENCES achievements(id)
+                                           ON DELETE RESTRICT,
 
                                    UNIQUE (user_id, achievement_id)
 );
-
-
 
 ALTER TABLE achievements
     ADD COLUMN trigger_type VARCHAR(50) NOT NULL,

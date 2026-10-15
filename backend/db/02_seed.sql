@@ -74,6 +74,3 @@ VALUES
         'flags'
     );
 
-INSERT IGNORE INTO user_achievements
-(user_id, achievement_id)
-VALUES (7, 1);
