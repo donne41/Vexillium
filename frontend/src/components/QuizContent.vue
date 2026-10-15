@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue"
+import { useRoute } from "vue-router"
 
 const props = defineProps({
     settings: {
@@ -18,8 +19,13 @@ let buttonChoise = ref(null)
 let selectedAnswer = ref(null)
 const isChecking = ref(false)
 let quizData = ref(null)
+let nextQuestion = ref(null)
+const route = useRoute()
+const quizType = route.params.quizType
+const maxLen = props.settings.length
 
-const quizStatsData = re({
+
+const quizStatsData = ref({
     totalQuestions: 0,
     correctAnswers: 0,
     history: []
@@ -27,31 +33,37 @@ const quizStatsData = re({
 
 
 
-
 async function getQuiz() {
     try {
-        let resp = await fetch("http://localhost:3000/api/random")
+        const regions = props.settings.regions.join(',');
+        let url = "http://localhost:3000/api/random"
+        if (regions.length > 0) {
+            url += `?regions=${regions}`
+        }
+        let resp = await fetch(url)
         if (!resp.ok)
             throw new Error(`Error fetching quiz data: ${resp.status}. Message: ${resp.statusText}`)
         const data = await resp.json()
-        quizData.value = data
-
-        if (quizType === "flags") {
-            flagQuiz()
-            showFlagQuiz = true
-            showCaptialQuiz = false
-        } else {
-            capitalQuiz()
-            showCaptialQuiz = true
-            showFlagQuiz = false
-        }
-
-        isLoading.value = false
+        nextQuestion.value = data
     } catch (error) {
         console.error(`Error fetching in quizGame.vue: ${error}`)
         isLoading.value = true
     }
 }
+
+function presentQuestion() {
+    quizData.value = nextQuestion.value
+    if (quizType === "flags") {
+        flagQuiz()
+        showFlagQuiz = true
+        showCaptialQuiz = false
+    } else {
+        capitalQuiz()
+        showCaptialQuiz = true
+        showFlagQuiz = false
+    }
+    isLoading.value = false
+}   
 
 function capitalQuiz() {
     buttonChoise.value = quizData.value.countries.sort((a, b) => a.Countryname.localeCompare(b.Countryname))
@@ -70,9 +82,9 @@ function submit(answer) {
 
     const correctAnswer = quizData.value.countries[quizData.value.correctIndex].Countryname
     const isCorrect = (answer === correctAnswer)
-    
+
     quizStatsData.value.totalQuestions++;
-    
+
     if (isCorrect) {
         quizStatsData.value.correctAnswers++
     }
@@ -81,25 +93,31 @@ function submit(answer) {
         correctCountry: correctAnswer,
         isCorrect: isCorrect
     })
-    setTimeout(async () => {
-        selectedAnswer.value = null
-        isChecking.value = false
+    if (quizStatsData.value.totalQuestions >= maxLen) {
+        quizEnd()
+    } else {
+        getQuiz();
+        setTimeout(async () => {
+            selectedAnswer.value = null
+            isChecking.value = false
 
-        if (maxLen > 0 && quizStatsData.value.totalQuestions >= maxLen) {
-            let list = loadFromLocal("quizData") || [];
-            list.push(quizStatsData.value);
-            try {
-                saveToLocal("quizData", list);
-            } catch (error) {
-                console.error(`Error saving to local: ${error}`)
-            }
-            emit("finished", quizStatsData.value)
-        } else {
-            isLoading.value = true
-            await getQuiz()
-        }
-    }, 3000)
+            presentQuestion()
+            isLoading.value = false
+        }, 3000)
+    }
 }
+
+function quizEnd() {
+    let list = loadFromLocal("quizData") || [];
+    list.push(quizStatsData.value);
+    try {
+        saveToLocal("quizData", list);
+    } catch (error) {
+        console.error(`Error saving to local: ${error}`)
+    }
+    emit("finished", quizStatsData.value)
+}
+
 
 function getButtonClass(option) {
     if (!selectedAnswer.value) return '';
@@ -113,8 +131,21 @@ function getButtonClass(option) {
     return 'dimmed'
 }
 
+function loadFromLocal(name) {
+    return JSON.parse(localStorage.getItem(name))
+}
+
+function saveToLocal(name, content) {
+    localStorage.setItem(name, JSON.stringify(content))
+}
+
+async function loadNext(){
+    await getQuiz()
+    presentQuestion()
+}
+
 onMounted(() => {
-    getQuiz()
+    loadNext()
 })
 
 </script>

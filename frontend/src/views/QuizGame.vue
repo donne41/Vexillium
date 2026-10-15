@@ -6,10 +6,11 @@ import QuizContent from "@/components/QuizContent.vue";
 
 const gameState = ref("settings")
 
-const gameSettigns = ref(null)
+const gameSettings = ref(null)
 const quizStats = ref(null)
 
 const startGame = (settings) => {
+    console.log(`Settings: ${settings.length} regions ${settings.regions}`)
     gameSettings.value = settings
     gameState.value = "playing"
 }
@@ -20,6 +21,10 @@ const finishGame = (stats) => {
 }
 
 const restartGame = () => {
+    gameState.value = "playing"
+}
+
+const gotToSettings = () => {
     gameState.value = "settings"
 }
 
@@ -28,13 +33,17 @@ const restartGame = () => {
 <template>
     <div class = main>
         <QuizSettings v-if="gameState === 'settings'" @start="startGame" />
+         
         <QuizContent v-if="gameState === 'playing'"
-        :settings="gameSettigns"
+        :settings="gameSettings"
         @finished="finishGame"/>
+        
         <QuizResult v-if="gameState === 'result'" 
         :stats="quizStats"
-        :settings="gameSettigns"
-        @restart="restartGame"/>
+        :settings="gameSettings"
+        @goToSettings="gotToSettings"
+        @restart="restartGame"/> 
+    
     </div>
 
 </template>
