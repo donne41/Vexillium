@@ -1,0 +1,69 @@
+
+CREATE DATABASE IF NOT EXISTS vexilliumDB;
+USE vexilliumDB;
+
+CREATE TABLE Regions
+(
+    RegionsID INT AUTO_INCREMENT PRIMARY KEY,
+    Regionname VARCHAR(100)
+);
+
+CREATE TABLE Countries
+(
+    CountryID INT AUTO_INCREMENT PRIMARY KEY,
+    Countryname VARCHAR(250),
+    Flag VARCHAR(100),
+    Capital VARCHAR(250),
+    RegionID INT,
+    FOREIGN KEY (RegionID) REFERENCES Regions (RegionsID)
+);
+
+CREATE TABLE Questions
+(
+    QuestionID INT AUTO_INCREMENT PRIMARY KEY,
+    Question VARCHAR(250),
+    AnswerID INT,
+    FOREIGN KEY (AnswerID) REFERENCES Countries (CountryID)
+);
+
+CREATE TABLE Accounts
+(
+    AccountID INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(250),
+    Password VARCHAR(250),
+    Score INT
+);
+
+CREATE TABLE Rooms
+(
+    RoomID INT AUTO_INCREMENT PRIMARY KEY,
+    RoomAdminID INT,
+    QuestionsID INT,
+    RoomName VARCHAR(100) NOT NULL,
+    InviteCode VARCHAR(6) NOT NULL UNIQUE,
+    RoomStatus VARCHAR(20) NOT NULL DEFAULT 'waiting',
+    IsPublic BOOLEAN NOT NULL DEFAULT TRUE,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (RoomAdminID) REFERENCES Accounts (AccountID),
+    FOREIGN KEY (QuestionsID) REFERENCES Questions (QuestionID)
+);
+
+CREATE TABLE AccountsRooms
+(
+    AccRoomsID INT AUTO_INCREMENT PRIMARY KEY,
+    AccountID INT NOT NULL,
+    RoomID INT NOT NULL,
+    FOREIGN KEY (AccountID) REFERENCES Accounts (AccountID),
+    FOREIGN KEY (RoomID) REFERENCES Rooms (RoomID),
+    UNIQUE (AccountID, RoomID)
+);
+
+CREATE TABLE RoomGuests
+(
+    GuestID INT AUTO_INCREMENT PRIMARY KEY,
+    RoomID INT NOT NULL,
+    GuestName VARCHAR(50) NOT NULL,
+    GuestTokenHash CHAR(64) NOT NULL UNIQUE,
+    JoinedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (RoomID) REFERENCES Rooms (RoomID) ON DELETE CASCADE
+);
