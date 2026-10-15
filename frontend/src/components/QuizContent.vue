@@ -59,12 +59,12 @@ function presentQuestion() {
     quizData.value = nextQuestion.value
     if (quizType === "flags") {
         flagQuiz()
-        showFlagQuiz = true
-        showCaptialQuiz = false
+        showFlagQuiz.value = true
+        showCaptialQuiz.value = false
     } else {
         capitalQuiz()
-        showCaptialQuiz = true
-        showFlagQuiz = false
+        showCaptialQuiz.value = true
+        showFlagQuiz.value = false
     }
     isLoading.value = false
 }
