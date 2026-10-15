@@ -4,6 +4,7 @@
     align-items: center;
     margin: 0 auto;
 }
+
 .captialname {
     color: var(--teal);
 }
@@ -16,7 +17,8 @@
 }
 
 
-.button-container button, .default {
+.button-container button,
+.default-green {
     transition: 0.3s;
     margin-top: 20px;
     padding: 14px 28px;
@@ -28,10 +30,47 @@
     font-weight: bold;
 }
 
+.default-blue {
+    transition: 0.3s;
+    margin-top: 20px;
+    padding: 14px 28px;
+    background: var(--teal);
+    color: var(--background);
+    border: 1px solid var(--background);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.toggle-off-blue {
+    transition: 0.3s;
+    margin-top: 20px;
+    padding: 14px 28px;
+    border: 1px solid var(--teal);
+    background: var(--background);
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.button-error {
+    transition: 0.3s;
+    margin-top: 20px;
+    padding: 14px 28px;
+    background: red;
+    color: var(--background);
+    border: 1px solid var(--background);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
 .button-container .wrong {
     background: red;
 
 }
+
 .button-container .dimmed {
     border: 1px solid var(--green);
     background: var(--background);
@@ -41,8 +80,27 @@
 .text-green {
     color: green;
 }
+
 .text-red {
     color: red;
+}
+
+.main-settings {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.difficulty-buttons {
+    gap: 5px
+}
+
+.region-buttons {
+    display: grid;
+    grid-template-columns: 3fr 3fr 3fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 1%
 }
 
 
