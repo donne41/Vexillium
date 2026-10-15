@@ -110,23 +110,25 @@ function delayNext() {
     setTimeout(async () => {
         selectedAnswer.value = null
         isChecking.value = false
-        await getQuiz
+        await getQuiz()
         presentQuestion()
         isLoading.value = false
     }, 3000)
 }
 
 function quizEnd() {
-    setTimeout(async () => { }, 2000)
-    let list = loadFromLocal("quizData") || [];
-    list.push(quizStatsData.value);
-    try {
-        saveToLocal("quizData", list);
-    } catch (error) {
-        console.error(`Error saving to local: ${error}`)
-    } finally {
-        emit("finished", quizStatsData.value)
-    }
+    setTimeout(async () => {
+        let list = loadFromLocal("quizData") || [];
+        list.push(quizStatsData.value);
+        try {
+            saveToLocal("quizData", list);
+        } catch (error) {
+            console.error(`Error saving to local: ${error}`)
+        } finally {
+            emit("finished", quizStatsData.value)
+        }
+    }, 2000)
+
 }
 
 
@@ -165,7 +167,7 @@ onMounted(() => {
         <p>Fråga {{ quizStatsData.history.length + 1 }} av {{ lengthString }}</p>
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
         <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
-                }}</span>?</h1>
+        }}</span>?</h1>
         <div class="button-container">
             <button v-for="option in buttonChoise" :key="option.Countryname" :class="getButtonClass(option.Countryname)"
                 @click="submit(option.Countryname)">{{
