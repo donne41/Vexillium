@@ -58,10 +58,11 @@ onMounted(() => {
 <template>
     <div class="main">
         <div class="difficulty-buttons">
-            <button @click="setLength(1)" :class="setLengthButton(1)">5</button>
+            <button v-for="len in [1, 10, 20, 0]" :key="len" :class="setLengthButton(len)" @click="setLength(len)">{{ len }}</button>
+<!--             <button @click="setLength(1)" :class="setLengthButton(1)">5</button>
             <button @click="setLength(10)" :class="setLengthButton(10)">10</button>
             <button @click="setLength(20)" :class="setLengthButton(20)">20</button>
-            <button @click="setLength(0)" :class="setLengthButton(0)">Oändligt</button>
+            <button @click="setLength(0)" :class="setLengthButton(0)">Oändligt</button> -->
         </div>
         <div class="region-buttons">
             <button v-for="region in regions" :key="region" :class="togglebuttonclass(region.RegionsID)"
