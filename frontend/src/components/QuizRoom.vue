@@ -39,7 +39,12 @@ async function fetchRoomPlayers() {
 
   try {
     const response = await fetch(
-        `http://localhost:3000/api/rooms/${roomId}/players`
+        `http://localhost:3000/api/rooms/${roomId}/players`,
+        {
+          headers: {
+            'X-Guest-Token': joinedRoom.value.guestToken,
+          }
+        }
     )
 
     if (!response.ok) {
@@ -91,7 +96,7 @@ async function leaveWaitingRoom() {
 
     const data = await response.json()
 
-    if (!response.ok) {
+    if (!response.ok && response.status !== 404) {
       throw new Error(data.error || 'Kunde inte lämna rummet.')
     }
 

@@ -196,6 +196,14 @@ exports.getRoomPlayers = async (req, res) => {
             });
         }
 
+        const guestToken = req.get('X-Guest-Token')
+
+        if (!await roomService.validateGuestSession(roomId, guestToken)) {
+            return res.status(403).json({
+                error: 'Du måste vara med i rummet'
+            });
+        }
+
         const players = await roomService.getRoomPlayers(roomId);
 
         return res.json(players);

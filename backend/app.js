@@ -9,7 +9,7 @@ const db = require('./connectionMySQL');
 
 const achievementRoutes = require('./routes/achievementRoutes');
 const roomRoutes = require('./routes/roomRoutes');
-const questionRoutes = require('./routes/questionRoutes');
+const questionRoutes = require('./routes/questionroutes');
 
 const app = express();
 
