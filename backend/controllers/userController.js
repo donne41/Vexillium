@@ -60,8 +60,8 @@ function handleError(res, error) {
 
 /*
 createUser testar username, password and email med hjälp av valideringsmetoderna
-och anropar sedan service metoden om alla valideringar lyckas annars returneras
-ett status meddelande.
+och om alla valideras skapas en nya användare via service metoden annars skickas
+status meddelanden till klienten.
  */
 exports.createUser = async (req, res) => {
     const { username, password, email } = req.body ?? {};
@@ -79,6 +79,77 @@ exports.createUser = async (req, res) => {
     try {
         const user = await userService.createUser(username.trim(), password, email.trim());
         res.status(201).json(user);
+    } catch (error) {
+        handleError(res, error);
+    }
+};
+
+// ---------- READ ----------
+
+/*
+getAllUsers skickar en JSON-array med användar-objekt till klienten,
+hittas inga användare är listan tom.
+ */
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await userService.getAllUsers();
+        res.json(users);
+    } catch (error) {
+        handleError(res, error);
+    }
+};
+
+/*
+getUserById hämtar en användare via ID och skickar en JSON-array till klienten,
+om ID:et inte är korrekt formaterat eller om ingen användare hittas skickas unika
+felmeddelanden för respektive till klienten.
+ */
+exports.getUserById = async (req, res) => {
+    const id = parseId(req);
+    if (!id) {
+        return res.status(400).json({ error: 'Invalid user id' });
+    }
+
+    try {
+        const user = await userService.getUserById(id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        handleError(res, error);
+    }
+};
+
+/*
+getUserByUsername hämtar en användare via användarnamn och skickar en
+JSON-array till klienten, om användarnamnet inte hittas i databasen
+skickas ett felmeddelande till klienten.
+ */
+exports.getUserByUsername = async (req, res) => {
+    try {
+        const user = await userService.getUserByUsername(req.params.username);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        handleError(res, error);
+    }
+};
+
+/*
+getUserByUsername hämtar en användare via email och skickar en
+JSON-array till klienten, om emailen inte hittas i databasen
+skickas ett felmeddelande till klienten.
+ */
+exports.getUserByEmail = async (req, res) => {
+    try {
+        const user = await userService.getUserByEmail(req.params.email);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(user);
     } catch (error) {
         handleError(res, error);
     }
