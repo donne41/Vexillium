@@ -115,6 +115,7 @@ function delayNext() {
 }
 
 function quizEnd() {
+    setTimeout( async () => {}, 2000)
     let list = loadFromLocal("quizData") || [];
     list.push(quizStatsData.value);
     try {
@@ -146,20 +147,19 @@ function saveToLocal(name, content) {
     localStorage.setItem(name, JSON.stringify(content))
 }
 
-async function loadNext() {
+async function loadFirst() {
     await getQuiz()
     presentQuestion()
 }
 
 onMounted(() => {
-    loadNext()
+    loadFirst()
 })
 
 </script>
-
 <template>
     <div v-if="!isLoading" class="quiz-content">
-        <p>Fråga {{ totalQuestions + 1 }} av {{ lengthString }}</p>
+        <p>Fråga {{ quizStatsData.history.length + 1 }} av {{ lengthString }}</p>
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
         <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
                 }}</span>?</h1>

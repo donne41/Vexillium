@@ -9,6 +9,10 @@ const setLength = (len) => {
     selectedLength.value = len
 }
 const handleStart = () => {
+    if(selectedRegions.value.length === 0) {
+        regions.value.entries(element => selectedRegions.value.push(element)
+        );
+    }
     emit("start", {
         length: selectedLength.value,
         regions: selectedRegions.value
@@ -54,7 +58,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="main">
+    <div class="main-settings">
         <div class="difficulty-buttons">
             <button v-for="len in [5, 10, 20]" :key="len" :class="setLengthButton(len)" @click="setLength(len)">{{ len }}</button>
             <button :class="setLengthButton(0)" @click="setLength(0)">Oändligt</button>

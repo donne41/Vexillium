@@ -73,6 +73,24 @@
     color: red;
 }
 
+.main-settings {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.difficulty-buttons {
+    gap: 5px
+}
+
+.region-buttons {   
+    display: grid;
+    grid-template-columns: 3fr 3fr 3fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 1%
+}
+
 
 
 .result-container {
