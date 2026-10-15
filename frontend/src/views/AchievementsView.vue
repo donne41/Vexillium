@@ -30,49 +30,27 @@ onMounted(async () => {
   <main class="achievements">
     <h1>Achievements 🏆</h1>
 
-    <div class="achievement-list">
-      <div
+    <p v-if="loading">
+      Laddar prestationer...
+    </p>
+
+    <p v-else-if="errorMessage" role="alert">
+      {{ errorMessage }}
+    </p>
+
+    <p v-else-if="achievements.length === 0">
+      Inga prestationer finns ännu.
+    </p>
+
+    <div v-else class="achievements-list">
+      <AchievementCard
           v-for="achievement in achievements"
-          :key="achievement.code"
-          class="achievement"
-          :class="{ unlocked: achievement.unlocked }"
-      >
-        <span class="achievement-image">
-          {{ achievement.image }}
-        </span>
-
-        <div class="achievement-info">
-          <h2>{{ achievement.name }}</h2>
-          <p>{{ achievement.description }}</p>
-
-          <span v-if="achievement.unlocked">
-            ✅ Unlocked
-          </span>
-
-
-
-          <p v-else-if="errorMessage">
-            {{ errorMessage }}
-          </p>
-
-          <div v-else class="achievements-list">
-            <AchievementCard
-                v-for="achievement in achievements"
-                :key="achievement.id"
-                :achievement="achievement"
-            />
-          </div>
-          <span v-else>
-            🔒 Locked
-          </span>
-          <p v-if="loading">Laddar prestationer...</p>
-        </div>
-      </div>
+          :key="achievement.id"
+          :achievement="achievement"
+      />
     </div>
   </main>
 </template>
-
-
 
 <style scoped>
 :root {

@@ -1,93 +1,78 @@
 <script setup>
+defineProps({
+  achievement: {
+    type: Object,
+    required: true
+  }
+})
 </script>
 
 <template>
-  <body>
+  <article class="achievement-item">
+    <div class="award-item-img-container">
+      <img
+          v-if="achievement.image"
+          class="award-item-img"
+          :src="achievement.image"
+          :alt="achievement.name"
+          width="140"
+          height="140"
+      />
 
-  <div class="container">
-    <h1 class="h1-achievements">Achievements 🏆</h1>
-
-    <div class="award-achievement-container">
-
-      <button class="achievement-item">
-        <div class="award-item-img-container">
-          <img class="award-item-img" width="140" height="140" src="../achievement-images/login-achievement.jpg" alt="Achievement Icon">
-        </div>
-        <span class="achievement-name">Login for the first time</span>
-      </button>
-
-      <button class="achievement-item">
-        <div class="award-item-img-container">
-          <img class="award-item-img" width="140" height="140" src="../achievement-images/Vexillium.jpg" alt="Achievement Icon">
-        </div>
-        <span class="achievement-name">Change your avatar👨🏻‍🦲</span>
-      </button>
-
-      <button class="achievement-item">
-        <div class="award-item-img-container">
-          <img class="award-item-img" width="140" height="140" src="../achievement-images/Vexillium.jpg" alt="Achievement Icon">
-        </div>
-        <span class="achievement-name">First Game🎮</span>
-      </button>
-      <button class="achievement-item">
-        <div class="award-item-img-container">
-          <img class="award-item-img" width="140" height="140" src="../achievement-images/birthday-achievement.jpg"alt="Achievement Icon">
-        </div>
-        <span class="achievement-name">Anniversity🎂</span>
-      </button>
-      <button class="achievement-item">
-        <div class="award-item-img-container">
-          <img class="award-item-img" width="140" height="140" src="../achievement-images/vexillium-master.png" alt="Achievement Icon">
-        </div>
-        <span class="achievement-name">Vexillium master🥇</span>
-        <span class="achievement-count">0/1</span>
-      </button>
-
+      <span v-else class="achievement-icon" aria-hidden="true">
+        {{ achievement.icon || '🏆' }}
+      </span>
     </div>
-  </div>
-  </body>
+
+    <div class="achievement-info">
+      <h2 class="achievement-name">
+        {{ achievement.name }}
+      </h2>
+
+      <p class="achievement-description">
+        {{ achievement.description }}
+      </p>
+    </div>
+  </article>
 </template>
 
 <style scoped>
-
-:root {
-  --background: #15181C;
-  --section: #1A1F26;
-  --card: #1E222A;
-  --border: #2F3643;
-  --teal: #00B8C8;
-  --green: #4CAF50;
-  --text: #FFFFFF;
-  --muted: #939EA9;
+.achievement-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #1e222a;
+  border: 1px solid #2f3643;
+  border-radius: 10px;
+  color: #fff;
 }
 
-.achievement-item{
-  background-color: var(--background);
-  border-radius:10px;
-  margin:5px;
+.award-item-img-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 100px;
+  height: 100px;
 }
 
-.achievement-icon{
-  background-color: var(--background);
+.award-item-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
-.achievement-name{
-  color:white;
+.achievement-icon {
+  font-size: 3rem;
 }
 
-.h1-achievements {
-  color: white;
+.achievement-info h2 {
+  margin: 0 0 0.5rem;
 }
 
-body {
-  font-family: Arial, sans-serif;
-  background-color: var(--background);
-  color: var(--text);
+.achievement-description {
   margin: 0;
-  padding: 0;
+  color: #939ea9;
 }
-
-
-
-
 </style>
