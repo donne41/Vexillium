@@ -27,7 +27,6 @@ const toggleRegion = (region) => {
     }else {
         selectedRegions.value.splice(index, 1)
     }
-    console.log(`all regions: ${selectedRegions.value}`)
 }
 
 function togglebuttonclass(id){

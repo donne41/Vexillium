@@ -10,7 +10,6 @@ const gameSettings = ref(null)
 const quizStats = ref(null)
 
 const startGame = (settings) => {
-    console.log(`Settings: ${settings.length} regions ${settings.regions}`)
     gameSettings.value = settings
     gameState.value = "playing"
 }
@@ -37,7 +36,7 @@ const gotToSettings = () => {
         <QuizContent v-if="gameState === 'playing'"
         :settings="gameSettings"
         @finished="finishGame"/>
-        
+
         <QuizResult v-if="gameState === 'result'" 
         :stats="quizStats"
         :settings="gameSettings"
