@@ -6,8 +6,8 @@ const userService = require('../services/userService');
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/;
 
 /**
- * isValidUsername kollar om ett användarnamn är längre än 3 tecken och mindre än
- * 50 tecken för att inte överstiga varchar(50) begränsningen från sql databasen.
+ * isValidUsername kollar om ett användarnamn är längre än 3 tecken och högst 50
+ * tecken för att inte överstiga varchar(50) begränsningen från sql databasen.
 */
 function isValidUsername(username) {
     return typeof username === 'string'
@@ -16,8 +16,8 @@ function isValidUsername(username) {
 }
 
 /**
- * isValidPassword kollar lösenordet är minst 8 tecken och inte överstiger antalet bytes som bcrypt
- * läser av (72) med hänsyn till svenska tecken (å, ä, ö) som tar upp 2 bytes istället för 1.
+ * isValidPassword testar att lösenordet är minst 8 tecken och inte överstiger antalet bytes som
+ * bcrypt läser av (72) med hänsyn till svenska tecken (å, ä, ö) som tar upp 2 bytes istället för 1.
 */
 function isValidPassword(password) {
     return typeof password === 'string'
@@ -44,8 +44,8 @@ function parseId(req) {
 }
 
 /**
- * handleError hanterar errors från mysql är UNIQUE regeln bryts eller ett
- * internal server error uppstår och skickar då en numrerad status tillbaka.
+ * handleError skickar 409 om en UNIQUE-regel bryts (användarnamn eller email upptaget).
+ * Alla andra fel loggas i terminalen och klienten får 500 utan tekniska detaljer.
  */
 function handleError(res, error) {
     if (error.code === 'ER_DUP_ENTRY') {
@@ -59,8 +59,8 @@ function handleError(res, error) {
 // ---------- CREATE ----------
 
 /**
- * createUser testar användarnamn, lösenord and email med hjälp av valideringsmetoderna
- * och om alla valideras skapas en nya användare via service metoden annars skickas
+ * createUser testar användarnamn, lösenord och email med hjälp av valideringsmetoderna
+ * och om alla valideras skapas en ny användare via service metoden annars skickas
  * status meddelanden till klienten.
  */
 exports.createUser = async (req, res) => {
@@ -100,7 +100,7 @@ exports.getAllUsers = async (req, res) => {
 };
 
 /**
- * getUserById hämtar en användare via ID och skickar en JSON-array till klienten,
+ * getUserById hämtar en användare via ID och skickar ett JSON-objekt till klienten,
  * om ID:et inte är korrekt formaterat eller om ingen användare hittas skickas unika
  * felmeddelanden för respektive till klienten.
  */
@@ -122,8 +122,8 @@ exports.getUserById = async (req, res) => {
 };
 
 /**
- * getUserByUsername hämtar en användare via användarnamn och skickar en
- * JSON-array till klienten, om användarnamnet inte hittas i databasen
+ * getUserByUsername hämtar en användare via användarnamn och skickar ett
+ * JSON-objekt till klienten, om användarnamnet inte hittas i databasen
  * skickas ett felmeddelande till klienten.
  */
 exports.getUserByUsername = async (req, res) => {
@@ -139,7 +139,7 @@ exports.getUserByUsername = async (req, res) => {
 };
 
 /**
- * getUserByUsername hämtar en användare via email och skickar en
+ * getUserByEmail hämtar en användare via email och skickar en
  * JSON-array till klienten, om emailen inte hittas i databasen
  * skickas ett felmeddelande till klienten.
  */
@@ -158,10 +158,9 @@ exports.getUserByEmail = async (req, res) => {
 // ---------- UPDATE ----------
 
 /**
- * updateUser letar upp en användare genom id och uppdaterar sedan användarnamn,
- * email och/eller lösenord beroende om de är tillagda i req och korrekt formaterade.
- * Om användaren hittas och alla parametrar är korrekt angivna uppdateras användaren
- * genom service metoden.
+ * updateUser validerar de fält som skickats med (användarnamn, email och/eller lösenord)
+ * och uppdaterar användaren med angivet id. Finns ingen användare med id:t skickas 404.
+ * Vid lyckad uppdatering skickas den uppdaterade användaren tillbaka som ett JSON-objekt.
  */
 exports.updateUser = async (req, res) => {
     const id = parseId(req);
@@ -205,6 +204,8 @@ exports.updateUser = async (req, res) => {
 /**
  * deleteUser raderar en användare från databasen med service metoden
  * om det givna ID:et är korrekt formaterat och användaren existerar.
+ * Användarens rader i game_results och user_achievements raderas
+ * automatiskt (ON DELETE CASCADE).
  */
 exports.deleteUser = async (req, res) => {
     const id = parseId(req);
