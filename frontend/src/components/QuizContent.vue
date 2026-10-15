@@ -24,6 +24,7 @@ const route = useRoute()
 const quizType = route.params.quizType
 const maxLen = props.settings.length
 const infinite = maxLen === 0 ? true : false
+const lengthString = infinite ? "Oändligt" : maxLen
 
 const quizStatsData = ref({
     totalQuestions: 0,
@@ -158,7 +159,7 @@ onMounted(() => {
 
 <template>
     <div v-if="!isLoading" class="quiz-content">
-
+        <p>Fråga {{ totalQuestions + 1 }} av {{ lengthString }}</p>
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
         <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
                 }}</span>?</h1>
