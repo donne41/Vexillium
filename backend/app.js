@@ -10,6 +10,7 @@ const db = require('./connectionMySQL');
 const achievementRoutes = require('./routes/achievementRoutes');
 const roomRoutes = require('./routes/roomRoutes');
 const questionRoutes = require('./routes/questionroutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use(express.static('public'));
 
 app.use('/api/achievements', achievementRoutes);
 app.use('/api/rooms', roomRoutes);
+app.use('/api/users', userRoutes);
 app.use(questionRoutes);
 
 async function testDatabaseConnection() {
