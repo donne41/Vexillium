@@ -24,6 +24,9 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME
 });
 
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
+
 pool.query('SELECT 1', (err, results) => {
     if (err) {
         console.error('Database test failed:', err);
