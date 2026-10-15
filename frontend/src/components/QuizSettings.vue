@@ -6,8 +6,6 @@ const selectedRegions = ref([])
 const emit = defineEmits(["start"])
 
 const setLength = (len) => {
-    console.log(`Setting length to ${len}`)
-    if(len === 0) console.log("Fix infinte mode")
     selectedLength.value = len
 }
 const handleStart = () => {
@@ -58,11 +56,8 @@ onMounted(() => {
 <template>
     <div class="main">
         <div class="difficulty-buttons">
-            <button v-for="len in [1, 10, 20, 0]" :key="len" :class="setLengthButton(len)" @click="setLength(len)">{{ len }}</button>
-<!--             <button @click="setLength(1)" :class="setLengthButton(1)">5</button>
-            <button @click="setLength(10)" :class="setLengthButton(10)">10</button>
-            <button @click="setLength(20)" :class="setLengthButton(20)">20</button>
-            <button @click="setLength(0)" :class="setLengthButton(0)">Oändligt</button> -->
+            <button v-for="len in [5, 10, 20]" :key="len" :class="setLengthButton(len)" @click="setLength(len)">{{ len }}</button>
+            <button :class="setLengthButton(0)" @click="setLength(0)">Oändligt</button>
         </div>
         <div class="region-buttons">
             <button v-for="region in regions" :key="region" :class="togglebuttonclass(region.RegionsID)"

@@ -23,7 +23,7 @@ let nextQuestion = ref(null)
 const route = useRoute()
 const quizType = route.params.quizType
 const maxLen = props.settings.length
-
+const infinite = maxLen === 0 ? true : false
 
 const quizStatsData = ref({
     totalQuestions: 0,
@@ -63,7 +63,7 @@ function presentQuestion() {
         showFlagQuiz = false
     }
     isLoading.value = false
-}   
+}
 
 function capitalQuiz() {
     buttonChoise.value = quizData.value.countries.sort((a, b) => a.Countryname.localeCompare(b.Countryname))
@@ -93,18 +93,24 @@ function submit(answer) {
         correctCountry: correctAnswer,
         isCorrect: isCorrect
     })
-    if (quizStatsData.value.totalQuestions >= maxLen) {
+    if (infinite && !isCorrect) {
+        quizEnd()
+    } else if(!infinite && quizStatsData.value.totalQuestions >= maxLen) {
         quizEnd()
     } else {
-        getQuiz();
-        setTimeout(async () => {
-            selectedAnswer.value = null
-            isChecking.value = false
-
-            presentQuestion()
-            isLoading.value = false
-        }, 3000)
+        delayNext()
     }
+}
+
+function delayNext() {
+    getQuiz();
+    setTimeout(async () => {
+        selectedAnswer.value = null
+        isChecking.value = false
+
+        presentQuestion()
+        isLoading.value = false
+    }, 3000)
 }
 
 function quizEnd() {
@@ -139,7 +145,7 @@ function saveToLocal(name, content) {
     localStorage.setItem(name, JSON.stringify(content))
 }
 
-async function loadNext(){
+async function loadNext() {
     await getQuiz()
     presentQuestion()
 }
@@ -155,7 +161,7 @@ onMounted(() => {
 
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
         <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
-        }}</span>?</h1>
+                }}</span>?</h1>
         <div class="button-container">
             <button v-for="option in buttonChoise" :key="option.Countryname" :class="getButtonClass(option.Countryname)"
                 @click="submit(option.Countryname)">{{
