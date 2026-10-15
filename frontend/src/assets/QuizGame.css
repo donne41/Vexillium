@@ -54,6 +54,18 @@
     font-weight: bold;
 }
 
+.button-error {
+    transition: 0.3s;
+    margin-top: 20px;
+    padding: 14px 28px;
+    background: red;
+    color: var(--background);
+    border: 1px solid var(--background);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
 .button-container .wrong {
     background: red;
 
@@ -84,7 +96,7 @@
     gap: 5px
 }
 
-.region-buttons {   
+.region-buttons {
     display: grid;
     grid-template-columns: 3fr 3fr 3fr;
     grid-template-rows: 1fr 1fr 1fr;

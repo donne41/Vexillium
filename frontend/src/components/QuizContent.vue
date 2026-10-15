@@ -20,11 +20,13 @@ let selectedAnswer = ref(null)
 const isChecking = ref(false)
 let quizData = ref(null)
 let nextQuestion = ref(null)
+let errorFirstFetch = ref(false)
 const route = useRoute()
 const quizType = route.params.quizType
 const maxLen = props.settings.length
 const infinite = maxLen === 0 ? true : false
 const lengthString = infinite ? "Oändligt" : maxLen
+
 
 const quizStatsData = ref({
     totalQuestions: 0,
@@ -49,6 +51,7 @@ async function getQuiz() {
     } catch (error) {
         console.error(`Error fetching in quizGame.vue: ${error}`)
         isLoading.value = true
+        errorFirstFetch.value = true
     }
 }
 
@@ -96,7 +99,7 @@ function submit(answer) {
     })
     if (infinite && !isCorrect) {
         quizEnd()
-    } else if(!infinite && quizStatsData.value.totalQuestions >= maxLen) {
+    } else if (!infinite && quizStatsData.value.totalQuestions >= maxLen) {
         quizEnd()
     } else {
         delayNext()
@@ -104,26 +107,26 @@ function submit(answer) {
 }
 
 function delayNext() {
-    getQuiz();
     setTimeout(async () => {
         selectedAnswer.value = null
         isChecking.value = false
-
+        await getQuiz
         presentQuestion()
         isLoading.value = false
     }, 3000)
 }
 
 function quizEnd() {
-    setTimeout( async () => {}, 2000)
+    setTimeout(async () => { }, 2000)
     let list = loadFromLocal("quizData") || [];
     list.push(quizStatsData.value);
     try {
         saveToLocal("quizData", list);
     } catch (error) {
         console.error(`Error saving to local: ${error}`)
+    } finally {
+        emit("finished", quizStatsData.value)
     }
-    emit("finished", quizStatsData.value)
 }
 
 
@@ -171,5 +174,6 @@ onMounted(() => {
     </div>
     <div v-else>
         <p>Loading quiz content...</p>
+        <button v-if="errorFirstFetch" @click="loadFirst" class="button-error">Ladda om</button>
     </div>
 </template>
