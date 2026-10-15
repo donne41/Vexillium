@@ -8,10 +8,9 @@ import './HeroSection.css'
 const router = useRouter()
 
 const showCategories = ref(false)
-function openQuiz(quizType, length = 10){
+function openQuiz(quizType){
   router.push({
-    path: `/quiz/${quizType}`,
-    query: { diff: length }
+    path: `/quiz/${quizType}`
   })
 }
 </script>
