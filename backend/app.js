@@ -1,45 +1,52 @@
 
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 const cors = require('cors');
-const mysql = require('mysql2');
 require('dotenv').config();
-const achievementRoutes =
-    require('./routes/achievementRoutes');
 
+const db = require('./connectionMySQL');
 
+const achievementRoutes = require('./routes/achievementRoutes');
+const roomRoutes = require('./routes/roomRoutes');
+const questionRoutes = require('./routes/questionroutes');
 
 const app = express();
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: 'http://localhost:5173',
+        methods: ['GET', 'POST']
+    }
+});
+
+app.set('io', io);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static('public'));
+
 app.use('/api/achievements', achievementRoutes);
-
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-});
-
-pool.query('SELECT 1', (err, results) => {
-    if (err) {
-        console.error('Database test failed:', err);
-        return;
-    }
-
-    console.log('Database connected:', results);
-});
-
-const questionRoutes = require("./routes/questionroutes");
+app.use('/api/rooms', roomRoutes);
 app.use(questionRoutes);
+
+async function testDatabaseConnection() {
+    try {
+        const [results] = await db.query('SELECT 1');
+
+        console.log('Database connected:', results);
+    } catch (error) {
+        console.error('Database test failed:', error);
+    }
+}
+
+testDatabaseConnection();
 
 const port = 3000;
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
-
-

@@ -29,7 +29,6 @@
     line-height: 1.6;
 }
 
-
 /* Layout */
 
 .quiz-room-grid {
@@ -45,30 +44,11 @@
     align-items: flex-start;
 }
 
-
-/* Bläddra-knapp */
-
-.browse-rooms-button {
-    margin-bottom: 16px;
-    padding: 12px 20px;
-    background: var(--teal);
-    color: var(--background);
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.browse-rooms-button:hover {
-    opacity: 0.9;
-}
-
-
 /* Gå med i rum */
 
 .join-room-card {
     width: 100%;
-    height: 390px;
+    min-height: 300px;
     padding: 24px;
     background: var(--card);
     border: 1px solid var(--border);
@@ -124,12 +104,11 @@
     opacity: 0.9;
 }
 
-
 /* Tillgängliga rum */
 
 .available-rooms-card {
-    height: 390px;
-    margin-top: 55px;
+    height: 350px;
+    margin-top: 0;
     padding: 24px;
     background: var(--card);
     border: 1px solid var(--border);
@@ -144,7 +123,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    padding-bottom: 18px;
+    padding-bottom: 16px;
     border-bottom: 1px solid var(--border);
 }
 
@@ -159,7 +138,6 @@
     font-size: 10px;
     letter-spacing: 1px;
 }
-
 
 /* Tomt läge */
 
@@ -177,7 +155,6 @@
     font-size: 14px;
 }
 
-
 /* Lista med quizrum */
 
 .rooms-list {
@@ -194,6 +171,8 @@
 
 .room-item {
     display: flex;
+    align-items: center;
+    flex-wrap: wrap;
     justify-content: space-between;
     gap: 20px;
     padding: 14px;
@@ -203,8 +182,7 @@
     font-size: 13px;
 }
 
-
-/* Surfplatta */
+/* Surfplatt */
 
 @media (max-width: 900px) {
     .quiz-room-grid {
@@ -216,7 +194,6 @@
         margin-top: 0;
     }
 }
-
 
 /* Mobil */
 
@@ -241,7 +218,6 @@
         flex-direction: column;
     }
 
-    .browse-rooms-button,
     .join-room-button {
         width: 100%;
     }
@@ -249,4 +225,199 @@
     .rooms-list {
         max-height: 280px;
     }
+}
+
+.room-error {
+    margin-top: 12px;
+    color: #ff8585;
+    font-size: 13px;
+}
+
+.waiting-room-card {
+    padding: 32px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.waiting-room-card h3 {
+    margin: 0 0 12px;
+    color: var(--teal);
+    font-size: 24px;
+}
+
+.waiting-room-card h4 {
+    margin: 24px 0 12px;
+    color: var(--text);
+    font-size: 16px;
+}
+
+.waiting-room-card p {
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.waiting-room-players {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.waiting-room-player {
+    padding: 12px 18px;
+    background: #242933;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+}
+
+
+/* Gå med-knapp för offentliga rum */
+
+.public-room-join-button {
+    padding: 10px 16px;
+    background: var(--teal);
+    color: var(--background);
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.public-room-join-button:hover {
+    opacity: 0.9;
+}
+
+.public-room-join-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* Bakgrund bakom popupen */
+
+.public-room-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1000;
+}
+
+
+/* Popup för att gå med i offentligt rum */
+
+.public-room-modal {
+    width: 100%;
+    max-width: 440px;
+    padding: 30px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    box-sizing: border-box;
+}
+
+.public-room-modal h3 {
+    margin: 0 0 12px;
+    color: var(--teal);
+    font-size: 22px;
+}
+
+.public-room-modal p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.public-room-modal label {
+    display: block;
+    margin: 20px 0 8px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.public-room-modal input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    background: #242933;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+}
+
+.public-room-modal input:focus {
+    border-color: var(--teal);
+}
+
+
+/* Knappar längst ner i popupen */
+
+.public-room-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.public-room-modal-actions button {
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.public-room-modal-actions button:first-child {
+    background: #242933;
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.public-room-modal-actions .join-room-button {
+    margin-top: 0;
+    background: var(--green);
+    color: var(--background);
+}
+
+.public-room-modal-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* Mobilanpassning */
+
+@media (max-width: 600px) {
+    .public-room-join-button {
+        width: 100%;
+    }
+
+    .public-room-modal {
+        padding: 22px;
+    }
+
+    .public-room-modal-actions {
+        flex-direction: column;
+    }
+
+    .public-room-modal-actions button {
+        width: 100%;
+    }
+}
+
+.public-room-modal .room-error {
+    color: #ff8585;
 }
