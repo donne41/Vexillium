@@ -55,3 +55,31 @@ function handleError(res, error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
 }
+
+// ---------- CREATE ----------
+
+/*
+createUser testar username, password and email med hjälp av valideringsmetoderna
+och anropar sedan service metoden om alla valideringar lyckas annars returneras
+ett status meddelande.
+ */
+exports.createUser = async (req, res) => {
+    const { username, password, email } = req.body ?? {};
+
+    if (!isValidUsername(username)) {
+        return res.status(400).json({ error: 'Username must be 3–50 characters' });
+    }
+    if (!isValidPassword(password)) {
+        return res.status(400).json({ error: 'Password must be at least 8 characters (max 72 bytes)' });
+    }
+    if (!isValidEmail(email)) {
+        return res.status(400).json({ error: 'A valid email is required' });
+    }
+
+    try {
+        const user = await userService.createUser(username.trim(), password, email.trim());
+        res.status(201).json(user);
+    } catch (error) {
+        handleError(res, error);
+    }
+};
