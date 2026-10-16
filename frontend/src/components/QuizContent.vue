@@ -2,6 +2,8 @@
 import { ref, onMounted } from "vue"
 import { useRoute } from "vue-router"
 
+
+
 const props = defineProps({
     settings: {
         type: Object,
@@ -26,6 +28,12 @@ const quizType = route.params.quizType
 const maxLen = props.settings.length
 const infinite = maxLen === 0 ? true : false
 const lengthString = infinite ? "Oändligt" : maxLen
+const GAME_TIME_SECONDS = 120
+const timer = ref(GAME_TIME_SECONDS)
+
+let timerInterval = null
+
+
 
 
 const quizStatsData = ref({
@@ -34,6 +42,25 @@ const quizStatsData = ref({
     history: []
 })
 
+function startTimer() {
+  if (timerInterval !== null || !gameOn.value) return
+
+  timerInterval = setInterval(() => {
+    timer.value--
+
+    if (timer.value <= 0) {
+      timer.value = 0
+      finishQuiz()
+    }
+  }, 1000)
+}
+
+function stopTimer() {
+  if (timerInterval !== null) {
+    clearInterval(timerInterval)
+    timerInterval = null
+  }
+}
 
 
 async function getQuiz() {
@@ -165,6 +192,7 @@ onMounted(() => {
 <template>
 
     <div v-if="!isLoading" class="quiz-content">
+      <div class="timer">{{ timer }} ⏰</div>
         <p>Fråga {{ quizStatsData.history.length + 1 }} av {{ lengthString }}</p>
       <div class="quiz-stats">
         <div class="quiz-stat">

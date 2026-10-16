@@ -151,3 +151,14 @@
     background: var(--teal);
     transition: width 0.2s ease;
 }
+
+.timer{
+
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--text);
+}
