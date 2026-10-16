@@ -163,8 +163,42 @@ onMounted(() => {
 
 </script>
 <template>
+
     <div v-if="!isLoading" class="quiz-content">
         <p>Fråga {{ quizStatsData.history.length + 1 }} av {{ lengthString }}</p>
+      <div class="quiz-stats">
+        <div class="quiz-stat">
+          <span>Framsteg</span>
+
+          <strong>
+            {{ quizStatsData.totalQuestions }} / {{ lengthString }}
+          </strong>
+
+          <div
+              class="progress-track"
+              role="progressbar"
+              :aria-valuenow="quizStatsData.totalQuestions"
+              :aria-valuemin="0"
+              :aria-valuemax="Number(lengthString)"
+              :aria-label="`Framsteg: ${quizStatsData.totalQuestions} av ${lengthString} frågor`"
+          >
+            <div
+                class="progress-fill"
+                :style="{
+          width: `${(quizStatsData.totalQuestions / Number(lengthString)) * 100}%`
+        }"
+            ></div>
+          </div>
+        </div>
+
+        <div class="quiz-stat">
+          <span>Poäng</span>
+
+          <strong>
+            {{ quizStatsData.correctAnswers }} / {{ lengthString }}
+          </strong>
+        </div>
+      </div>
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
         <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
         }}</span>?</h1>
@@ -173,6 +207,7 @@ onMounted(() => {
                 @click="submit(option.Countryname)">{{
                     option.Countryname }}</button>
         </div>
+
     </div>
     <div v-else>
         <p>Loading quiz content...</p>
