@@ -8,7 +8,11 @@ const props = defineProps({
     settings: {
         type: Object,
         required: true
-    }
+    },
+  timer: {
+        type: Number,
+    required: true
+  }
 })
 
 const emit = defineEmits(["finished"])
@@ -28,12 +32,6 @@ const quizType = route.params.quizType
 const maxLen = props.settings.length
 const infinite = maxLen === 0 ? true : false
 const lengthString = infinite ? "Oändligt" : maxLen
-const GAME_TIME_SECONDS = 120
-const timer = ref(GAME_TIME_SECONDS)
-
-let timerInterval = null
-
-
 
 
 const quizStatsData = ref({
@@ -42,25 +40,6 @@ const quizStatsData = ref({
     history: []
 })
 
-function startTimer() {
-  if (timerInterval !== null || !gameOn.value) return
-
-  timerInterval = setInterval(() => {
-    timer.value--
-
-    if (timer.value <= 0) {
-      timer.value = 0
-      finishQuiz()
-    }
-  }, 1000)
-}
-
-function stopTimer() {
-  if (timerInterval !== null) {
-    clearInterval(timerInterval)
-    timerInterval = null
-  }
-}
 
 
 async function getQuiz() {
@@ -75,12 +54,18 @@ async function getQuiz() {
             throw new Error(`Error fetching quiz data: ${resp.status}. Message: ${resp.statusText}`)
         const data = await resp.json()
         nextQuestion.value = data
+
+
     } catch (error) {
         console.error(`Error fetching in quizGame.vue: ${error}`)
         isLoading.value = true
         errorFirstFetch.value = true
     }
+
+
 }
+
+
 
 function presentQuestion() {
     quizData.value = nextQuestion.value
@@ -191,8 +176,8 @@ onMounted(() => {
 </script>
 <template>
 
+  
     <div v-if="!isLoading" class="quiz-content">
-      <div class="timer">{{ timer }} ⏰</div>
         <p>Fråga {{ quizStatsData.history.length + 1 }} av {{ lengthString }}</p>
       <div class="quiz-stats">
         <div class="quiz-stat">
@@ -225,6 +210,11 @@ onMounted(() => {
           <strong>
             {{ quizStatsData.correctAnswers }} / {{ lengthString }}
           </strong>
+        </div>
+
+        <div class="quiz-stat">
+          <span>Tid kvar</span>
+          <strong>{{ timer }} s</strong>
         </div>
       </div>
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />

@@ -23,6 +23,53 @@ let quizStatsData = ref({
     history: []
 });
 
+const GAME_TIME_SECONDS = 120
+const timer = ref(GAME_TIME_SECONDS)
+
+let timerInterval = null
+
+const settings = ref({
+  length: Number(route.query.diff) || 10,
+  regions: []
+})
+
+
+function startTimer() {
+  if (timerInterval !== null || !gameOn.value) return
+
+  timerInterval = setInterval(() => {
+    timer.value--
+
+    if (timer.value <= 0) {
+      timer.value = 0
+      finishQuiz()
+    }
+  }, 1000)
+}
+
+function stopTimer() {
+  if (timerInterval !== null) {
+    clearInterval(timerInterval)
+    timerInterval = null
+  }
+}
+
+function finishQuiz() {
+  if (!gameOn.value) return
+
+  // Avsluta spelet direkt så att det inte avslutas två gånger.
+  gameOn.value = false
+  stopTimer()
+
+  try {
+    const list = loadFromLocal('quizData') || []
+    list.push(quizStatsData.value)
+    saveToLocal('quizData', list)
+  } catch (error) {
+    console.error('Error saving quiz result:', error)
+  }
+}
+
 async function getQuiz() {
     try {
         let resp = await fetch("http://localhost:3000/api/random")
@@ -42,6 +89,10 @@ async function getQuiz() {
         }
 
         isLoading.value = false
+
+      if (timerInterval === null && gameOn.value) {
+        startTimer()
+      }
     } catch (error) {
         console.error(`Error fetching in quizGame.vue: ${error}`)
         isLoading.value = true
@@ -105,13 +156,21 @@ function getButtonClass(option) {
     return 'dimmed'
 }
 function restartGame() {
-    quizStatsData.value = {
-        totalQuestions: 0,
-        correctAnswers: 0,
-        history: []
-    }
-    getQuiz();
-    gameOn = true
+  stopTimer()
+
+  timer.value = GAME_TIME_SECONDS
+
+  quizStatsData.value = {
+    totalQuestions: 0,
+    correctAnswers: 0,
+    history: []
+  }
+
+  selectedAnswer.value = null
+  isChecking.value = false
+  gameOn.value = true
+
+  getQuiz()
 }
 
 function loadFromLocal(name) {
@@ -123,18 +182,30 @@ function saveToLocal(name, content) {
 }
 
 onMounted(() => {
+  stopTimer()
     getQuiz()
+
 })
 </script>
 
 <template class="main">
+
+
     <div v-if="gameOn">
-        <div v-if="!isLoading" class="quiz-content">
+      <QuizContent
+          :settings="settings"
+          :timer="timer"
+          @finished="finishQuiz"
+      />
+
+      <div v-if="!isLoading" class="quiz-content">
 
             <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
+
             <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
                     }}</span>?</h1>
             <div class="button-container">
+
                 <button v-for="option in buttonChoise" :key="option.Countryname"
                     :class="getButtonClass(option.Countryname)" @click="submit(option.Countryname)">{{
                         option.Countryname }}</button>
