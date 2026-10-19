@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import {ref, onMounted, onBeforeUnmount} from "vue"
 import { useRoute } from "vue-router"
 import "@/assets/QuizGame.css"
+import { watch } from 'vue'
 
 const route = useRoute()
 let quizContent = ref(null)
@@ -23,43 +24,45 @@ let quizStatsData = ref({
     history: []
 });
 
-const GAME_TIME_SECONDS = 120
-const timer = ref(GAME_TIME_SECONDS)
 
-let timerInterval = null
 
-const settings = ref({
-  length: Number(route.query.diff) || 10,
-  regions: []
+
+const props = defineProps({
+  settings: {
+    type: Object,
+    required: true
+  },
+  timer: {
+    type: Number,
+    required: true
+  }
 })
 
+const emit = defineEmits(['finish'])
 
-function startTimer() {
-  if (timerInterval !== null || !gameOn.value) return
-
-  timerInterval = setInterval(() => {
-    timer.value--
-
-    if (timer.value <= 0) {
-      timer.value = 0
-      finishQuiz()
+watch(
+    () => props.timer,
+    (newTimer) => {
+      if (newTimer <= 0) {
+        finishQuiz('time_up')
+      }
     }
-  }, 1000)
-}
+)
 
-function stopTimer() {
-  if (timerInterval !== null) {
-    clearInterval(timerInterval)
-    timerInterval = null
-  }
-}
 
-function finishQuiz() {
+
+function finishQuiz(reason = 'completed') {
   if (!gameOn.value) return
 
   // Avsluta spelet direkt så att det inte avslutas två gånger.
   gameOn.value = false
   stopTimer()
+
+  emit('finish', {
+    ...quizStatsData.value,
+    finishReason: reason,
+    maxScore: quizLength
+  })
 
   try {
     const list = loadFromLocal('quizData') || []
@@ -158,7 +161,6 @@ function getButtonClass(option) {
 function restartGame() {
   stopTimer()
 
-  timer.value = GAME_TIME_SECONDS
 
   quizStatsData.value = {
     totalQuestions: 0,
@@ -181,11 +183,7 @@ function saveToLocal(name, content) {
     localStorage.setItem(name, JSON.stringify(content))
 }
 
-onMounted(() => {
-  stopTimer()
-    getQuiz()
 
-})
 </script>
 
 <template class="main">
@@ -197,6 +195,9 @@ onMounted(() => {
           :timer="timer"
           @finished="finishQuiz"
       />
+
+
+
 
       <div v-if="!isLoading" class="quiz-content">
 

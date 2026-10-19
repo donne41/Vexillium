@@ -1,21 +1,20 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import {ref, onMounted, watch} from "vue"
 import { useRoute } from "vue-router"
 
-
-
 const props = defineProps({
-    settings: {
-        type: Object,
-        required: true
-    },
+  settings: {
+    type: Object,
+    required: true
+  },
   timer: {
-        type: Number,
+    type: Number,
     required: true
   }
 })
 
-const emit = defineEmits(["finished"])
+const emit = defineEmits(['finish'])
+
 let isLoading = ref(true)
 let showFlagQuiz = ref(false)
 let showCaptialQuiz = ref(false)
@@ -39,6 +38,8 @@ const quizStatsData = ref({
     correctAnswers: 0,
     history: []
 })
+
+
 
 
 
@@ -214,7 +215,7 @@ onMounted(() => {
 
         <div class="quiz-stat">
           <span>Tid kvar</span>
-          <strong>{{ timer }} s</strong>
+          <strong>{{ props.timer }} s</strong>
         </div>
       </div>
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
