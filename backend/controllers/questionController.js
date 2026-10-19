@@ -8,33 +8,22 @@ exports.getCountries = (async (req, res) => {
         const countries = await questionService.getCountries();
         res.json({ countries });
     } catch (error) {
+        console.error(error);
         return res.status(500).json({
-            error: error.message
-        });
-    }
-});
-
-exports.getCountriesByRegion = (async (req, res) => {
-    const regionId = req.params.regionId;
-    try {
-        console.log("qController calling region: " + regionId);
-        const countries = await questionService.getCountriesByRegion(regionId);
-        res.json({ countries })
-    } catch (error) {
-        return res.status(500).json({
-            error: error.message
+            error: 'Kunde inte hämta länderna'
         });
     }
 });
 
 exports.getRandomCountries = (async (req, res) => {
-    const regionId = req.params.regionId;
+    const regions = req.query.regions;
     try {
-        const countries = await questionService.getRandom(regionId);
+        const countries = await questionService.getRandom(regions);
         res.send(countries);
     } catch (error) {
+        console.error(error);
         return res.status(500).json({
-            error: error.message
+            error: 'Kunde inte hämta slumpmässiga länder'
         });
     }
 });
@@ -43,9 +32,22 @@ exports.getRandomAllCountries = (async (req, res) => {
     try {
         const countries = await questionService.getRandomAllCountries();
         res.send(countries);
-    }catch (error) {
+    } catch (error) {
+        console.error(error);
         return res.status(500).json({
-            error: error.message
+            error: 'Kunde inte hämta slumpmässiga länder'
         });
     }
 });
+
+exports.getRegions = (async (req, res) => {
+    try {
+        const regions = await questionService.getRegions();
+        res.send(regions);
+    } catch(error){
+        console.error(error);
+        return res.status(500).json({
+            error: 'Kunde inte hämta regionerna'
+        });
+    }
+})

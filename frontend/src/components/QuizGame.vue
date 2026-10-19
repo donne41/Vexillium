@@ -27,7 +27,7 @@ async function getQuiz() {
     try {
         let resp = await fetch("http://localhost:3000/api/random")
         if (!resp.ok)
-            throw new Error(`Error fetching quiz data: ${resp.status}. Message: ${resp.statusText}`)
+          throw new Error(`Kunde inte hämta quizdata: ${resp.status}`)
         const data = await resp.json()
         quizContent.value = data
 
@@ -43,7 +43,7 @@ async function getQuiz() {
 
         isLoading.value = false
     } catch (error) {
-        console.error(`Error fetching in quizGame.vue: ${error}`)
+        console.error(`Fel vid hämtning av quizdata: ${error}`)
         isLoading.value = true
     }
 }
@@ -82,7 +82,7 @@ function submit(answer) {
             try {
                 saveToLocal("quizData", list);
             } catch (error) {
-                console.error(`Error saving to local: ${error}`)
+                console.error(`Kunde inte spara lokalt: ${error}`)
             } finally {
                 gameOn = false
             }
@@ -141,7 +141,7 @@ onMounted(() => {
             </div>
         </div>
         <div v-else>
-            <p>Loading quiz content...</p>
+            <p>Laddar quiz...</p>
         </div>
     </div>
     <div v-else>
