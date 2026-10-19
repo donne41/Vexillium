@@ -41,7 +41,7 @@ async function testDatabaseConnection() {
 
         console.log('Database connected:', results);
     } catch (error) {
-        console.error('Database test failed:', error);
+        console.error('Anslutningen till databasen misslyckades:', error);
     }
 }
 

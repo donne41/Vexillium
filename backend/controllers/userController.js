@@ -49,11 +49,16 @@ function parseId(req) {
  */
 function handleError(res, error) {
     if (error.code === 'ER_DUP_ENTRY') {
-        const field = error.sqlMessage.endsWith("email'") ? 'Email' : 'Username';
-        return res.status(409).json({ error: `${field} is already taken` });
+        const field = error.sqlMessage.endsWith("email'")
+        ? 'E-postadressen'
+            : "Användarnamnet";
+
+        return res.status(409).json({
+            error:`${field} är redan upptaget`
+        });
     }
     console.error(error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Ett internt serverfel uppstod' });
 }
 
 // ---------- CREATE ----------
@@ -67,13 +72,13 @@ exports.createUser = async (req, res) => {
     const { username, password, email } = req.body ?? {};
 
     if (!isValidUsername(username)) {
-        return res.status(400).json({ error: 'Username must be 3–50 characters' });
+        return res.status(400).json({ error: 'Användarnamnet måste vara mellan 3 och 50 tecken' });
     }
     if (!isValidPassword(password)) {
-        return res.status(400).json({ error: 'Password must be at least 8 characters (max 72 bytes)' });
+        return res.status(400).json({ error: 'Lösenordet måste vara minst 8 tecken och högst 72 byte' });
     }
     if (!isValidEmail(email)) {
-        return res.status(400).json({ error: 'A valid email is required' });
+        return res.status(400).json({ error: 'En giltig e-postadress krävs' });
     }
 
     try {
@@ -107,13 +112,13 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
     const id = parseId(req);
     if (!id) {
-        return res.status(400).json({ error: 'Invalid user id' });
+        return res.status(400).json({ error: 'Ogiltigt användar-ID' });
     }
 
     try {
         const user = await userService.getUserById(id);
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ error: 'Användaren hittades inte' });
         }
         res.json(user);
     } catch (error) {
@@ -130,7 +135,7 @@ exports.getUserByUsername = async (req, res) => {
     try {
         const user = await userService.getUserByUsername(req.params.username);
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ error: 'Användaren hittades inte' });
         }
         res.json(user);
     } catch (error) {
@@ -147,7 +152,7 @@ exports.getUserByEmail = async (req, res) => {
     try {
         const user = await userService.getUserByEmail(req.params.email);
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ error: 'Användaren hittades inte' });
         }
         res.json(user);
     } catch (error) {
@@ -165,22 +170,22 @@ exports.getUserByEmail = async (req, res) => {
 exports.updateUser = async (req, res) => {
     const id = parseId(req);
     if (!id) {
-        return res.status(400).json({ error: 'Invalid user id' });
+        return res.status(400).json({ error: 'Ogiltigt användar-ID' });
     }
 
     const { username, email, password } = req.body ?? {};
 
     if (username === undefined && email === undefined && password === undefined) {
-        return res.status(400).json({ error: 'Provide username, email and/or password' });
+        return res.status(400).json({ error: 'Ange användarnamn, e-post och/eller lösenord' });
     }
     if (username !== undefined && !isValidUsername(username)) {
-        return res.status(400).json({ error: 'Username must be 3–50 characters' });
+        return res.status(400).json({ error: 'Användarnamnet måste vara mellan 3 och 50 tecken' });
     }
     if (email !== undefined && !isValidEmail(email)) {
-        return res.status(400).json({ error: 'Email is not valid' });
+        return res.status(400).json({ error: 'E-postadressen är ogiltig' });
     }
     if (password !== undefined && !isValidPassword(password)) {
-        return res.status(400).json({ error: 'Password must be at least 8 characters (max 72 bytes)' });
+        return res.status(400).json({ error: 'Lösenordet måste vara minst 8 tecken och högst 72 byte' });
     }
 
     try {
@@ -190,7 +195,7 @@ exports.updateUser = async (req, res) => {
             password
         });
         if (!updated) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ error: 'Användaren hittades inte' });
         }
         const user = await userService.getUserById(id);
         res.json(user);
@@ -210,13 +215,13 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     const id = parseId(req);
     if (!id) {
-        return res.status(400).json({ error: 'Invalid user id' });
+        return res.status(400).json({ error: 'Ogiltigt användar-ID' });
     }
 
     try {
         const deleted = await userService.deleteUser(id);
         if (!deleted) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ error: 'Användaren hittades inte' });
         }
         res.status(204).send();
     } catch (error) {
