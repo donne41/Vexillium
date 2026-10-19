@@ -9,7 +9,7 @@ exports.getCountries = (async (req, res) => {
         res.json({ countries });
     } catch (error) {
         return res.status(500).json({
-            error: error.message
+            error: 'Kunde inte hämta länderna'
         });
     }
 });
@@ -21,7 +21,7 @@ exports.getRandomCountries = (async (req, res) => {
         res.send(countries);
     } catch (error) {
         return res.status(500).json({
-            error: error.message
+            error: 'Kunde inte hämta slumpmässiga länder'
         });
     }
 });
@@ -32,7 +32,7 @@ exports.getRandomAllCountries = (async (req, res) => {
         res.send(countries);
     }catch (error) {
         return res.status(500).json({
-            error: error.message
+            error: 'Kunde inte hämta slumpmässiga länder'
         });
     }
 });
@@ -43,7 +43,7 @@ exports.getRegions = (async (req, res) => {
         res.send(regions);
     }catch(error){
         return res.status(500).json({
-            error: error.message
+            error: 'Kunde inte hämta regionerna'
         });
     }
 })

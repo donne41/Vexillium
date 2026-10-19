@@ -9,7 +9,7 @@ exports.getAchievements = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            error: 'Could not fetch achievements'
+            error: 'Kunde inte hämta prestationerna'
         });
     }
 };

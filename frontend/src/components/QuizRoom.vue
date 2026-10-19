@@ -71,6 +71,14 @@ function stopPlayersInterval() {
   }
 }
 
+function getErrorMessage(error, fallback) {
+  if (error instanceof TypeError) {
+    return 'Kunde inte ansluta. Försök igen senare.'
+  }
+
+  return error?.message || fallback
+}
+
 async function leaveWaitingRoom() {
   if (!joinedRoom.value || isLeaving.value) return
 
@@ -109,8 +117,10 @@ async function leaveWaitingRoom() {
 
     await fetchRooms()
   } catch (error) {
-    waitingRoomError.value =
-        error.message || 'Kunde inte lämna rummet.'
+    waitingRoomError.value = getErrorMessage(
+        error,
+        'Kunde inte lämna rummet.'
+    )
 
     console.error('Fel vid lämnande av rum:', error)
   } finally {
@@ -199,7 +209,10 @@ async function joinPublicRoom() {
     await fetchRoomPlayers()
     startPlayersInterval()
   } catch (error) {
-    publicRoomError.value = error.message || 'Något gick fel.'
+    publicRoomError.value = getErrorMessage(
+        error,
+        'Kunde inte gå med i rummet'
+    )
   } finally {
     isJoining.value = false
   }
@@ -280,12 +293,14 @@ async function joinRoom() {
     await fetchRoomPlayers()
     startPlayersInterval()
   } catch (error) {
-    errorMessage.value = error.message || 'Något gick fel.'
+    errorMessage.value = getErrorMessage(
+        error,
+        'Kunde inte gå med i rummet.'
+    )
   } finally {
     isJoining.value = false
   }
 }
-
 
 onMounted(async () => {
   socket = io('http://localhost:3000')
