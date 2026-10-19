@@ -73,3 +73,4 @@ VALUES
         100,
         'flags'
     );
+
