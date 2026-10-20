@@ -11,5 +11,6 @@ router.post('/join', roomController.joinRoom);
 router.post('/:roomId/join-public', roomController.joinPublicRoom);
 router.post('/:roomId/leave', roomController.leaveRoom);
 router.post('/:roomId/validate-session', roomController.validateGuestSession);
+router.delete('/:roomId', roomController.deleteRoom);
 
 module.exports = router;

@@ -290,3 +290,54 @@ exports.validateGuestSession = async (req, res) => {
         });
     }
 };
+
+exports.deleteRoom = async (req, res) => {
+    try {
+        if (!req.user?.id) {
+            return res.status(401).json({
+                error: 'Du behöver logga in för att ta bort quizrummet.'
+            });
+        }
+
+        const roomId = Number(req.params.roomId);
+
+        if (!Number.isSafeInteger(roomId) || roomId <= 0) {
+            return res.status(400).json({
+                error: 'Ogiltigt rums-ID.'
+            });
+        }
+
+        const result = await roomService.deleteRoom(
+            roomId,
+            req.user.id
+        );
+
+        if (result === 'not_found') {
+            return res.status(404).json({
+                error: 'Quizrummet finns inte längre.'
+            });
+        }
+
+        if (result === 'forbidden') {
+            return res.status(403).json({
+                error: 'Bara den som skapade quizrummet får ta bort det.'
+            });
+        }
+
+        if (result === 'not_waiting') {
+            return res.status(409).json({
+                error: 'Du kan bara avbryta ett quizrum innan quizet har startat.'
+            });
+        }
+
+        req.app.get('io')?.emit('rooms:updated');
+
+        return res.status(204).send();
+    } catch (error) {
+        console.error('Kunde inte ta bort quizrum:', error);
+
+        return res.status(500).json({
+            error: 'Kunde inte ta bort quizrummet. Försök igen senare.'
+        });
+    }
+};
