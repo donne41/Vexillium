@@ -167,7 +167,7 @@ function resetForm() {
 
         <p>Rumsnamn: {{ createdRoom.name }}</p>
         <p>
-          {{ createdRoom.isPublic ? 'Offentligt rum' : 'Privat Rum'}}
+          {{ createdRoom.isPublic ? 'Offentligt rum' : 'Privat rum'}}
         </p>
 
         <p>Inbjudningskod:</p>
