@@ -3,8 +3,9 @@ const questionService = require("../services/questionService");
 
 exports.getRandomCountries = (async (req, res) => {
     const regions = req.query.regions;
+    const filter = req.query.filter || 0
     try {
-        const countries = await questionService.getRandom(regions);
+        const countries = await questionService.getRandom(regions, filter);
         res.send(countries);
     } catch (error) {
         console.error(error);

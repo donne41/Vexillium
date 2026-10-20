@@ -1,19 +1,29 @@
 const dbConnect = require("../connectionMySQL");
 
 
-async function getRandom(regions) {
+async function getRandom(regions, filter) {
     let sql = "SELECT * FROM Countries";
-    let params = []
+    let regionParams = []
+    let filterParams = []
     if (regions) {
         const regionsParam = regions.split(',')
         if (regionsParam.includes("2") && !regionsParam.includes("1")) regionsParam.push("1")
         const placeholders = regionsParam.map(() => '?').join(',')
 
         sql += ` WHERE RegionID IN (${placeholders})`
-        params = regionsParam
+        regionParams = regionsParam
+    }
+    if(filter !== 0){
+        const filterParam = filter.split(',')
+        const placeholders = filterParam.map(() => '?').join(',')
+
+        sql += ` AND NOT CountryID IN (?)`
+        filterParams = filterParam
+        console.log(filterParam)
     }
     sql += " ORDER BY RAND() LIMIT 4"
-    const [rows] = await dbConnect.query(sql, params)
+    console.log(sql)
+    const [rows] = await dbConnect.query(sql, [regionParams, filterParams])
     return {
         "correctIndex": Math.floor(Math.random() * 4),
         "countries": rows

@@ -40,10 +40,16 @@ const quizStatsData = ref({
 async function getQuiz() {
     try {
         const regions = props.settings.regions.join(',');
+        const answeredCountries = quizStatsData.value?.history.map(item => item.correctID)
         let url = "http://localhost:3000/api/random"
         if (regions.length > 0) {
             url += `?regions=${regions}`
         }
+        if(answeredCountries.length > 0){
+            const filterName = answeredCountries.join(',')
+            url += `&filter=${filterName}`
+        }
+        console.log("history countries..: ", url)
         let resp = await fetch(url)
         if (!resp.ok)
           throw new Error(`Kunde inte hämta quizdata: ${resp.status}`)
@@ -66,6 +72,7 @@ async function presentQuestion() {
     await checkRepeatingQuestion()
     questionNumber.value++
     quizData.value = nextQuestion.value
+    console.log(quizData.value)
 
     if (quizType === "flags") {
         flagQuiz()
@@ -115,8 +122,8 @@ function submit(answer) {
     isChecking.value = true
     selectedAnswer.value = answer
 
-    const correctAnswer = quizData.value.countries[quizData.value.correctIndex].Countryname
-    const isCorrect = (answer === correctAnswer)
+    const correctAnswer = quizData.value.countries[quizData.value.correctIndex]
+    const isCorrect = (answer === correctAnswer.Countryname)
 
     quizStatsData.value.totalQuestions++;
 
@@ -125,7 +132,8 @@ function submit(answer) {
     }
     quizStatsData.value.history.push({
         userAnswer: answer,
-        correctCountry: correctAnswer,
+        correctCountry: correctAnswer.Countryname,
+        correctID: correctAnswer.CountryID,
         isCorrect: isCorrect
     })
     if (infinite && !isCorrect) {
