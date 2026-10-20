@@ -1,9 +1,15 @@
 
 const express = require('express');
+const session = require('express-session');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+
 require('dotenv').config();
+if (!process.env.SESSION_SECRET) {
+    console.error('SESSION_SECRET saknas i .env');
+    process.exit(1);
+}
 
 const db = require('./connectionMySQL');
 
@@ -28,6 +34,20 @@ app.set('io', io);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000
+        // Om vi övergår från HTTP till HTTPS lägg till -> secure: true
+    }
+}));
 app.use(express.static('public'));
 
 app.use('/api/achievements', achievementRoutes);
