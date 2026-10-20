@@ -1,6 +1,7 @@
 <script setup>
-import {ref, onMounted, watch} from "vue"
+import {computed, ref, onMounted, watch} from "vue"
 import { useRoute } from "vue-router"
+
 
 const props = defineProps({
   settings: {
@@ -14,6 +15,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['finish'])
+let hasEnded = false
+watch(() => props.timer, (timer) => {
+  if (timer <= 0) quizEnd()
+})
 
 let isLoading = ref(true)
 let showFlagQuiz = ref(false)
@@ -31,6 +36,10 @@ const quizType = route.params.quizType
 const maxLen = props.settings.length
 const infinite = maxLen === 0 ? true : false
 const lengthString = infinite ? "Oändligt" : maxLen
+const progressPercent = computed(() =>
+    maxLen <= 0
+        ? 0
+        : Math.min((quizStatsData.value.totalQuestions / maxLen) * 100, 100))
 
 
 const quizStatsData = ref({
@@ -130,6 +139,8 @@ function delayNext() {
 }
 
 function quizEnd() {
+  if (hasEnded) return
+  hasEnded = true
     setTimeout(async () => {
         let list = loadFromLocal("quizData") || [];
         list.push(quizStatsData.value);
@@ -189,18 +200,17 @@ onMounted(() => {
           </strong>
 
           <div
+              v-if="!infinite"
               class="progress-track"
               role="progressbar"
               :aria-valuenow="quizStatsData.totalQuestions"
               :aria-valuemin="0"
-              :aria-valuemax="Number(lengthString)"
+              :aria-valuemax="maxLen"
               :aria-label="`Framsteg: ${quizStatsData.totalQuestions} av ${lengthString} frågor`"
           >
             <div
                 class="progress-fill"
-                :style="{
-          width: `${(quizStatsData.totalQuestions / Number(lengthString)) * 100}%`
-        }"
+                :style="{ width: `${progressPercent}%` }"
             ></div>
           </div>
         </div>

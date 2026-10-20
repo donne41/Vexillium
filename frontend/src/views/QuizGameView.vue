@@ -33,13 +33,7 @@ function startTimer() {
 
     if (timer.value <= 0) {
       timer.value = 0
-      finishGame({
-        finishReason: "time_up",
-        correctAnswers: quizStats.value?.correctAnswers ?? 0,
-        totalQuestions: quizStats.value?.totalQuestions ?? 0,
-        history: quizStats.value?.history ?? [],
-        maxScore: gameSettings.value?.length ?? 0
-      })
+      stopTimer()
     }
   }, 1000)
 }
