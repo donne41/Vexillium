@@ -9,7 +9,7 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(["finished"])
+const emit = defineEmits(["finished", "error"])
 let isLoading = ref(true)
 let showFlagQuiz = ref(false)
 let showCaptialQuiz = ref(false)
@@ -26,6 +26,7 @@ const quizType = route.params.quizType
 const maxLen = props.settings.length
 const infinite = maxLen === 0 ? true : false
 const lengthString = infinite ? "Oändligt" : maxLen
+let questionNumber = ref(0)
 
 
 const quizStatsData = ref({
@@ -47,16 +48,26 @@ async function getQuiz() {
         if (!resp.ok)
           throw new Error(`Kunde inte hämta quizdata: ${resp.status}`)
         const data = await resp.json()
+        if (data.length < 1) throw new Error("Databasen svarade utan data!")
         nextQuestion.value = data
     } catch (error) {
+        if (error instanceof TypeError) {
+            console.error("Kunde inte nå servern! Status: ", error.message)
+            emit("error", "Kunde inte nå servern.")
+        } else {
+            emit("error", "Övrigt fel: " + error.message)
+        }
         console.error(`Fel vid hämtning av quizdata: ${error}`)
         isLoading.value = true
         errorFirstFetch.value = true
     }
 }
 
-function presentQuestion() {
+async function presentQuestion() {
+    await checkRepeatingQuestion()
+    questionNumber.value++
     quizData.value = nextQuestion.value
+
     if (quizType === "flags") {
         flagQuiz()
         showFlagQuiz.value = true
@@ -70,13 +81,35 @@ function presentQuestion() {
 }
 
 function capitalQuiz() {
-    buttonChoise.value = quizData.value.countries.sort((a, b) => a.Countryname.localeCompare(b.Countryname))
+    buttonChoise.value = [...quizData.value.countries].sort((a, b) => a.Countryname.localeCompare(b.Countryname))
     capitalName = quizData.value.countries[quizData.value.correctIndex].Capital
 }
 
 function flagQuiz() {
-    buttonChoise.value = quizData.value.countries.sort((a, b) => a.Countryname.localeCompare(b.Countryname))
+    buttonChoise.value = [...quizData.value.countries].sort((a, b) => a.Countryname.localeCompare(b.Countryname))
     flagurl.value = quizData.value.countries[quizData.value.correctIndex].Flag
+}
+
+async function checkRepeatingQuestion() {
+    /* Ändra till hur långt bakåt man ska kolla. obs finns bara 8 st i norden.  */
+    const splitNumber = 5
+    let recentHistory = []
+    if (quizStatsData.value.history.length < splitNumber) {
+        recentHistory = quizStatsData.value.history
+    } else {
+        recentHistory = quizStatsData.value.history.slice(splitNumber * -1)
+    }
+
+    while (true) {
+        let nextCorrectName = nextQuestion.value.countries[nextQuestion.value.correctIndex].Countryname
+        let currentCorrectName = quizData.value?.countries[quizData.value.correctIndex].Countryname
+
+        let isRepetingHistory = recentHistory.some(item => item.correctCountry === nextCorrectName)
+        let isRepeatingRecent = currentCorrectName === nextCorrectName
+        if (!isRepetingHistory && !isRepeatingRecent) break
+        
+        await getQuiz()
+    }
 }
 
 function submit(answer) {
@@ -111,7 +144,7 @@ function delayNext() {
         selectedAnswer.value = null
         isChecking.value = false
         await getQuiz()
-        presentQuestion()
+        await presentQuestion()
         isLoading.value = false
     }, 3000)
 }
@@ -154,7 +187,7 @@ function saveToLocal(name, content) {
 
 async function loadFirst() {
     await getQuiz()
-    presentQuestion()
+    await presentQuestion()
 }
 
 onMounted(() => {
@@ -164,7 +197,7 @@ onMounted(() => {
 </script>
 <template>
     <div v-if="!isLoading" class="quiz-content">
-        <p>Fråga {{ quizStatsData.history.length + 1 }} av {{ lengthString }}</p>
+        <p>Fråga {{ questionNumber }} av {{ lengthString }}</p>
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
         <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
         }}</span>?</h1>

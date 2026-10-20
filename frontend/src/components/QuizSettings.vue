@@ -3,13 +3,13 @@ import { ref, onMounted } from "vue"
     const selectedLength = ref(10)
 const selectedRegions = ref([])
 
-const emit = defineEmits(["start"])
+const emit = defineEmits(["start", "error"])
 
 const setLength = (len) => {
     selectedLength.value = len
 }
 const handleStart = () => {
-    if(selectedRegions.value.length === 0) {
+    if (selectedRegions.value.length === 0) {
         regions.value.entries(element => selectedRegions.value.push(element)
         );
     }
@@ -39,15 +39,20 @@ function setLengthButton(len) {
 
 
 let regions = ref([]);
-async function getRegions(){
+async function getRegions() {
     try {
         const resp = await fetch("http://localhost:3000/api/regions")
         if(!resp.ok)
             throw new Error(`Kunde inte hämta regioner från databasen: ${resp.status}`)
         const data = await resp.json()
+        if (data.length < 1) throw new Error("Databasen svarade utan data vid hämtning av regioner!")
         regions.value = data;
     }catch(error){
         console.error(`Fel vid hämtning: ${error}`)
+        if (error instanceof TypeError)
+            emit("error", "Kunde inte nå servern.")
+        else
+            emit("error", "Övrigt fel: " + error.message)
     }
 }
 onMounted(() => {
