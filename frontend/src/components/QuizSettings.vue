@@ -43,11 +43,11 @@ async function getRegions(){
     try {
         const resp = await fetch("http://localhost:3000/api/regions")
         if(!resp.ok)
-            throw new Error(`Could not fetch regions from database: ${resp.status}`)
+            throw new Error(`Kunde inte hämta regioner från databasen: ${resp.status}`)
         const data = await resp.json()
         regions.value = data;
     }catch(error){
-        console.error(`Error fetching... ${error}`)
+        console.error(`Fel vid hämtning: ${error}`)
     }
 }
 onMounted(() => {

@@ -1,14 +1,16 @@
-
 <script setup>
+import {RouterLink} from 'vue-router'
 import './QuizCategories.css'
 
 const categories = [
   {
     title: 'Flaggor',
+    quizPath: '/quiz/flags',
     description: 'Snabba visuella matchningar mot klockan. Världens alla nationer ingår.'
   },
   {
     title: 'Huvudstäder',
+    quizPath: '/quiz/capitals',
     description: 'Navigera kontinenterna och bevisa dina kunskaper om globala centralorter.'
   },
   {
@@ -42,21 +44,31 @@ const categories = [
 
       <div class="quiz-grid">
 
-        <article
+        <component
+            :is="category.quizPath ? RouterLink : 'article'"
             v-for="category in categories"
             :key="category.title"
+            :to="category.quizPath || undefined"
             class="quiz-card"
+            :class="{ 'quiz-card-disabled': !category.quizPath }"
+            :title="!category.quizPath
+        ? 'Detta quiz är inte tillgängligt ännu'
+        : ''"
         >
-          <span class="quiz-tag">
-            {{ category.title }}
-          </span>
+  <span class="quiz-tag">
+    {{ category.title }}
+  </span>
 
           <p>{{ category.description }}</p>
 
-          <span class="quiz-link">
-            Börja quiz →
-          </span>
-        </article>
+          <span v-if="category.quizPath" class="quiz-link">
+    Börja quiz →
+  </span>
+
+          <span v-else class="quiz-link quiz-link-disabled">
+    Kommer snart
+  </span>
+        </component>
 
       </div>
 
