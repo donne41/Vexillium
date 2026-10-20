@@ -17,6 +17,7 @@ const achievementRoutes = require('./routes/achievementRoutes');
 const roomRoutes = require('./routes/roomRoutes');
 const questionRoutes = require('./routes/questionroutes');
 const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
@@ -50,9 +51,11 @@ app.use(session({
 }));
 app.use(express.static('public'));
 
+
 app.use('/api/achievements', achievementRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 app.use(questionRoutes);
 
 async function testDatabaseConnection() {
