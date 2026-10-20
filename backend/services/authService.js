@@ -2,10 +2,10 @@ const pool = require('../connectionMySQL');
 const bcrypt = require('bcryptjs');
 
 /**
- * verifyCredentials verifierar inloggningsuppgifter. identiifier representerar
+ * verifyCredentials verifierar inloggningsuppgifter. identifier representerar
  * det angivna användarnamnet eller email. Om ett @ används matchas identifier
  * mot användare via email annars användarnamn. Returnerar { id, username }
- * om lösenordet stämmer.
+ * om lösenordet stämmer annars null.
  */
 async function verifyCredentials(identifier, password) {
     const column = identifier.includes('@') ? 'email' : 'username';
@@ -27,4 +27,15 @@ async function verifyCredentials(identifier, password) {
     return { id: user.id, username: user.username };
 }
 
-module.exports = { verifyCredentials };
+/**
+ * recordLogin anropas vid en lyckad inloggning för att öka login_count med 1
+ * och uppdatera last_login_at till nuvarande tid för det angivna användar-id:et.
+ */
+async function recordLogin(userId) {
+    await pool.execute(
+        'UPDATE users SET login_count = login_count + 1, last_login_at = NOW() WHERE id = ?',
+        [userId]
+    );
+}
+
+module.exports = { verifyCredentials, recordLogin };
