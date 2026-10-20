@@ -4,15 +4,18 @@ const userService = require('../services/userService');
 
 // Regex för att kolla om en email är korrekt formaterad.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/;
+const USERNAME_ERROR = 'Användarnamnet måste vara 3–50 tecken och får inte innehålla @';
 
 /**
  * isValidUsername kollar om ett användarnamn är längre än 3 tecken och högst 50
- * tecken för att inte överstiga varchar(50) begränsningen från sql databasen.
+ * tecken för att inte överstiga varchar(50) begränsningen från sql databasen samt
+ * att @ tecken inte används.
 */
 function isValidUsername(username) {
     return typeof username === 'string'
         && username.trim().length >= 3
-        && username.trim().length <= 50;
+        && username.trim().length <= 50
+        && !username.includes('@');
 }
 
 /**
@@ -72,7 +75,7 @@ exports.createUser = async (req, res) => {
     const { username, password, email } = req.body ?? {};
 
     if (!isValidUsername(username)) {
-        return res.status(400).json({ error: 'Användarnamnet måste vara mellan 3 och 50 tecken' });
+        return res.status(400).json({ error: USERNAME_ERROR });
     }
     if (!isValidPassword(password)) {
         return res.status(400).json({ error: 'Lösenordet måste vara minst 8 tecken och högst 72 byte' });
@@ -179,7 +182,7 @@ exports.updateUser = async (req, res) => {
         return res.status(400).json({ error: 'Ange användarnamn, e-post och/eller lösenord' });
     }
     if (username !== undefined && !isValidUsername(username)) {
-        return res.status(400).json({ error: 'Användarnamnet måste vara mellan 3 och 50 tecken' });
+        return res.status(400).json({ error: USERNAME_ERROR  });
     }
     if (email !== undefined && !isValidEmail(email)) {
         return res.status(400).json({ error: 'E-postadressen är ogiltig' });
