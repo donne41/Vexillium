@@ -223,6 +223,61 @@ async function leaveRoom(roomId, guestToken) {
     return result.affectedRows > 0;
 }
 
+async function deleteRoom(roomId, userId) {
+    const connection = await db.getConnection();
+
+    try {
+        await connection.beginTransaction();
+        const [rooms] = await connection.execute(
+            `SELECT RoomAdminID, RoomStatus
+             FROM Rooms
+             WHERE RoomID = ?
+             FOR UPDATE`,
+            [roomId]
+        );
+
+        const room = rooms[0];
+
+        if (!room) {
+            await connection.rollback();
+            return 'not_found';
+        }
+
+        if (Number(room.RoomAdminID) !== Number(userId)) {
+            await connection.rollback();
+            return 'forbidden';
+        }
+
+        if (room.RoomStatus !== 'waiting') {
+            await connection.rollback();
+            return 'not_waiting';
+        }
+
+        await connection.execute(
+            'DELETE FROM AccountsRooms WHERE RoomID = ?',
+            [roomId]
+        );
+
+        await connection.execute(
+            'DELETE FROM RoomGuests WHERE RoomID = ?',
+            [roomId]
+        );
+
+        await connection.execute(
+            'DELETE FROM Rooms WHERE RoomID = ?',
+            [roomId]
+        );
+
+        await connection.commit();
+        return 'deleted';
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    } finally {
+        connection.release();
+    }
+}
+
 module.exports = {
     createRoom,
     getPublicRooms,
@@ -231,6 +286,7 @@ module.exports = {
     joinPublicRoom,
     getRoomPlayers,
     validateGuestSession,
-    leaveRoom
+    leaveRoom,
+    deleteRoom
 };
 
