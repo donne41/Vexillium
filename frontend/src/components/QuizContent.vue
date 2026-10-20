@@ -52,7 +52,6 @@ async function getQuiz() {
         nextQuestion.value = data
     } catch (error) {
         if (error instanceof TypeError) {
-            console.error("Kunde inte nå servern! Status: ", error.message)
             emit("error", "Kunde inte nå servern.")
         } else {
             emit("error", "Övrigt fel: " + error.message)
@@ -91,7 +90,7 @@ function flagQuiz() {
 }
 
 async function checkRepeatingQuestion() {
-    /* Ändra till hur långt bakåt man ska kolla. obs finns bara 8 st i norden.  */
+    /* Ändra till hur långt bakåt man ska kolla i besvarade frågor. obs finns bara 8 st i norden.  */
     const splitNumber = 5
     let recentHistory = []
     if (quizStatsData.value.history.length < splitNumber) {
@@ -107,7 +106,6 @@ async function checkRepeatingQuestion() {
         let isRepetingHistory = recentHistory.some(item => item.correctCountry === nextCorrectName)
         let isRepeatingRecent = currentCorrectName === nextCorrectName
         if (!isRepetingHistory && !isRepeatingRecent) break
-        
         await getQuiz()
     }
 }
@@ -209,6 +207,5 @@ onMounted(() => {
     </div>
     <div v-else>
         <p>Laddar quiz...</p>
-        <button v-if="errorFirstFetch" @click="loadFirst" class="button-error">Ladda om</button>
     </div>
 </template>
