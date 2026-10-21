@@ -1,36 +1,11 @@
 const questionService = require("../services/questionService");
 
 
-
-exports.getCountries = (async (req, res) => {
-    try {
-        console.log("Question controller calling for questions");
-        const countries = await questionService.getCountries();
-        res.json({ countries });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            error: 'Kunde inte hämta länderna'
-        });
-    }
-});
-
 exports.getRandomCountries = (async (req, res) => {
     const regions = req.query.regions;
+    const filter = req.query.filter || 0
     try {
-        const countries = await questionService.getRandom(regions);
-        res.send(countries);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            error: 'Kunde inte hämta slumpmässiga länder'
-        });
-    }
-});
-
-exports.getRandomAllCountries = (async (req, res) => {
-    try {
-        const countries = await questionService.getRandomAllCountries();
+        const countries = await questionService.getRandom(regions, filter);
         res.send(countries);
     } catch (error) {
         console.error(error);
