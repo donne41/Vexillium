@@ -1,12 +1,22 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import {computed, ref, onMounted, watch} from "vue"
 import { useRoute } from "vue-router"
 
+
 const props = defineProps({
-    settings: {
-        type: Object,
-        required: true
-    }
+  settings: {
+    type: Object,
+    required: true
+  },
+  timer: {
+    type: Number,
+    required: true
+  }
+})
+
+let hasEnded = false
+watch(() => props.timer, (timer) => {
+  if (timer <= 0) quizEnd()
 })
 
 const emit = defineEmits(["finished", "error"])
@@ -27,6 +37,10 @@ const maxLen = props.settings.length
 const infinite = maxLen === 0 ? true : false
 const lengthString = infinite ? "Oändligt" : maxLen
 let questionNumber = ref(0)
+const progressPercent = computed(() =>
+    maxLen <= 0
+        ? 0
+        : Math.min((questionNumber / maxLen) * 100, 100))
 
 
 const quizStatsData = ref({
@@ -48,6 +62,8 @@ function getLatestFilter(regions) {
     return lateHistory
 }
 
+
+
 async function getQuiz() {
     try {
         const regions = props.settings.regions.join(',');
@@ -66,6 +82,8 @@ async function getQuiz() {
         const data = await resp.json()
         if (data.length < 1) throw new Error("Databasen svarade utan data!")
         nextQuestion.value = data
+
+
     } catch (error) {
         if (error instanceof TypeError) {
             emit("error", "Kunde inte nå servern.")
@@ -76,6 +94,8 @@ async function getQuiz() {
         isLoading.value = true
         errorFirstFetch.value = true
     }
+
+
 }
 
 async function presentQuestion() {
@@ -143,6 +163,8 @@ function delayNext() {
 }
 
 function quizEnd() {
+  if (hasEnded) return
+  hasEnded = true
     setTimeout(async () => {
         let list = loadFromLocal("quizData") || [];
         list.push(quizStatsData.value);
@@ -189,8 +211,47 @@ onMounted(() => {
 
 </script>
 <template>
+
+  
     <div v-if="!isLoading" class="quiz-content">
         <p>Fråga {{ questionNumber }} av {{ lengthString }}</p>
+      <div class="quiz-stats">
+        <div class="quiz-stat">
+          <span>Framsteg</span>
+
+          <strong>
+            {{ quizStatsData.totalQuestions }} / {{ lengthString }}
+          </strong>
+
+          <div
+              v-if="!infinite"
+              class="progress-track"
+              role="progressbar"
+              :aria-valuenow="quizStatsData.totalQuestions"
+              :aria-valuemin="0"
+              :aria-valuemax="maxLen"
+              :aria-label="`Framsteg: ${quizStatsData.totalQuestions} av ${lengthString} frågor`"
+          >
+            <div
+                class="progress-fill"
+                :style="{ width: `${progressPercent}%` }"
+            ></div>
+          </div>
+        </div>
+
+        <div class="quiz-stat">
+          <span>Poäng</span>
+
+          <strong>
+            {{ quizStatsData.correctAnswers }} / {{ lengthString }}
+          </strong>
+        </div>
+
+        <div class="quiz-stat">
+          <span>Tid kvar</span>
+          <strong>{{ props.timer }} s</strong>
+        </div>
+      </div>
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
         <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
                 }}</span>?</h1>
@@ -199,6 +260,7 @@ onMounted(() => {
                 @click="submit(option.Countryname)">{{
                     option.Countryname }}</button>
         </div>
+
     </div>
     <div v-else>
         <p>Laddar quiz...</p>

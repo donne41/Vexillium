@@ -4,6 +4,18 @@ import QuizCategories from '../components/QuizCategories.vue'
 import RecentGames from '../components/RecentGames.vue'
 import Leaderboard from '../components/Leaderboard.vue'
 import QuizRoom from '../components/QuizRoom.vue'
+import CreateRoom from '../components/CreateRoom.vue'
+
+defineProps({
+  currentUser: {
+    type: Object,
+    default: null,
+  },
+  authHeaders: {
+    type: Object,
+    default: () => ({}),
+  },
+})
 </script>
 
 <template>
@@ -20,6 +32,11 @@ import QuizRoom from '../components/QuizRoom.vue'
       <RecentGames />
       <Leaderboard />
     </div>
+
+    <CreateRoom
+        :current-user="currentUser"
+        :auth-headers="authHeaders"
+    />
 
     <QuizRoom />
 
