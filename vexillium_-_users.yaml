@@ -659,7 +659,7 @@ collection:
         meta:
           id: req_e7d07e4f2e064759879731ba2e0d1b42
           created: 1792082419261
-          modified: 1792083147054
+          modified: 1792529020724
           isPrivate: false
           description: |-
             Request should return → 200 {
@@ -713,7 +713,7 @@ collection:
         meta:
           id: req_e94503b430c74385970a45d3ebb2b20b
           created: 1792082786701
-          modified: 1792082858693
+          modified: 1792529025122
           isPrivate: false
           description: "Request should return → 200 "
           sortKey: -1792081719295
@@ -951,18 +951,228 @@ collection:
             send: true
             store: true
           rebuildPath: true
+  - name: AUTH
+    meta:
+      id: fld_fef9c52b87314f72984ee4b74214cd75
+      created: 1792536354954
+      modified: 1792536405403
+      sortKey: -1792536354954
+      description: ""
+    children:
+      - url: "{{ _.auth_url }}/login"
+        name: Successful login user
+        meta:
+          id: req_834aa648003548ddb2d9031c80211fe5
+          created: 1792536584074
+          modified: 1792536676636
+          isPrivate: false
+          description: ""
+          sortKey: -1792536584074
+        method: POST
+        body:
+          mimeType: application/json
+          text: '{ "identifier": "anna", "password": "nyttLosen456" }'
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.auth_url }}/login"
+        name: Successful login email
+        meta:
+          id: req_626a7012d5454fdaa9e182c475cc0ce5
+          created: 1792536671527
+          modified: 1792536683774
+          isPrivate: false
+          description: ""
+          sortKey: -1792310058602.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: '{ "identifier": "anna3@mail.se", "password": "nyttLosen456" }'
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.auth_url }}/login"
+        name: Successful login user with spaces
+        meta:
+          id: req_5c0172abcd5a4614acff81e505734db9
+          created: 1792537631550
+          modified: 1792537635853
+          isPrivate: false
+          description: ""
+          sortKey: -1792423321338.25
+        method: POST
+        body:
+          mimeType: application/json
+          text: '{ "identifier": "  anna  ", "password": "nyttLosen456" }'
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.auth_url }}/login"
+        name: Wrong password
+        meta:
+          id: req_0d89a57bec1f4796a0775deb06f1ad46
+          created: 1792537660572
+          modified: 1792537819918
+          isPrivate: false
+          description: ""
+          sortKey: -1792479952706.125
+        method: POST
+        body:
+          mimeType: application/json
+          text: '{ "identifier": "anna", "password": "felLosen123" }'
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.auth_url }}/login"
+        name: Unknown user
+        meta:
+          id: req_e60250fa46964edbb389a6fd31c8544f
+          created: 1792537719915
+          modified: 1792537826630
+          isPrivate: false
+          description: ""
+          sortKey: -1792451637022.1875
+        method: POST
+        body:
+          mimeType: application/json
+          text: '{ "identifier": "klimpen", "password": "felLosen123" }'
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.auth_url }}/login"
+        name: Empty user
+        meta:
+          id: req_0dcaed0475624c0c97bb23da6ca31d88
+          created: 1792537751891
+          modified: 1792537831762
+          isPrivate: false
+          description: ""
+          sortKey: -1792437479180.2188
+        method: POST
+        body:
+          mimeType: application/json
+          text: '{ "identifier": "", "password": "felLosen123" }'
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.auth_url }}/login"
+        name: Empty password
+        meta:
+          id: req_0b39574ae3e942fb878d65776570737b
+          created: 1792537842665
+          modified: 1792537847435
+          isPrivate: false
+          description: ""
+          sortKey: -1792430400259.2344
+        method: POST
+        body:
+          mimeType: application/json
+          text: '{ "identifier": "anna", "password": "" }'
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.auth_url }}/login"
+        name: No body
+        meta:
+          id: req_3f0ff80e662e4fe1aa3402b823ed9ed5
+          created: 1792537943690
+          modified: 1792537951493
+          isPrivate: false
+          description: ""
+          sortKey: -1792426860798.7422
+        method: POST
+        body:
+          mimeType: application/json
+          text: "{}"
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
 cookieJar:
   name: Default Jar
   meta:
     id: jar_e24b5fdbd837f7cb4798242cee2d07b2fa863084
     created: 1792077710748
-    modified: 1792077710748
+    modified: 1792538062243
+  cookies:
+    - id: a26ef731-c6c9-41c1-a981-c9b4dc158e70
+      key: connect.sid
+      value: s%3AS_8UtEpIWgonVmQteqeaLb0ZpkUX0An3.NFfr4tug%2FM0tV7xNX7wXX%2FCW%2BKCViF%2ByG1yJvTrNxns
+      domain: localhost
+      path: /
+      secure: false
+      httpOnly: true
+      hostOnly: true
 environments:
   name: Base Environment
   meta:
     id: env_e24b5fdbd837f7cb4798242cee2d07b2fa863084
     created: 1792077710744
-    modified: 1792077932241
+    modified: 1792536602197
     isPrivate: false
   data:
     base_url: http://localhost:3000/api/users
+    auth_url: http://localhost:3000/api/auth
