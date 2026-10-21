@@ -114,6 +114,24 @@
     gap: 1%
 }
 
+.text-box {
+    margin: 1rem 0 1rem 0;
+}
+
+@media screen and (max-width: 670px){
+
+    .difficulty-buttons {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .region-buttons {
+        display: flex;
+        flex-direction: column;
+    }
+
+}
+
 
 
 .result-container {
