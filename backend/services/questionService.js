@@ -8,18 +8,16 @@ async function getRandom(regions, filter) {
     if (regions) {
         const regionsParam = regions.split(',')
         if (regionsParam.includes("2") && !regionsParam.includes("1")) regionsParam.push("1")
-        const placeholders = regionsParam.map(() => '?').join(',')
 
-        sql += ` WHERE RegionID IN (${placeholders})`
+        sql += ` WHERE RegionID IN (?)`
         regionParams = regionsParam
     }
-    if(filter !== 0){
+    if (filter !== 0) {
         const filterParam = filter.split(',')
         const placeholders = filterParam.map(() => '?').join(',')
 
         sql += ` AND NOT CountryID IN (?)`
         filterParams = filterParam
-        console.log(filterParam)
     }
     sql += " ORDER BY RAND() LIMIT 4"
     console.log(sql)

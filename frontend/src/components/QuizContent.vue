@@ -35,24 +35,34 @@ const quizStatsData = ref({
     history: []
 })
 
-
+function getLatestFilter(regions) {
+    let split = 10
+    if (regions.length === 1 && regions.includes(1)) {
+        split = 4
+    }
+    let lateHistory = [];
+    if (quizStatsData.value?.history.length >= split)
+        lateHistory = quizStatsData.value.history.slice(split * -1).map(item => item.correctID)
+    else
+        lateHistory = quizStatsData.value.history.map(item => item.correctID)
+    return lateHistory
+}
 
 async function getQuiz() {
     try {
         const regions = props.settings.regions.join(',');
-        const answeredCountries = quizStatsData.value?.history.map(item => item.correctID)
+        const answeredCountries = getLatestFilter(regions)
         let url = "http://localhost:3000/api/random"
         if (regions.length > 0) {
             url += `?regions=${regions}`
         }
-        if(answeredCountries.length > 0){
+        if (answeredCountries.length > 0) {
             const filterName = answeredCountries.join(',')
             url += `&filter=${filterName}`
         }
-        console.log("history countries..: ", url)
         let resp = await fetch(url)
         if (!resp.ok)
-          throw new Error(`Kunde inte hämta quizdata: ${resp.status}`)
+            throw new Error(`Kunde inte hämta quizdata: ${resp.status}`)
         const data = await resp.json()
         if (data.length < 1) throw new Error("Databasen svarade utan data!")
         nextQuestion.value = data
@@ -69,10 +79,8 @@ async function getQuiz() {
 }
 
 async function presentQuestion() {
-    await checkRepeatingQuestion()
     questionNumber.value++
     quizData.value = nextQuestion.value
-    console.log(quizData.value)
 
     if (quizType === "flags") {
         flagQuiz()
@@ -94,27 +102,6 @@ function capitalQuiz() {
 function flagQuiz() {
     buttonChoise.value = [...quizData.value.countries].sort((a, b) => a.Countryname.localeCompare(b.Countryname))
     flagurl.value = quizData.value.countries[quizData.value.correctIndex].Flag
-}
-
-async function checkRepeatingQuestion() {
-    /* Ändra till hur långt bakåt man ska kolla i besvarade frågor. obs finns bara 8 st i norden.  */
-    const splitNumber = 5
-    let recentHistory = []
-    if (quizStatsData.value.history.length < splitNumber) {
-        recentHistory = quizStatsData.value.history
-    } else {
-        recentHistory = quizStatsData.value.history.slice(splitNumber * -1)
-    }
-
-    while (true) {
-        let nextCorrectName = nextQuestion.value.countries[nextQuestion.value.correctIndex].Countryname
-        let currentCorrectName = quizData.value?.countries[quizData.value.correctIndex].Countryname
-
-        let isRepetingHistory = recentHistory.some(item => item.correctCountry === nextCorrectName)
-        let isRepeatingRecent = currentCorrectName === nextCorrectName
-        if (!isRepetingHistory && !isRepeatingRecent) break
-        await getQuiz()
-    }
 }
 
 function submit(answer) {
@@ -206,7 +193,7 @@ onMounted(() => {
         <p>Fråga {{ questionNumber }} av {{ lengthString }}</p>
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
         <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
-        }}</span>?</h1>
+                }}</span>?</h1>
         <div class="button-container">
             <button v-for="option in buttonChoise" :key="option.Countryname" :class="getButtonClass(option.Countryname)"
                 @click="submit(option.Countryname)">{{
