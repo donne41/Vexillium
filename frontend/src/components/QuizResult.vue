@@ -20,6 +20,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(["restart", "goToSettings"])
+const lengthString = props.settings.length === 0 ? "Oändligt" : props.settings.length
 
 
 let quizStatsData = ref({
@@ -43,7 +44,7 @@ function goToSettings() {
 
 
 onMounted(() => {
-    
+
 })
 </script>
 
@@ -51,11 +52,11 @@ onMounted(() => {
     <div>
         <div class="result-container">
             <h2>Quizet för {{ quizString }} är slut!</h2>
-            <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ props.settings.length }}</p>
+            <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ lengthString }}</p>
             <ol>
                 <li v-for="(item, index) in quizStatsData.history" :key="index">
                     <p>Du svarade <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer
-                            }}</span> rätt svar var {{ item.correctCountry }}</p>
+                    }}</span> rätt svar var {{ item.correctCountry }}</p>
                 </li>
             </ol>
             <button @click="goToSettings" class="default-blue">Inställningar</button>
