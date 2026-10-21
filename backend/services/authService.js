@@ -1,6 +1,11 @@
 const pool = require('../connectionMySQL');
 const bcrypt = require('bcryptjs');
 
+// Giltig hash att jämföra mot när användaren saknas, så att svarstiden blir
+// densamma oavsett om kontot finns eller inte.
+const DUMMY_HASH = bcrypt.hashSync('ingen-anvandare', 10);
+
+
 /**
  * verifyCredentials verifierar inloggningsuppgifter. identifier representerar
  * det angivna användarnamnet eller email. Om ett @ används matchas identifier
@@ -19,8 +24,8 @@ async function verifyCredentials(identifier, password) {
         return null;
     }
 
-    const passwordMatches = await bcrypt.compare(password, user.password_hash);
-    if (!passwordMatches) {
+    const passwordMatches = await bcrypt.compare(password, user ? user.password_hash : DUMMY_HASH);
+    if (!user || !passwordMatches) {
         return null;
     }
 
