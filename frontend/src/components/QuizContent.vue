@@ -214,23 +214,22 @@ onMounted(() => {
 
   
     <div v-if="!isLoading" class="quiz-content">
-        <p>Fråga {{ questionNumber }} av {{ lengthString }}</p>
       <div class="quiz-stats">
         <div class="quiz-stat">
           <span>Framsteg</span>
 
           <strong>
-            {{ quizStatsData.totalQuestions }} / {{ lengthString }}
+            {{ questionNumber }} / {{ lengthString }}
           </strong>
 
           <div
               v-if="!infinite"
               class="progress-track"
               role="progressbar"
-              :aria-valuenow="quizStatsData.totalQuestions"
+              :aria-valuenow="questionNumber.value"
               :aria-valuemin="0"
               :aria-valuemax="maxLen"
-              :aria-label="`Framsteg: ${quizStatsData.totalQuestions} av ${lengthString} frågor`"
+              :aria-label="`Framsteg: ${questionNumber} av ${lengthString} frågor`"
           >
             <div
                 class="progress-fill"

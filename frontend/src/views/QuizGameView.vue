@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue"
+import { ref, watch, onBeforeUnmount } from "vue"
 import QuizResult from "@/components/QuizResult.vue"
 import QuizSettings from "@/components/QuizSettings.vue"
 import QuizContent from "@/components/QuizContent.vue"
