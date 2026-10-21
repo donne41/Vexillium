@@ -45,8 +45,10 @@ app.use(session({
     cookie: {
         httpOnly: true,
         sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000
-        // Om vi övergår från HTTP till HTTPS lägg till -> secure: true
+        maxAge: 24 * 60 * 60 * 1000,
+        // Secure (endast HTTPS) i produktion, avstängd lokalt så att http://localhost fungerar.
+        // Körs appen bakom en proxy som hanterar HTTPS krävs även app.set('trust proxy', 1).
+        secure: process.env.NODE_ENV === 'production'
     }
 }));
 app.use(express.static('public'));
