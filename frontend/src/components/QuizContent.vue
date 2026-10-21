@@ -74,7 +74,7 @@ async function getQuiz() {
         }
         if (answeredCountries.length > 0) {
             const filterName = answeredCountries.join(',')
-            url += `&filter=${filterName}`
+          url += `${url.includes('?') ? '&' : '?'}filter=${filterName}`
         }
         let resp = await fetch(url)
         if (!resp.ok)
