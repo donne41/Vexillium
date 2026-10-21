@@ -18,6 +18,7 @@ const roomRoutes = require('./routes/roomRoutes');
 const questionRoutes = require('./routes/questionroutes');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
+const attachUser = require('./middleware/attachUser');
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use(session({
         secure: process.env.NODE_ENV === 'production'
     }
 }));
+app.use(attachUser);
 app.use(express.static('public'));
 
 
