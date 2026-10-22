@@ -18,23 +18,22 @@ async function getRegions() {
 
 function buildSqlParams(regions, filter){
     let sql = "SELECT * FROM Countries";
-    let regionParams = []
-    let filterParams = []
+    const params = []
     if (regions) {
-        regionParams = regions.split(',')
+        params.push(regions.split(','))
         if (regionsParam.includes("2") && !regionsParam.includes("1")) regionsParam.push("1")
 
         sql += ` WHERE RegionID IN (?)`
     }
+    
     if (filter !== 0) {
-        filterParams = filter.split(',')
+        params.push(filter.split(','))
 
         sql += regions
             ? ' AND CountryID NOT IN (?)'
             : ' WHERE CountryID NOT IN (?)'
     }
     sql += " ORDER BY RAND() LIMIT 4"
-    const params = []
 
     if (regions) {
         params.push(regionParams)
