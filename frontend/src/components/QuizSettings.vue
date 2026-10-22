@@ -63,14 +63,31 @@ onMounted(() => {
 
 <template>
     <div class="main-settings">
+        <article class="text-box">
+            <h2>Välj längd på quizet</h2>
+        </article>
         <div class="difficulty-buttons">
-            <button v-for="len in [5, 10, 20]" :key="len" :class="setLengthButton(len)" @click="setLength(len)">{{ len }}</button>
+            <button v-for="len in [5, 10, 20]" :key="len" :class="setLengthButton(len)" @click="setLength(len)">{{ len
+                }}</button>
             <button :class="setLengthButton(0)" @click="setLength(0)">Oändligt</button>
         </div>
+        <article class="text-box">
+            <h2>Välj vilka regioner som ska vara med</h2>
+            <p>Obs lämna blankt för att alla ska vara med</p>
+        </article>
         <div class="region-buttons">
             <button v-for="region in regions" :key="region" :class="togglebuttonclass(region.RegionsID)"
-            @click="toggleRegion(region.RegionsID)">{{ region.Regionname }}</button>
+                @click="toggleRegion(region.RegionsID)">{{ region.Regionname }}</button>
         </div>
         <button class="default-green" @click="handleStart">Starta Quiz!</button>
     </div>
 </template>
+<style scoped>
+h2 {
+    margin: 0;
+}
+
+p {
+    margin: 0;
+}
+</style>

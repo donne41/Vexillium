@@ -115,12 +115,12 @@ async function presentQuestion() {
 }
 
 function capitalQuiz() {
-    buttonChoise.value = [...quizData.value.countries].sort((a, b) => a.Countryname.localeCompare(b.Countryname))
+    buttonChoise.value = quizData.value.countries
     capitalName = quizData.value.countries[quizData.value.correctIndex].Capital
 }
 
 function flagQuiz() {
-    buttonChoise.value = [...quizData.value.countries].sort((a, b) => a.Countryname.localeCompare(b.Countryname))
+    buttonChoise.value = quizData.value.countries
     flagurl.value = quizData.value.countries[quizData.value.correctIndex].Flag
 }
 
