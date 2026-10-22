@@ -2,6 +2,7 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const requireAuth = require('../middleware/requireAuth');
 
 // Max 10 misslyckade inloggningsförsök per IP-adress och 15 minuter.
 const loginLimiter = rateLimit({
@@ -15,5 +16,6 @@ const loginLimiter = rateLimit({
 
 router.post('/login', loginLimiter, authController.login);
 router.post('/logout', authController.logout);
+router.get('/me', requireAuth, authController.me);
 
 module.exports = router;

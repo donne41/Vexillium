@@ -35,7 +35,7 @@ exports.login = async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'Ett internt serverfel uppstod' });
     }
-}
+};
 
 /**
  * logout avslutar sessionen på servern och tar bort session-cookien i webbläsaren.
@@ -50,4 +50,12 @@ exports.logout = (req, res) => {
         res.clearCookie('connect.sid');
         res.status(204).send();
     });
-}
+};
+
+/**
+ * me skickar den inloggade användaren ({ id, username }) till klienten.
+ * Routen skyddas av requireAuth, så hit når bara inloggade användare.
+ */
+exports.me = (req, res) => {
+    res.json(req.user);
+};
