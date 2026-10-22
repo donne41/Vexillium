@@ -36,3 +36,18 @@ exports.login = async (req, res) => {
         res.status(500).json({ error: 'Ett internt serverfel uppstod' });
     }
 }
+
+/**
+ * logout avslutar sessionen på servern och tar bort session-cookien i webbläsaren.
+ * Svarar 204 även om ingen var inloggad, eftersom resultatet blir detsamma: utloggad.
+ */
+exports.logout = (req, res) => {
+    req.session.destroy((error) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Ett internt serverfel uppstod' });
+        }
+        res.clearCookie('connect.sid');
+        res.status(204).send();
+    });
+}
