@@ -20,12 +20,14 @@ function buildSqlParams(regions, filter){
     let sql = "SELECT * FROM Countries";
     const params = []
     if (regions) {
-        params.push(regions.split(','))
-        if (regionsParam.includes("2") && !regionsParam.includes("1")) regionsParam.push("1")
+        let regionFilter = []
+        regionFilter = regions.split(',')
+        if (regions.includes("2") && !regions.includes("1")) regionFilter.push("1")
 
         sql += ` WHERE RegionID IN (?)`
+        params.push(regionFilter)
     }
-    
+
     if (filter !== 0) {
         params.push(filter.split(','))
 
@@ -34,14 +36,6 @@ function buildSqlParams(regions, filter){
             : ' WHERE CountryID NOT IN (?)'
     }
     sql += " ORDER BY RAND() LIMIT 4"
-
-    if (regions) {
-        params.push(regionParams)
-    }
-
-    if (filter !== 0) {
-        params.push(filterParams)
-    }
 
     return {
         sql: sql,

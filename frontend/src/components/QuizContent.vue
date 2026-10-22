@@ -115,12 +115,12 @@ async function presentQuestion() {
 }
 
 function capitalQuiz() {
-    buttonChoise.value = quizData.value.countries
+    buttonChoise.value = [...quizData.value.countries].sort(() => 0.5 - Math.random())
     capitalName = quizData.value.countries[quizData.value.correctIndex].Capital
 }
 
 function flagQuiz() {
-    buttonChoise.value = quizData.value.countries
+    buttonChoise.value = [...quizData.value.countries].sort(() => 0.5 - Math.random())
     flagurl.value = quizData.value.countries[quizData.value.correctIndex].Flag
 }
 
