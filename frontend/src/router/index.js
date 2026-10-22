@@ -14,6 +14,13 @@ const router = createRouter({
       return savedPosition
     }
 
+    if (to.hash) {
+      return {
+        el: to.hash,
+        top: 110,
+      }
+    }
+
     return { top: 0 }
   },
 

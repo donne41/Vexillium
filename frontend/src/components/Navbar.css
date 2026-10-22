@@ -1,10 +1,15 @@
-
 /* Navigation */
 
 .navbar {
-    max-width: 1300px;
+    max-width: 100%;
+    max-width: none;
     margin: 0 auto;
     padding: 24px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
 }
 
 .navbar-content {
@@ -12,6 +17,8 @@
     justify-content: space-between;
     align-items: center;
     gap: 24px;
+    max-width: 1240px;
+    margin: 0 auto;
 }
 
 .navbar h1 {
@@ -37,18 +44,23 @@
     color: var(--teal);
 }
 
-.login-button {
-    padding: 10px 20px;
-    background: transparent;
-    color: var(--teal);
-    border: 1px solid var(--teal);
-    border-radius: 8px;
-    font-size: 15px;
+.navbar .login-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 26px;
+    border: none;
+    border-radius: 12px;
+    background: #08b5c6;
+    color: #000;
+    font: inherit;
+    font-weight: 500;
+    text-decoration: none;
 }
 
 .navbar .login-button:hover {
-    background: var(--teal);
-    color: var(--background);
+    background: #09c5d6;
+    color: #101810;
 }
 
 /* Hamburger menu - hidden on desktop */
@@ -152,14 +164,21 @@
     }
 
     .mobile-nav .mobile-login {
+        align-self: flex-start;
         margin-top: 8px;
-        border: 1px solid var(--teal);
-        color: var(--teal);
+        padding: 12px 26px;
+        border: none;
+        border-radius: 12px;
+        background: #08b5c6;
+        color: #000;
+        font: inherit;
+        font-weight: 500;
         text-align: center;
+        text-decoration: none;
     }
 
     .mobile-nav .mobile-login:hover {
-        background: var(--teal);
-        color: var(--background);
+        background: #09c5d6;
+        color: #000;;
     }
 }
