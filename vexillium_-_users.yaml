@@ -1237,15 +1237,6 @@ cookieJar:
     id: jar_e24b5fdbd837f7cb4798242cee2d07b2fa863084
     created: 1792077710748
     modified: 1792701773504
-  cookies:
-    - id: 244e35b5-00b9-43f2-b751-4a67979c18da
-      key: connect.sid
-      value: s%3Ah_6dFK0Dvh0MAVJwbZyFBWfqKwZxiT0c.YKdujrZQJCWE6c2q9FB7KZoWHo9QFttbidL6EItbKwc
-      domain: localhost
-      path: /
-      secure: false
-      httpOnly: true
-      hostOnly: true
 environments:
   name: Base Environment
   meta:
