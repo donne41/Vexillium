@@ -1,1145 +1,1225 @@
 type: collection.insomnia.rest/5.0
 schema_version: "5.1"
-name: Vexillium - Users
+name: Vexillium
 meta:
   id: wrk_abf252d5e38c4793b55075fdba13700e
   created: 1792077710736
-  modified: 1792077710736
+  modified: 1792608459034
   description: ""
 collection:
-  - name: CREATE
+  - name: USER
     meta:
-      id: fld_ee5f574c8df242eb9fe8bf559100598d
-      created: 1792078018612
-      modified: 1792078018612
-      sortKey: -1792078018612
+      id: fld_fa50493a095f47219032cd7b432af684
+      created: 1792608467995
+      modified: 1792608467995
+      sortKey: -1792608467995
       description: ""
     children:
-      - url: "{{ _.base_url }}"
-        name: "Create user: Anna"
+      - name: CREATE
         meta:
-          id: req_9f94185690354864bb31841796194f7c
-          created: 1792078022718
-          modified: 1792078949489
-          isPrivate: false
-          description: 'Request should return → 201, { "id": 1, "username": "anna" }'
-          sortKey: -1792078022718
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": "anna", "password": "hemligt123", "email": "anna@mail.se"
-            }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: "Create user: Erik"
+          id: fld_ee5f574c8df242eb9fe8bf559100598d
+          created: 1792078018612
+          modified: 1792608476703
+          sortKey: -1792608471186
+          description: ""
+        children:
+          - url: "{{ _.base_url }}"
+            name: "Create user: Anna"
+            meta:
+              id: req_9f94185690354864bb31841796194f7c
+              created: 1792078022718
+              modified: 1792078949489
+              isPrivate: false
+              description: 'Request should return → 201, { "id": 1, "username": "anna" }'
+              sortKey: -1792078022718
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": "anna", "password": "hemligt123", "email": "anna@mail.se"
+                }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: "Create user: Erik"
+            meta:
+              id: req_2ed41101a4124ef5a5b9515b4351988c
+              created: 1792078556857
+              modified: 1792081559750
+              isPrivate: false
+              description: 'Request should return → 201, { "id": 1, "username": "erik" }'
+              sortKey: -1792078022818
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": "erik", "password": "hemligt123", "email": "erik@mail.se"
+                }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: "Duplicate username: anna"
+            meta:
+              id: req_83ad128feabf40b8bc455b3f3993ca74
+              created: 1792078684972
+              modified: 1792078945560
+              isPrivate: false
+              description: Request should return → 409 Username is already taken
+              sortKey: -1790862425762
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": "anna", "password": "hemligt123", "email": "anna2@mail.se"
+                }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: "Duplicate email: anna@mail.com"
+            meta:
+              id: req_4fd49843ff8c4e25b701ddbd0d71ec87
+              created: 1792078827078
+              modified: 1792078940143
+              isPrivate: false
+              description: Request should return → 409 Email is already taken
+              sortKey: -1790254627284
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": "anna2", "password": "hemligt123", "email": "anna@mail.se"
+                }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: Username too short
+            meta:
+              id: req_e42c2862b405428894b9a3854bbb7cd5
+              created: 1792078899966
+              modified: 1792078981577
+              isPrivate: false
+              description: 'Request should return → 400 { "error": "Username must be 3–50
+                characters" }'
+              sortKey: -1789950728045
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": "ab", "password": "hemligt123", "email": "anna@mail.se" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: Username is a number
+            meta:
+              id: req_899a4e7e38af40ee84a4494bed970ca2
+              created: 1792079006065
+              modified: 1792079093555
+              isPrivate: false
+              description: 'Request should return → 400 { "error": "Username must be 3–50
+                characters" }'
+              sortKey: -1789798778425.5
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": 123, "password": "hemligt123", "email": "anna2@mail.se" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: Password too short
+            meta:
+              id: req_b2e2444fe9d2433a8fa74100343e1aae
+              created: 1792079142919
+              modified: 1792079218596
+              isPrivate: false
+              description: 'Request should return → 400 {"error": "Password must be at least 8
+                characters (max 72 bytes)"}'
+              sortKey: -1789722803615.75
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": "test", "password": "kort", "email": "test@mail.se" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: Password too many bytes
+            meta:
+              id: req_4c633e06106b4cfd906374fc3c8a253d
+              created: 1792081064890
+              modified: 1792081217299
+              isPrivate: false
+              description: 'Request should return → 400 {"error": "Password must be at least 8
+                characters (max 72 bytes)"}'
+              sortKey: -1789684816210.875
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": "test", "password":
+                "ååååååååååääääääääääööööööööööåäöåäöå", "email": "test@mail.se"
+                }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: Email missing ending
+            meta:
+              id: req_03390d6c57ee483db8ebe298c7ee4e79
+              created: 1792081198636
+              modified: 1792081240615
+              isPrivate: false
+              description: 'Request should return → 400 {"error": "A valid email is
+                required"}'
+              sortKey: -1789665822508.4375
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": "test", "password": "hemligt123", "email": "test@mail" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: Email has too many periods
+            meta:
+              id: req_68f1da1d02ff4da5b2c87478e7a26e68
+              created: 1792081272197
+              modified: 1792081281826
+              isPrivate: false
+              description: 'Request should return → 400 {"error": "A valid email is
+                required"}'
+              sortKey: -1789656325657.2188
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": "test", "password": "hemligt123", "email": "test@mail..se"
+                }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: Email field missing
+            meta:
+              id: req_068ada600cca4c44ae18bd1d145cb22d
+              created: 1792081298852
+              modified: 1792081322013
+              isPrivate: false
+              description: 'Request should return → 400 {"error": "A valid email is
+                required"}'
+              sortKey: -1789651577231.6094
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": "test", "password": "hemligt123"}'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: Body missing from request
+            meta:
+              id: req_9d94b0ceb6de4ae6be8d9269e07d8f8f
+              created: 1792081351006
+              modified: 1792081375053
+              isPrivate: false
+              description: 'Request should return → 400 {"error": "Username must be 3–50
+                characters"}'
+              sortKey: -1789649203018.8047
+            method: POST
+            body:
+              mimeType: application/json
+              text: ""
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}"
+            name: "Create user: Olle, tests trimmings"
+            meta:
+              id: req_1af5800c3bdd4f4a9fd48d13feee13f2
+              created: 1792081415180
+              modified: 1792081457061
+              isPrivate: false
+              description: 'Request should return → 201, { "id": ?, "username": "olle" }'
+              sortKey: -1792078022768
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "username": "   olle   ", "password": "hemligt123", "email":
+                "olle@mail.se" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: READ
         meta:
-          id: req_2ed41101a4124ef5a5b9515b4351988c
-          created: 1792078556857
-          modified: 1792081559750
-          isPrivate: false
-          description: 'Request should return → 201, { "id": 1, "username": "erik" }'
-          sortKey: -1792078022818
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": "erik", "password": "hemligt123", "email": "erik@mail.se"
-            }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: "Duplicate username: anna"
-        meta:
-          id: req_83ad128feabf40b8bc455b3f3993ca74
-          created: 1792078684972
-          modified: 1792078945560
-          isPrivate: false
-          description: Request should return → 409 Username is already taken
-          sortKey: -1790862425762
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": "anna", "password": "hemligt123", "email": "anna2@mail.se"
-            }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: "Duplicate email: anna@mail.com"
-        meta:
-          id: req_4fd49843ff8c4e25b701ddbd0d71ec87
-          created: 1792078827078
-          modified: 1792078940143
-          isPrivate: false
-          description: Request should return → 409 Email is already taken
-          sortKey: -1790254627284
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": "anna2", "password": "hemligt123", "email": "anna@mail.se"
-            }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: Username too short
-        meta:
-          id: req_e42c2862b405428894b9a3854bbb7cd5
-          created: 1792078899966
-          modified: 1792078981577
-          isPrivate: false
-          description: 'Request should return → 400 { "error": "Username must be 3–50
-            characters" }'
-          sortKey: -1789950728045
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": "ab", "password": "hemligt123", "email": "anna@mail.se" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: Username is a number
-        meta:
-          id: req_899a4e7e38af40ee84a4494bed970ca2
-          created: 1792079006065
-          modified: 1792079093555
-          isPrivate: false
-          description: 'Request should return → 400 { "error": "Username must be 3–50
-            characters" }'
-          sortKey: -1789798778425.5
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": 123, "password": "hemligt123", "email": "anna2@mail.se" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: Password too short
-        meta:
-          id: req_b2e2444fe9d2433a8fa74100343e1aae
-          created: 1792079142919
-          modified: 1792079218596
-          isPrivate: false
-          description: 'Request should return → 400 {"error": "Password must be at least 8
-            characters (max 72 bytes)"}'
-          sortKey: -1789722803615.75
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": "test", "password": "kort", "email": "test@mail.se" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: Password too many bytes
-        meta:
-          id: req_4c633e06106b4cfd906374fc3c8a253d
-          created: 1792081064890
-          modified: 1792081217299
-          isPrivate: false
-          description: 'Request should return → 400 {"error": "Password must be at least 8
-            characters (max 72 bytes)"}'
-          sortKey: -1789684816210.875
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": "test", "password":
-            "ååååååååååääääääääääööööööööööåäöåäöå", "email": "test@mail.se" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: Email missing ending
-        meta:
-          id: req_03390d6c57ee483db8ebe298c7ee4e79
-          created: 1792081198636
-          modified: 1792081240615
-          isPrivate: false
-          description: 'Request should return → 400 {"error": "A valid email is required"}'
-          sortKey: -1789665822508.4375
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": "test", "password": "hemligt123", "email": "test@mail" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: Email has too many periods
-        meta:
-          id: req_68f1da1d02ff4da5b2c87478e7a26e68
-          created: 1792081272197
-          modified: 1792081281826
-          isPrivate: false
-          description: 'Request should return → 400 {"error": "A valid email is required"}'
-          sortKey: -1789656325657.2188
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": "test", "password": "hemligt123", "email": "test@mail..se"
-            }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: Email field missing
-        meta:
-          id: req_068ada600cca4c44ae18bd1d145cb22d
-          created: 1792081298852
-          modified: 1792081322013
-          isPrivate: false
-          description: 'Request should return → 400 {"error": "A valid email is required"}'
-          sortKey: -1789651577231.6094
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": "test", "password": "hemligt123"}'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: Body missing from request
-        meta:
-          id: req_9d94b0ceb6de4ae6be8d9269e07d8f8f
-          created: 1792081351006
-          modified: 1792081375053
-          isPrivate: false
-          description: 'Request should return → 400 {"error": "Username must be 3–50
-            characters"}'
-          sortKey: -1789649203018.8047
-        method: POST
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}"
-        name: "Create user: Olle, tests trimmings"
-        meta:
-          id: req_1af5800c3bdd4f4a9fd48d13feee13f2
-          created: 1792081415180
-          modified: 1792081457061
-          isPrivate: false
-          description: 'Request should return → 201, { "id": ?, "username": "olle" }'
-          sortKey: -1792078022768
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "username": "   olle   ", "password": "hemligt123", "email":
-            "olle@mail.se" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: READ
-    meta:
-      id: fld_41d12c4694bb41568669f334793101dc
-      created: 1792081477197
-      modified: 1792081481047
-      sortKey: -1792078018712
-      description: ""
-    children:
-      - url: "{{ _.base_url }}"
-        name: GET /
-        meta:
-          id: req_9ae5e0b794f34eb7bf6f1734f3d5c4c1
-          created: 1792081485973
-          modified: 1792083704642
-          isPrivate: false
-          description: >-
-            Request should return → 200 
+          id: fld_41d12c4694bb41568669f334793101dc
+          created: 1792081477197
+          modified: 1792608475164
+          sortKey: -1792608471086
+          description: ""
+        children:
+          - url: "{{ _.base_url }}"
+            name: GET /
+            meta:
+              id: req_9ae5e0b794f34eb7bf6f1734f3d5c4c1
+              created: 1792081485973
+              modified: 1792083704642
+              isPrivate: false
+              description: >-
+                Request should return → 200 
 
-            The array should contain all users but not any password hash nor
-            email
-          sortKey: -1792081485973
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/1"
-        name: GET /1
+                The array should contain all users but not any password hash nor
+                email
+              sortKey: -1792081485973
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/1"
+            name: GET /1
+            meta:
+              id: req_0db28e9109754946bd03048a855be363
+              created: 1792081675744
+              modified: 1792082149974
+              isPrivate: false
+              description: Request should return → 200 and the user with id 1
+              sortKey: -1792079754395.5
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/9999"
+            name: GET /9999
+            meta:
+              id: req_3402144f96d246588f626d5ffa8e67f8
+              created: 1792081766821
+              modified: 1792082155896
+              isPrivate: false
+              description: Request should return → 404 User not found
+              sortKey: -1792078888606.75
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/abc"
+            name: GET /abc
+            meta:
+              id: req_e6705dd4f8a74fb2b894a64204fdcb2a
+              created: 1792081814053
+              modified: 1792082162554
+              isPrivate: false
+              description: |-
+                Request should return → 404 {
+                	"error": "Invalid user id"
+                }
+              sortKey: -1792078455712.375
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/0"
+            name: GET /0
+            meta:
+              id: req_cc5e21d3334a42a3ae4ccd4b25462566
+              created: 1792081896167
+              modified: 1792082166694
+              isPrivate: false
+              description: |-
+                Request should return → 404 {
+                	"error": "Invalid user id"
+                }
+              sortKey: -1792078239265.1875
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/-1"
+            name: GET /-1
+            meta:
+              id: req_f2dfa034db264a5d9e59bbb98d654504
+              created: 1792081918162
+              modified: 1792082171281
+              isPrivate: false
+              description: |-
+                Request should return → 404 {
+                	"error": "Invalid user id"
+                }
+              sortKey: -1792078131041.5938
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/2.5"
+            name: GET /2.5
+            meta:
+              id: req_d6ca83f6831046a8b5bdcc4cee737e0e
+              created: 1792081931226
+              modified: 1792082178310
+              isPrivate: false
+              description: |-
+                Request should return → 404 {
+                	"error": "Invalid user id"
+                }
+              sortKey: -1792078076929.7969
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/username/anna"
+            name: GET /username/anna
+            meta:
+              id: req_ed639754db3a40cba924658e4974f5e3
+              created: 1792081952054
+              modified: 1792082750216
+              isPrivate: false
+              description: |-
+                Request should return → 200
+                {
+                	"id": 1,
+                	"username": "anna",
+                	"created_at": "2026-10-15T13:34:12.000Z",
+                	"last_login_at": null
+                }
+              sortKey: -1792078049873.8984
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/username/nobody"
+            name: GET /username/nobody
+            meta:
+              id: req_2b741133bb024a96b03229f3a76e7f33
+              created: 1792082013346
+              modified: 1792082187885
+              isPrivate: false
+              description: |-
+                Request should return → 404
+                {
+                	"error": "User not found"
+                }
+              sortKey: -1792078036345.9492
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/email/anna@mail.se"
+            name: GET /email/anna@mail.se
+            meta:
+              id: req_48545649ba274be886275532561724ac
+              created: 1792082054875
+              modified: 1792082221174
+              isPrivate: false
+              description: |-
+                Request should return → 200
+                {
+                	"id": 1,
+                	"username": "anna",
+                	"created_at": "2026-10-15T13:34:12.000Z",
+                	"last_login_at": null
+                }
+              sortKey: -1792078029581.9746
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/email/anna@mail.se"
+            name: GET /email/ANNA@MAIL.SE
+            meta:
+              id: req_86638543ac774b93bf4cfba668062706
+              created: 1792082235801
+              modified: 1792082235801
+              isPrivate: false
+              description: |-
+                Request should return → 200
+                {
+                	"id": 1,
+                	"username": "anna",
+                	"created_at": "2026-10-15T13:34:12.000Z",
+                	"last_login_at": null
+                }
+              sortKey: -1792078026199.9873
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/email/nobody@mail.se"
+            name: GET /email/nobody@mail.se
+            meta:
+              id: req_eb3f5d81f8694fc4add7381a04c3158d
+              created: 1792082262347
+              modified: 1792082276405
+              isPrivate: false
+              description: |-
+                Request should return → 404 {
+                	"error": "User not found"
+                }
+              sortKey: -1792078024508.9937
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/email/anna3@mail.se"
+            name: GET /email/anna3@mail.se
+            meta:
+              id: req_afc8d9f6e40344e6a85359f0fe5c623e
+              created: 1792082824942
+              modified: 1792082848423
+              isPrivate: false
+              description: |-
+                Request should return → 404 {
+                	"error": "User not found"
+                }
+              sortKey: -1792078023663.4968
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/7"
+            name: GET /7
+            meta:
+              id: req_d3f02f4446e84b13814725aa2d580ec2
+              created: 1792083601350
+              modified: 1792083675600
+              isPrivate: false
+              description: Request should return → 404 User not found
+              sortKey: -1792079321501.125
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: UPDATE
         meta:
-          id: req_0db28e9109754946bd03048a855be363
-          created: 1792081675744
-          modified: 1792082149974
-          isPrivate: false
-          description: Request should return → 200 and the user with id 1
-          sortKey: -1792079754395.5
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/9999"
-        name: GET /9999
+          id: fld_395c0a09931c4b2784f7c5d876efa1b6
+          created: 1792082294129
+          modified: 1792608473620
+          sortKey: -1792608470986
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/1"
+            name: Update username
+            meta:
+              id: req_e7d07e4f2e064759879731ba2e0d1b42
+              created: 1792082419261
+              modified: 1792529020724
+              isPrivate: false
+              description: |-
+                Request should return → 200 {
+                	"id": 1,
+                	"username": "anna2",
+                	"created_at": "2026-10-15T13:34:12.000Z",
+                	"last_login_at": null
+                }
+              sortKey: -1792082419261
+            method: PUT
+            body:
+              mimeType: application/json
+              text: '{ "username": "anna" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/1"
+            name: Update email
+            meta:
+              id: req_961cd7b7b67643189b6867ee6ff8f187
+              created: 1792082677434
+              modified: 1792082764997
+              isPrivate: false
+              description: "Request should return → 200 "
+              sortKey: -1792081952617
+            method: PUT
+            body:
+              mimeType: application/json
+              text: '{ "email": "anna3@mail.se" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/1"
+            name: Update password
+            meta:
+              id: req_e94503b430c74385970a45d3ebb2b20b
+              created: 1792082786701
+              modified: 1792529025122
+              isPrivate: false
+              description: "Request should return → 200 "
+              sortKey: -1792081719295
+            method: PUT
+            body:
+              mimeType: application/json
+              text: '{ "password": "nyttLosen456" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/1"
+            name: Update all fields
+            meta:
+              id: req_8b3678cb155c48d69fd004a5fc2ce87f
+              created: 1792083143686
+              modified: 1792083175023
+              isPrivate: false
+              description: "Request should return → 200 "
+              sortKey: -1792081602634
+            method: PUT
+            body:
+              mimeType: application/json
+              text: '{ "password": "nyttLosen456", "email": "anna3@mail.se", "username":
+                "anna" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/1"
+            name: Update with empty fields
+            meta:
+              id: req_39147daa1754458e891b500987442445
+              created: 1792083221786
+              modified: 1792083233406
+              isPrivate: false
+              description: Request should return → 400
+              sortKey: -1792081544303.5
+            method: PUT
+            body:
+              mimeType: application/json
+              text: "{}"
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/1"
+            name: Update with empty username string
+            meta:
+              id: req_cf17e2b150a24c189aa6dcabc9e0f2bf
+              created: 1792083255423
+              modified: 1792083266472
+              isPrivate: false
+              description: Request should return → 400
+              sortKey: -1792081515138.25
+            method: PUT
+            body:
+              mimeType: application/json
+              text: '{ "username": "" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/1"
+            name: Update with existing username
+            meta:
+              id: req_b753cfe912b143259409a4d8b890bb86
+              created: 1792083319309
+              modified: 1792083376860
+              isPrivate: false
+              description: Request should return → 409 Username already taken
+              sortKey: -1792081500555.625
+            method: PUT
+            body:
+              mimeType: application/json
+              text: '{ "username": "erik" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/1"
+            name: Update with existing email
+            meta:
+              id: req_3bde17b3f29f4ce0801f240427563634
+              created: 1792083345266
+              modified: 1792083368313
+              isPrivate: false
+              description: Request should return → 409 Email already taken
+              sortKey: -1792081493264.3125
+            method: PUT
+            body:
+              mimeType: application/json
+              text: '{ "email": "erik@mail.se" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/9999"
+            name: Update non-existent user id
+            meta:
+              id: req_7182e59720a04d3e8bbc97e48ea63b9c
+              created: 1792083401610
+              modified: 1792083456616
+              isPrivate: false
+              description: Request should return → 404 User not found
+              sortKey: -1792081489618.6562
+            method: PUT
+            body:
+              mimeType: application/json
+              text: '{ "password": "NyttLosen456", "email": "testy@mail.se", "username":
+                "testy" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/abc"
+            name: Update badly formatted user id
+            meta:
+              id: req_5cd3d15383b64c71be73333a14d9710d
+              created: 1792083480032
+              modified: 1792083499024
+              isPrivate: false
+              description: Request should return → 400 Invalid user id
+              sortKey: -1792081487795.8281
+            method: PUT
+            body:
+              mimeType: application/json
+              text: '{ "password": "NyttLosen456", "email": "testy@mail.se", "username":
+                "testy" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: DELETE
         meta:
-          id: req_3402144f96d246588f626d5ffa8e67f8
-          created: 1792081766821
-          modified: 1792082155896
-          isPrivate: false
-          description: Request should return → 404 User not found
-          sortKey: -1792078888606.75
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/abc"
-        name: GET /abc
-        meta:
-          id: req_e6705dd4f8a74fb2b894a64204fdcb2a
-          created: 1792081814053
-          modified: 1792082162554
-          isPrivate: false
-          description: |-
-            Request should return → 404 {
-            	"error": "Invalid user id"
-            }
-          sortKey: -1792078455712.375
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/0"
-        name: GET /0
-        meta:
-          id: req_cc5e21d3334a42a3ae4ccd4b25462566
-          created: 1792081896167
-          modified: 1792082166694
-          isPrivate: false
-          description: |-
-            Request should return → 404 {
-            	"error": "Invalid user id"
-            }
-          sortKey: -1792078239265.1875
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/-1"
-        name: GET /-1
-        meta:
-          id: req_f2dfa034db264a5d9e59bbb98d654504
-          created: 1792081918162
-          modified: 1792082171281
-          isPrivate: false
-          description: |-
-            Request should return → 404 {
-            	"error": "Invalid user id"
-            }
-          sortKey: -1792078131041.5938
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/2.5"
-        name: GET /2.5
-        meta:
-          id: req_d6ca83f6831046a8b5bdcc4cee737e0e
-          created: 1792081931226
-          modified: 1792082178310
-          isPrivate: false
-          description: |-
-            Request should return → 404 {
-            	"error": "Invalid user id"
-            }
-          sortKey: -1792078076929.7969
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/username/anna"
-        name: GET /username/anna
-        meta:
-          id: req_ed639754db3a40cba924658e4974f5e3
-          created: 1792081952054
-          modified: 1792082750216
-          isPrivate: false
-          description: |-
-            Request should return → 200
-            {
-            	"id": 1,
-            	"username": "anna",
-            	"created_at": "2026-10-15T13:34:12.000Z",
-            	"last_login_at": null
-            }
-          sortKey: -1792078049873.8984
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/username/nobody"
-        name: GET /username/nobody
-        meta:
-          id: req_2b741133bb024a96b03229f3a76e7f33
-          created: 1792082013346
-          modified: 1792082187885
-          isPrivate: false
-          description: |-
-            Request should return → 404
-            {
-            	"error": "User not found"
-            }
-          sortKey: -1792078036345.9492
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/email/anna@mail.se"
-        name: GET /email/anna@mail.se
-        meta:
-          id: req_48545649ba274be886275532561724ac
-          created: 1792082054875
-          modified: 1792082221174
-          isPrivate: false
-          description: |-
-            Request should return → 200
-            {
-            	"id": 1,
-            	"username": "anna",
-            	"created_at": "2026-10-15T13:34:12.000Z",
-            	"last_login_at": null
-            }
-          sortKey: -1792078029581.9746
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/email/anna@mail.se"
-        name: GET /email/ANNA@MAIL.SE
-        meta:
-          id: req_86638543ac774b93bf4cfba668062706
-          created: 1792082235801
-          modified: 1792082235801
-          isPrivate: false
-          description: |-
-            Request should return → 200
-            {
-            	"id": 1,
-            	"username": "anna",
-            	"created_at": "2026-10-15T13:34:12.000Z",
-            	"last_login_at": null
-            }
-          sortKey: -1792078026199.9873
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/email/nobody@mail.se"
-        name: GET /email/nobody@mail.se
-        meta:
-          id: req_eb3f5d81f8694fc4add7381a04c3158d
-          created: 1792082262347
-          modified: 1792082276405
-          isPrivate: false
-          description: |-
-            Request should return → 404 {
-            	"error": "User not found"
-            }
-          sortKey: -1792078024508.9937
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/email/anna3@mail.se"
-        name: GET /email/anna3@mail.se
-        meta:
-          id: req_afc8d9f6e40344e6a85359f0fe5c623e
-          created: 1792082824942
-          modified: 1792082848423
-          isPrivate: false
-          description: |-
-            Request should return → 404 {
-            	"error": "User not found"
-            }
-          sortKey: -1792078023663.4968
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/7"
-        name: GET /7
-        meta:
-          id: req_d3f02f4446e84b13814725aa2d580ec2
-          created: 1792083601350
-          modified: 1792083675600
-          isPrivate: false
-          description: Request should return → 404 User not found
-          sortKey: -1792079321501.125
-        method: GET
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: UPDATE
-    meta:
-      id: fld_395c0a09931c4b2784f7c5d876efa1b6
-      created: 1792082294129
-      modified: 1792082294129
-      sortKey: -1792082294129
-      description: ""
-    children:
-      - url: "{{ _.base_url }}/1"
-        name: Update username
-        meta:
-          id: req_e7d07e4f2e064759879731ba2e0d1b42
-          created: 1792082419261
-          modified: 1792529020724
-          isPrivate: false
-          description: |-
-            Request should return → 200 {
-            	"id": 1,
-            	"username": "anna2",
-            	"created_at": "2026-10-15T13:34:12.000Z",
-            	"last_login_at": null
-            }
-          sortKey: -1792082419261
-        method: PUT
-        body:
-          mimeType: application/json
-          text: '{ "username": "anna" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/1"
-        name: Update email
-        meta:
-          id: req_961cd7b7b67643189b6867ee6ff8f187
-          created: 1792082677434
-          modified: 1792082764997
-          isPrivate: false
-          description: "Request should return → 200 "
-          sortKey: -1792081952617
-        method: PUT
-        body:
-          mimeType: application/json
-          text: '{ "email": "anna3@mail.se" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/1"
-        name: Update password
-        meta:
-          id: req_e94503b430c74385970a45d3ebb2b20b
-          created: 1792082786701
-          modified: 1792529025122
-          isPrivate: false
-          description: "Request should return → 200 "
-          sortKey: -1792081719295
-        method: PUT
-        body:
-          mimeType: application/json
-          text: '{ "password": "nyttLosen456" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/1"
-        name: Update all fields
-        meta:
-          id: req_8b3678cb155c48d69fd004a5fc2ce87f
-          created: 1792083143686
-          modified: 1792083175023
-          isPrivate: false
-          description: "Request should return → 200 "
-          sortKey: -1792081602634
-        method: PUT
-        body:
-          mimeType: application/json
-          text: '{ "password": "nyttLosen456", "email": "anna3@mail.se", "username":
-            "anna" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/1"
-        name: Update with empty fields
-        meta:
-          id: req_39147daa1754458e891b500987442445
-          created: 1792083221786
-          modified: 1792083233406
-          isPrivate: false
-          description: Request should return → 400
-          sortKey: -1792081544303.5
-        method: PUT
-        body:
-          mimeType: application/json
-          text: "{}"
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/1"
-        name: Update with empty username string
-        meta:
-          id: req_cf17e2b150a24c189aa6dcabc9e0f2bf
-          created: 1792083255423
-          modified: 1792083266472
-          isPrivate: false
-          description: Request should return → 400
-          sortKey: -1792081515138.25
-        method: PUT
-        body:
-          mimeType: application/json
-          text: '{ "username": "" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/1"
-        name: Update with existing username
-        meta:
-          id: req_b753cfe912b143259409a4d8b890bb86
-          created: 1792083319309
-          modified: 1792083376860
-          isPrivate: false
-          description: Request should return → 409 Username already taken
-          sortKey: -1792081500555.625
-        method: PUT
-        body:
-          mimeType: application/json
-          text: '{ "username": "erik" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/1"
-        name: Update with existing email
-        meta:
-          id: req_3bde17b3f29f4ce0801f240427563634
-          created: 1792083345266
-          modified: 1792083368313
-          isPrivate: false
-          description: Request should return → 409 Email already taken
-          sortKey: -1792081493264.3125
-        method: PUT
-        body:
-          mimeType: application/json
-          text: '{ "email": "erik@mail.se" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/9999"
-        name: Update non-existent user id
-        meta:
-          id: req_7182e59720a04d3e8bbc97e48ea63b9c
-          created: 1792083401610
-          modified: 1792083456616
-          isPrivate: false
-          description: Request should return → 404 User not found
-          sortKey: -1792081489618.6562
-        method: PUT
-        body:
-          mimeType: application/json
-          text: '{ "password": "NyttLosen456", "email": "testy@mail.se", "username":
-            "testy" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/abc"
-        name: Update badly formatted user id
-        meta:
-          id: req_5cd3d15383b64c71be73333a14d9710d
-          created: 1792083480032
-          modified: 1792083499024
-          isPrivate: false
-          description: Request should return → 400 Invalid user id
-          sortKey: -1792081487795.8281
-        method: PUT
-        body:
-          mimeType: application/json
-          text: '{ "password": "NyttLosen456", "email": "testy@mail.se", "username":
-            "testy" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: DELETE
-    meta:
-      id: fld_afcd4b88589141dbadba7765af961477
-      created: 1792083515253
-      modified: 1792083515253
-      sortKey: -1792083515253
-      description: ""
-    children:
-      - url: "{{ _.base_url }}/7"
-        name: DELETE /7
-        meta:
-          id: req_2286fe0e3a7547b49cf43931ffa78292
-          created: 1792083533131
-          modified: 1792083736203
-          isPrivate: false
-          description: |+
-            Request should return → First 204 then 404 when repeated
+          id: fld_afcd4b88589141dbadba7765af961477
+          created: 1792083515253
+          modified: 1792608472244
+          sortKey: -1792608470886
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/7"
+            name: DELETE /7
+            meta:
+              id: req_2286fe0e3a7547b49cf43931ffa78292
+              created: 1792083533131
+              modified: 1792083736203
+              isPrivate: false
+              description: |+
+                Request should return → First 204 then 404 when repeated
 
-          sortKey: -1792083533131
-        method: DELETE
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.base_url }}/abc"
-        name: DELETE /abc
-        meta:
-          id: req_134e275e22254ca6ad3af15fe38dee6e
-          created: 1792083691346
-          modified: 1792083752100
-          isPrivate: false
-          description: |+
-            Request should return → 400 Invalid user id
+              sortKey: -1792083533131
+            method: DELETE
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/abc"
+            name: DELETE /abc
+            meta:
+              id: req_134e275e22254ca6ad3af15fe38dee6e
+              created: 1792083691346
+              modified: 1792083752100
+              isPrivate: false
+              description: |+
+                Request should return → 400 Invalid user id
 
-          sortKey: -1792082976196
-        method: DELETE
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: AUTH
+              sortKey: -1792082976196
+            method: DELETE
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: AUTH
+        meta:
+          id: fld_fef9c52b87314f72984ee4b74214cd75
+          created: 1792536354954
+          modified: 1792608470888
+          sortKey: -1792608470786
+          description: ""
+        children:
+          - url: "{{ _.auth_url }}/login"
+            name: Successful login user
+            meta:
+              id: req_834aa648003548ddb2d9031c80211fe5
+              created: 1792536584074
+              modified: 1792701771114
+              isPrivate: false
+              description: ""
+              sortKey: -1792536584074
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "identifier": "anna", "password": "nyttLosen456" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.auth_url }}/login"
+            name: Successful login email
+            meta:
+              id: req_626a7012d5454fdaa9e182c475cc0ce5
+              created: 1792536671527
+              modified: 1792536683774
+              isPrivate: false
+              description: ""
+              sortKey: -1792310058602.5
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "identifier": "anna3@mail.se", "password": "nyttLosen456" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.auth_url }}/login"
+            name: Successful login user with spaces
+            meta:
+              id: req_5c0172abcd5a4614acff81e505734db9
+              created: 1792537631550
+              modified: 1792537635853
+              isPrivate: false
+              description: ""
+              sortKey: -1792423321338.25
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "identifier": "  anna  ", "password": "nyttLosen456" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.auth_url }}/login"
+            name: Wrong password
+            meta:
+              id: req_0d89a57bec1f4796a0775deb06f1ad46
+              created: 1792537660572
+              modified: 1792568404076
+              isPrivate: false
+              description: ""
+              sortKey: -1792479952706.125
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "identifier": "anna", "password": "felLosen123" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.auth_url }}/login"
+            name: Unknown user
+            meta:
+              id: req_e60250fa46964edbb389a6fd31c8544f
+              created: 1792537719915
+              modified: 1792537826630
+              isPrivate: false
+              description: ""
+              sortKey: -1792451637022.1875
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "identifier": "klimpen", "password": "felLosen123" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.auth_url }}/login"
+            name: Empty user
+            meta:
+              id: req_0dcaed0475624c0c97bb23da6ca31d88
+              created: 1792537751891
+              modified: 1792537831762
+              isPrivate: false
+              description: ""
+              sortKey: -1792437479180.2188
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "identifier": "", "password": "felLosen123" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.auth_url }}/login"
+            name: Empty password
+            meta:
+              id: req_0b39574ae3e942fb878d65776570737b
+              created: 1792537842665
+              modified: 1792537847435
+              isPrivate: false
+              description: ""
+              sortKey: -1792430400259.2344
+            method: POST
+            body:
+              mimeType: application/json
+              text: '{ "identifier": "anna", "password": "" }'
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.auth_url }}/login"
+            name: No body
+            meta:
+              id: req_3f0ff80e662e4fe1aa3402b823ed9ed5
+              created: 1792537943690
+              modified: 1792537951493
+              isPrivate: false
+              description: ""
+              sortKey: -1792426860798.7422
+            method: POST
+            body:
+              mimeType: application/json
+              text: "{}"
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.auth_url }}/logout"
+            name: Logout
+            meta:
+              id: req_92d90a6a183b4e29ad1580f335cd7bd9
+              created: 1792699847395
+              modified: 1792701753495
+              isPrivate: false
+              description: ""
+              sortKey: -1792699847395
+            method: POST
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.auth_url }}/me"
+            name: /me
+            meta:
+              id: req_770ff31540664d8096f6208b1ca49d1a
+              created: 1792701691212
+              modified: 1792701785931
+              isPrivate: false
+              description: ""
+              sortKey: -1792654169358.5
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+  - name: ROOM
     meta:
-      id: fld_fef9c52b87314f72984ee4b74214cd75
-      created: 1792536354954
-      modified: 1792536405403
-      sortKey: -1792536354954
+      id: fld_1a4355b75639411a9c7e43b1ec852ca0
+      created: 1792608487011
+      modified: 1792608487011
+      sortKey: -1792608487011
       description: ""
     children:
-      - url: "{{ _.auth_url }}/login"
-        name: Successful login user
+      - url: "{{ _.api_url }}/rooms"
+        name: Access rooms
         meta:
-          id: req_834aa648003548ddb2d9031c80211fe5
-          created: 1792536584074
-          modified: 1792536676636
+          id: req_c43afd64196e421298704722b7785082
+          created: 1792608491322
+          modified: 1792700439553
           isPrivate: false
           description: ""
-          sortKey: -1792536584074
+          sortKey: -1792608491322
         method: POST
         body:
           mimeType: application/json
-          text: '{ "identifier": "anna", "password": "nyttLosen456" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.auth_url }}/login"
-        name: Successful login email
-        meta:
-          id: req_626a7012d5454fdaa9e182c475cc0ce5
-          created: 1792536671527
-          modified: 1792536683774
-          isPrivate: false
-          description: ""
-          sortKey: -1792310058602.5
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "identifier": "anna3@mail.se", "password": "nyttLosen456" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.auth_url }}/login"
-        name: Successful login user with spaces
-        meta:
-          id: req_5c0172abcd5a4614acff81e505734db9
-          created: 1792537631550
-          modified: 1792537635853
-          isPrivate: false
-          description: ""
-          sortKey: -1792423321338.25
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "identifier": "  anna  ", "password": "nyttLosen456" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.auth_url }}/login"
-        name: Wrong password
-        meta:
-          id: req_0d89a57bec1f4796a0775deb06f1ad46
-          created: 1792537660572
-          modified: 1792537819918
-          isPrivate: false
-          description: ""
-          sortKey: -1792479952706.125
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "identifier": "anna", "password": "felLosen123" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.auth_url }}/login"
-        name: Unknown user
-        meta:
-          id: req_e60250fa46964edbb389a6fd31c8544f
-          created: 1792537719915
-          modified: 1792537826630
-          isPrivate: false
-          description: ""
-          sortKey: -1792451637022.1875
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "identifier": "klimpen", "password": "felLosen123" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.auth_url }}/login"
-        name: Empty user
-        meta:
-          id: req_0dcaed0475624c0c97bb23da6ca31d88
-          created: 1792537751891
-          modified: 1792537831762
-          isPrivate: false
-          description: ""
-          sortKey: -1792437479180.2188
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "identifier": "", "password": "felLosen123" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.auth_url }}/login"
-        name: Empty password
-        meta:
-          id: req_0b39574ae3e942fb878d65776570737b
-          created: 1792537842665
-          modified: 1792537847435
-          isPrivate: false
-          description: ""
-          sortKey: -1792430400259.2344
-        method: POST
-        body:
-          mimeType: application/json
-          text: '{ "identifier": "anna", "password": "" }'
-        headers:
-          - name: Content-Type
-            value: application/json
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.auth_url }}/login"
-        name: No body
-        meta:
-          id: req_3f0ff80e662e4fe1aa3402b823ed9ed5
-          created: 1792537943690
-          modified: 1792537951493
-          isPrivate: false
-          description: ""
-          sortKey: -1792426860798.7422
-        method: POST
-        body:
-          mimeType: application/json
-          text: "{}"
+          text: '{ "roomName": "Testrum", "isPublic": true }'
         headers:
           - name: Content-Type
             value: application/json
@@ -1156,11 +1236,11 @@ cookieJar:
   meta:
     id: jar_e24b5fdbd837f7cb4798242cee2d07b2fa863084
     created: 1792077710748
-    modified: 1792538062243
+    modified: 1792701773504
   cookies:
-    - id: a26ef731-c6c9-41c1-a981-c9b4dc158e70
+    - id: 244e35b5-00b9-43f2-b751-4a67979c18da
       key: connect.sid
-      value: s%3AS_8UtEpIWgonVmQteqeaLb0ZpkUX0An3.NFfr4tug%2FM0tV7xNX7wXX%2FCW%2BKCViF%2ByG1yJvTrNxns
+      value: s%3Ah_6dFK0Dvh0MAVJwbZyFBWfqKwZxiT0c.YKdujrZQJCWE6c2q9FB7KZoWHo9QFttbidL6EItbKwc
       domain: localhost
       path: /
       secure: false
@@ -1171,8 +1251,9 @@ environments:
   meta:
     id: env_e24b5fdbd837f7cb4798242cee2d07b2fa863084
     created: 1792077710744
-    modified: 1792536602197
+    modified: 1792608609250
     isPrivate: false
   data:
     base_url: http://localhost:3000/api/users
     auth_url: http://localhost:3000/api/auth
+    api_url: http://localhost:3000/api
