@@ -379,7 +379,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="quiz-room-section">
+  <section id="quiz-rooms" class="quiz-room-section">
     <div class="quiz-room-container">
 
       <div class="quiz-room-heading">

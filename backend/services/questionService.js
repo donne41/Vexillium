@@ -1,95 +1,50 @@
-const dbConnect = require("../dbConnection");
+const dbConnect = require("../connectionMySQL");
 
-function getCountries() {
-    return new Promise((resolve, reject) => {
-        let sql = "SELECT * FROM Countries";
-        dbConnect.query(sql, (error, rows) => {
-            if (error)
-                reject(error);
-            else
-                resolve(rows);
 
-        });
-    });
+async function getRandom(regions, filter) {
+    const { sql, params } = buildSqlParams(regions, filter)
+    const [rows] = await dbConnect.query(sql, params)
+    return {
+        "correctIndex": Math.floor(Math.random() * 4),
+        "countries": rows
+    }
 }
 
-function getCountriesByRegion(regionId) {
-    return new Promise((resolve, reject) => {
-        let sql = "SELECT * FROM Countries WHERE RegionID = ?";
-        dbConnect.query(sql, [regionId], (error, rows) => {
-            if (error)
-                reject(error);
-            else
-                resolve(rows);
-        });
-    });
+async function getRegions() {
+    const sql = "SELECT * FROM Regions"
+    const [rows] = await dbConnect.query(sql)
+    return rows
 }
 
-function getRandom(regions) {
-    return new Promise((resolve, reject) => {
-        let sql = "SELECT * FROM Countries";
-        let params = [] 
-        if(regions){
-            const regionsParam = regions.split(',')
-            if(regionsParam.includes("2") && !regionsParam.includes("1")) regionsParam.push("1")
-            const placeholders = regionsParam.map(() => '?').join(',')  
+function buildSqlParams(regions, filter){
+    let sql = "SELECT * FROM Countries";
+    const params = []
+    if (regions) {
+        let regionFilter = []
+        regionFilter = regions.split(',')
+        if (regions.includes("2") && !regions.includes("1")) regionFilter.push("1")
 
-            sql +=  ` WHERE RegionID IN (${placeholders})`
-            params = regionsParam
-        }
-        sql += " ORDER BY RAND() LIMIT 4"
-        dbConnect.query(sql, params, (error, rows) => {
-            if (error)
-                reject(error);
-            else {
-                let quizContent = {
-                    "correctIndex": Math.floor(Math.random() * 4),
-                    "countries": rows
-                }
-                resolve(quizContent);
-            }
-        });
-    }); 
-}
+        sql += ` WHERE RegionID IN (?)`
+        params.push(regionFilter)
+    }
 
-function getRandomAllCountries() {
-    return new Promise((resolve, reject) => {
-        let sql = "SELECT * FROM Countries ORDER BY RAND() LIMIT 4";
-        dbConnect.query(sql, (error, rows) => {
-            if (error)
-                reject(error);
-            else{
-                let quizContent = {
-                    "correctIndex": Math.floor(Math.random() * rows.length),
-                    "countries": rows
-                }
-                resolve(quizContent);
-            }
-        });
-    })
-}
+    if (filter !== 0) {
+        params.push(filter.split(','))
 
-function getRegions(){
-    return new Promise((resolve, reject) => {
-        const sql = "SELECT * FROM Regions"
-        dbConnect.query(sql, (error, rows) => {
-            if(error)
-                reject(error)
-            else{
-                resolve(rows)
-            }
-        })
-    })
+        sql += regions
+            ? ' AND CountryID NOT IN (?)'
+            : ' WHERE CountryID NOT IN (?)'
+    }
+    sql += " ORDER BY RAND() LIMIT 4"
+
+    return {
+        sql: sql,
+        params: params
+    }
 }
 
 module.exports = {
-    getCountries,
-    getCountriesByRegion,
     getRandom,
-    getRandomAllCountries,
     getRegions,
-    
-
-
 
 }
