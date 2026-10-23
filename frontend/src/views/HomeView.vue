@@ -1,10 +1,20 @@
 <script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import HeroSection from '../components/HeroSection.vue'
 import QuizCategories from '../components/QuizCategories.vue'
 import RecentGames from '../components/RecentGames.vue'
 import Leaderboard from '../components/Leaderboard.vue'
 import QuizRoom from '../components/QuizRoom.vue'
 import CreateRoom from '../components/CreateRoom.vue'
+
+const route = useRoute()
+
+const showJoinRoom = computed(() => route.hash === '#quiz-rooms')
+const showCreateRoom = computed(() =>
+    route.hash === '#quiz-rooms' || route.hash === '#create-room'
+)
+const showQuizCategories = computed(() => route.hash === '#quiz')
 
 defineProps({
   currentUser: {
@@ -22,43 +32,21 @@ defineProps({
   <main>
 
     <!-- Översta delen av startsidan -->
-    <HeroSection />
-
-    <!-- Våra sex quizkategorier -->
-    <QuizCategories />
-
-    <!-- Senaste spel och topplistan -->
-    <div class="homepage-stats">
+    <HeroSection>
       <RecentGames />
       <Leaderboard />
-    </div>
+    </HeroSection>
+
+    <!-- Våra sex quizkategorier -->
+    <QuizCategories v-show="showQuizCategories" />
 
     <CreateRoom
+        v-show="showCreateRoom"
         :current-user="currentUser"
         :auth-headers="authHeaders"
     />
 
-    <QuizRoom />
+    <QuizRoom v-show="showJoinRoom" />
 
   </main>
 </template>
-
-<style scoped>
-.homepage-stats {
-  max-width: 1364px;
-  margin: 0 auto;
-  padding: 70px 32px;
-
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-}
-
-@media (max-width: 700px) {
-  .homepage-stats {
-    grid-template-columns: 1fr;
-    padding: 48px 20px;
-    gap: 20px;
-  }
-}
-</style>
