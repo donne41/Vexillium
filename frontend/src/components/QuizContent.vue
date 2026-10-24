@@ -14,12 +14,12 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['finish'])
 let hasEnded = false
 watch(() => props.timer, (timer) => {
   if (timer <= 0) quizEnd()
 })
 
+const emit = defineEmits(["finished", "error"])
 let isLoading = ref(true)
 let showFlagQuiz = ref(false)
 let showCaptialQuiz = ref(false)
@@ -36,10 +36,11 @@ const quizType = route.params.quizType
 const maxLen = props.settings.length
 const infinite = maxLen === 0 ? true : false
 const lengthString = infinite ? "Oändligt" : maxLen
+let questionNumber = ref(0)
 const progressPercent = computed(() =>
     maxLen <= 0
         ? 0
-        : Math.min((quizStatsData.value.totalQuestions / maxLen) * 100, 100))
+        : Math.min((questionNumber / maxLen) * 100, 100))
 
 
 const quizStatsData = ref({
@@ -48,25 +49,47 @@ const quizStatsData = ref({
     history: []
 })
 
-
+function getLatestFilter(regions) {
+    let split = 10
+    if (regions.length === 1 && regions.includes(1)) {
+        split = 4
+    }
+    let lateHistory = [];
+    if (quizStatsData.value?.history.length >= split)
+        lateHistory = quizStatsData.value.history.slice(split * -1).map(item => item.correctID)
+    else
+        lateHistory = quizStatsData.value.history.map(item => item.correctID)
+    return lateHistory
+}
 
 
 
 async function getQuiz() {
     try {
         const regions = props.settings.regions.join(',');
+        const answeredCountries = getLatestFilter(regions)
         let url = "http://localhost:3000/api/random"
         if (regions.length > 0) {
             url += `?regions=${regions}`
         }
+        if (answeredCountries.length > 0) {
+            const filterName = answeredCountries.join(',')
+          url += `${url.includes('?') ? '&' : '?'}filter=${filterName}`
+        }
         let resp = await fetch(url)
         if (!resp.ok)
-          throw new Error(`Kunde inte hämta quizdata: ${resp.status}`)
+            throw new Error(`Kunde inte hämta quizdata: ${resp.status}`)
         const data = await resp.json()
+        if (data.length < 1) throw new Error("Databasen svarade utan data!")
         nextQuestion.value = data
 
 
     } catch (error) {
+        if (error instanceof TypeError) {
+            emit("error", "Kunde inte nå servern.")
+        } else {
+            emit("error", "Övrigt fel: " + error.message)
+        }
         console.error(`Fel vid hämtning av quizdata: ${error}`)
         isLoading.value = true
         errorFirstFetch.value = true
@@ -75,10 +98,10 @@ async function getQuiz() {
 
 }
 
-
-
-function presentQuestion() {
+async function presentQuestion() {
+    questionNumber.value++
     quizData.value = nextQuestion.value
+
     if (quizType === "flags") {
         flagQuiz()
         showFlagQuiz.value = true
@@ -92,12 +115,12 @@ function presentQuestion() {
 }
 
 function capitalQuiz() {
-    buttonChoise.value = quizData.value.countries.sort((a, b) => a.Countryname.localeCompare(b.Countryname))
+    buttonChoise.value = [...quizData.value.countries].sort(() => 0.5 - Math.random())
     capitalName = quizData.value.countries[quizData.value.correctIndex].Capital
 }
 
 function flagQuiz() {
-    buttonChoise.value = quizData.value.countries.sort((a, b) => a.Countryname.localeCompare(b.Countryname))
+    buttonChoise.value = [...quizData.value.countries].sort(() => 0.5 - Math.random())
     flagurl.value = quizData.value.countries[quizData.value.correctIndex].Flag
 }
 
@@ -106,8 +129,8 @@ function submit(answer) {
     isChecking.value = true
     selectedAnswer.value = answer
 
-    const correctAnswer = quizData.value.countries[quizData.value.correctIndex].Countryname
-    const isCorrect = (answer === correctAnswer)
+    const correctAnswer = quizData.value.countries[quizData.value.correctIndex]
+    const isCorrect = (answer === correctAnswer.Countryname)
 
     quizStatsData.value.totalQuestions++;
 
@@ -116,7 +139,8 @@ function submit(answer) {
     }
     quizStatsData.value.history.push({
         userAnswer: answer,
-        correctCountry: correctAnswer,
+        correctCountry: correctAnswer.Countryname,
+        correctID: correctAnswer.CountryID,
         isCorrect: isCorrect
     })
     if (infinite && !isCorrect) {
@@ -133,7 +157,7 @@ function delayNext() {
         selectedAnswer.value = null
         isChecking.value = false
         await getQuiz()
-        presentQuestion()
+        await presentQuestion()
         isLoading.value = false
     }, 3000)
 }
@@ -178,7 +202,7 @@ function saveToLocal(name, content) {
 
 async function loadFirst() {
     await getQuiz()
-    presentQuestion()
+    await presentQuestion()
 }
 
 onMounted(() => {
@@ -190,23 +214,22 @@ onMounted(() => {
 
   
     <div v-if="!isLoading" class="quiz-content">
-        <p>Fråga {{ quizStatsData.history.length + 1 }} av {{ lengthString }}</p>
       <div class="quiz-stats">
         <div class="quiz-stat">
           <span>Framsteg</span>
 
           <strong>
-            {{ quizStatsData.totalQuestions }} / {{ lengthString }}
+            {{ questionNumber }} / {{ lengthString }}
           </strong>
 
           <div
               v-if="!infinite"
               class="progress-track"
               role="progressbar"
-              :aria-valuenow="quizStatsData.totalQuestions"
+              :aria-valuenow="questionNumber.value"
               :aria-valuemin="0"
               :aria-valuemax="maxLen"
-              :aria-label="`Framsteg: ${quizStatsData.totalQuestions} av ${lengthString} frågor`"
+              :aria-label="`Framsteg: ${questionNumber} av ${lengthString} frågor`"
           >
             <div
                 class="progress-fill"
@@ -230,7 +253,7 @@ onMounted(() => {
       </div>
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
         <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
-        }}</span>?</h1>
+                }}</span>?</h1>
         <div class="button-container">
             <button v-for="option in buttonChoise" :key="option.Countryname" :class="getButtonClass(option.Countryname)"
                 @click="submit(option.Countryname)">{{
@@ -240,6 +263,5 @@ onMounted(() => {
     </div>
     <div v-else>
         <p>Laddar quiz...</p>
-        <button v-if="errorFirstFetch" @click="loadFirst" class="button-error">Ladda om</button>
     </div>
 </template>

@@ -7,14 +7,38 @@
 
 .hero-content {
     max-width: 1300px;
-    min-height: 420px;
     margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 60px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 48px;
 }
 
+.hero-dashboard {
+    min-width: 0;
+    align-self: center;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 24px;
+}
+
+.hero-dashboard .recent-games,
+.hero-dashboard .leaderboard {
+    width: 100%;
+    height: 100%;
+}
+
+.hero-dashboard .recent-games-empty,
+.hero-dashboard .leaderboard-empty {
+    min-height: 120px;
+}
+
+.hero-dashboard .recent-games h2,
+.hero-dashboard .leaderboard h2 {
+    font-size: 24px;
+    line-height: 1.3;
+}
 .hero-text {
     flex: 1;
     min-width: 0;
@@ -47,7 +71,6 @@
 }
 
 .play-button {
-    margin-top: 20px;
     padding: 14px 28px;
     background: var(--green);
     color: var(--background);
@@ -55,10 +78,65 @@
     border-radius: 8px;
     font-size: 16px;
     font-weight: bold;
+    display: inline-block;
+    text-decoration: none;
 }
 
 .play-button:hover {
     background: #62c566;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.hero-actions > a {
+    gap: 12px;
+}
+
+.hero-button-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.hero-button-arrow {
+    width: 20px;
+    height: 20px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.hero-actions .play-button,
+.hero-secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 50px;
+    padding: 14px 28px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.3;
+    text-align: center;
+    text-decoration: none;
+}
+
+.hero-secondary-button {
+    background: var(--background);
+    color: var(--text);
+    border-color: var(--muted);
+}
+
+.hero-secondary-button:hover {
+    background: var(--card);
+    border-color: var(--text);
 }
 
 /* Quizkategorier */
@@ -100,19 +178,15 @@
 /* Logotyp till höger */
 
 .hero-graphic {
-    width: 400px;
-    min-height: 400px;
-    flex-shrink: 0;
-
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 16px;
 }
 
 .animated-logo {
     position: relative;
-    width: 400px;
-    height: 400px;
+    width: 300px;
+    height: 300px;
 }
 
 .hero-globe {
@@ -153,25 +227,104 @@
     }
 }
 
+.hero-room-box {
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.hero-room-box h3 {
+    margin: 0 0 12px;
+    color: var(--teal);
+}
+
+.hero-room-box p {
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.hero-room-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.hero-room-link {
+    display: inline-flex;
+    justify-content: center;
+    padding: 12px 18px;
+    background: var(--teal);
+    color: #000;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.hero-room-link:hover {
+    background: #09c5d6;
+}
+
+.hero-feature-cards {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.hero-feature-card {
+    --card-image: none;
+    min-width: 0;
+    min-height: 180px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--card);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), var(--card-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.hero-feature-card h3 {
+    margin: 0 0 12px;
+    color: var(--teal);
+    font-size: 28px;
+}
+
+.hero-feature-card p {
+    margin: 0;
+    color: #fff;
+    line-height: 1.6;
+}
+
+.hero-feature-card:hover {
+    border-color: var(--teal);
+}
+
+.hero-feature-card:focus-visible,
+.hero-actions a:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 4px;
+}
+
 /* Surfplatta */
 
 @media (max-width: 900px) {
     .hero-content {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 40px;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
     }
 
     .hero h2 {
         font-size: 44px;
     }
 
-    .hero-graphic {
-        width: 100%;
-        max-width: 400px;
-        min-height: 0;
-        margin: auto;
-    }
 }
 
 /* Mobil */
@@ -203,5 +356,17 @@
 
     .category-buttons button {
         width: 100%;
+    }
+
+    .hero-feature-cards {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .hero-feature-card {
+        padding: 24px;
+    }
+
+    .hero-actions > a {
+        flex: 1 1 150px;
     }
 }

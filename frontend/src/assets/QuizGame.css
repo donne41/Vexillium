@@ -13,7 +13,18 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+    min-width: 400px;
 
+}
+
+@media screen and (max-width: 670px) {
+
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+    }
+    
 }
 
 
@@ -101,6 +112,24 @@
     grid-template-columns: 3fr 3fr 3fr;
     grid-template-rows: 1fr 1fr 1fr;
     gap: 1%
+}
+
+.text-box {
+    margin: 1rem 0 1rem 0;
+}
+
+@media screen and (max-width: 670px){
+
+    .difficulty-buttons {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .region-buttons {
+        display: flex;
+        flex-direction: column;
+    }
+
 }
 
 

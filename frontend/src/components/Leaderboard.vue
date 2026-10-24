@@ -6,7 +6,7 @@ const players = []
 </script>
 
 <template>
-  <section class="leaderboard">
+  <section id="leaderboard" class="leaderboard">
 
     <div class="leaderboard-header">
       <div>

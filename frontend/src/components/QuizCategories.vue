@@ -1,32 +1,44 @@
 <script setup>
 import {RouterLink} from 'vue-router'
+import flagsBackground from '../assets/quizflaggor.png'
+import capitalsBackground from '../assets/quizhuvudstäder.png'
+import neighboursBackground from '../assets/quizgrannländer.png'
+import populationBackground from '../assets/quizbefolkningochyta.png'
+import currenciesBackground from '../assets/quizvalutor.png'
+import languagesBackground from '../assets/quizspråk.png'
 import './QuizCategories.css'
 
 const categories = [
   {
     title: 'Flaggor',
+    background: flagsBackground,
     quizPath: '/quiz/flags',
     description: 'Snabba visuella matchningar mot klockan. Världens alla nationer ingår.'
   },
   {
     title: 'Huvudstäder',
+    background: capitalsBackground,
     quizPath: '/quiz/capitals',
     description: 'Navigera kontinenterna och bevisa dina kunskaper om globala centralorter.'
   },
   {
     title: 'Grannländer',
+    background: neighboursBackground,
     description: 'Gränsanalys och geopolitiska relationer i ett unikt pusselformat.'
   },
   {
     title: 'Befolkning & yta',
+    background: populationBackground,
     description: 'Sortera, väg och värdera länders storlek och demografiska densitet.'
   },
   {
     title: 'Valutor',
+    background: currenciesBackground,
     description: 'Ekonomisk geografi. Koppla ihop rätt valutaenhet med motsvarande rike.'
   },
   {
     title: 'Språk',
+    background: languagesBackground,
     description: 'Hitta den geografiska hemvisten för globala tungomål och dialekter.'
   }
 ]
@@ -50,6 +62,7 @@ const categories = [
             :key="category.title"
             :to="category.quizPath || undefined"
             class="quiz-card"
+            :style="{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${category.background})` }"
             :class="{ 'quiz-card-disabled': !category.quizPath }"
             :title="!category.quizPath
         ? 'Detta quiz är inte tillgängligt ännu'
