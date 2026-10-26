@@ -1,5 +1,5 @@
 <script setup>
-import {RouterLink} from 'vue-router'
+import { RouterLink } from 'vue-router'
 import flagsBackground from '../assets/quizflaggor.png'
 import capitalsBackground from '../assets/quizhuvudstäder.png'
 import neighboursBackground from '../assets/quizgrannländer.png'
@@ -13,78 +13,69 @@ const categories = [
     title: 'Flaggor',
     background: flagsBackground,
     quizPath: '/quiz/flags',
-    description: 'Snabba visuella matchningar mot klockan. Världens alla nationer ingår.'
+    description: 'Snabba visuella matchningar mot klockan. Världens alla nationer ingår.',
   },
   {
     title: 'Huvudstäder',
     background: capitalsBackground,
     quizPath: '/quiz/capitals',
-    description: 'Navigera kontinenterna och bevisa dina kunskaper om globala centralorter.'
+    description: 'Navigera kontinenterna och bevisa dina kunskaper om globala centralorter.',
   },
   {
     title: 'Grannländer',
+    quizPath: '/quiz/neighbours',
     background: neighboursBackground,
-    description: 'Gränsanalys och geopolitiska relationer i ett unikt pusselformat.'
+    description: 'Testa vilka länder och territorier som delar landgräns.',
   },
   {
     title: 'Befolkning & yta',
     background: populationBackground,
-    description: 'Sortera, väg och värdera länders storlek och demografiska densitet.'
+    description: 'Sortera, väg och värdera länders storlek och demografiska densitet.',
   },
   {
     title: 'Valutor',
     background: currenciesBackground,
-    description: 'Ekonomisk geografi. Koppla ihop rätt valutaenhet med motsvarande rike.'
+    description: 'Ekonomisk geografi. Koppla ihop rätt valutaenhet med motsvarande rike.',
   },
   {
     title: 'Språk',
     background: languagesBackground,
-    description: 'Hitta den geografiska hemvisten för globala tungomål och dialekter.'
-  }
+    description: 'Hitta den geografiska hemvisten för globala tungomål och dialekter.',
+  },
 ]
 </script>
 
 <template>
   <section class="quiz-section" id="quiz">
     <div class="quiz-container">
-
       <h2>Utmaningar för alla nivåer</h2>
 
-      <p class="quiz-intro">
-        Välj bland våra ämnesområden och testa dina geografikunskaper.
-      </p>
+      <p class="quiz-intro">Välj bland våra ämnesområden och testa dina geografikunskaper.</p>
 
       <div class="quiz-grid">
-
         <component
-            :is="category.quizPath ? RouterLink : 'article'"
-            v-for="category in categories"
-            :key="category.title"
-            :to="category.quizPath || undefined"
-            class="quiz-card"
-            :style="{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${category.background})` }"
-            :class="{ 'quiz-card-disabled': !category.quizPath }"
-            :title="!category.quizPath
-        ? 'Detta quiz är inte tillgängligt ännu'
-        : ''"
+          :is="category.quizPath ? RouterLink : 'article'"
+          v-for="category in categories"
+          :key="category.title"
+          :to="category.quizPath || undefined"
+          class="quiz-card"
+          :style="{
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${category.background})`,
+          }"
+          :class="{ 'quiz-card-disabled': !category.quizPath }"
+          :title="!category.quizPath ? 'Detta quiz är inte tillgängligt ännu' : ''"
         >
-  <span class="quiz-tag">
-    {{ category.title }}
-  </span>
+          <span class="quiz-tag">
+            {{ category.title }}
+          </span>
 
           <p>{{ category.description }}</p>
 
-          <span v-if="category.quizPath" class="quiz-link">
-    Börja quiz →
-  </span>
+          <span v-if="category.quizPath" class="quiz-link"> Börja quiz → </span>
 
-          <span v-else class="quiz-link quiz-link-disabled">
-    Kommer snart
-  </span>
+          <span v-else class="quiz-link quiz-link-disabled"> Kommer snart </span>
         </component>
-
       </div>
-
     </div>
   </section>
 </template>
