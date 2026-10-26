@@ -10,13 +10,13 @@ const currentUser = ref(null)
  * currentUser. Utloggad (401) eller nätverksfel ger null.
  */
 async function fetchMe() {
-    try {
-        const response = await fetch(`${API_URL}/me`, { credentials: 'include' })
-        currentUser.value = response.ok ? await respoonse.json() : null
-    } catch (error) {
-        console.log('Kunde inte hämta inloggad användare:', error)
-        currentUser.value = null
-    }
+  try {
+    const response = await fetch(`${API_URL}/me`, { credentials: 'include' })
+    currentUser.value = response.ok ? await response.json() : null
+  } catch (error) {
+    console.error('Kunde inte hämta inloggad användare:', error)
+    currentUser.value = null
+  }
 }
 
 /**
@@ -24,8 +24,8 @@ async function fetchMe() {
  * som ändrar den. currentUser är skrivskyddad utanför den här filen.
  */
 export function useAuth() {
-    return {
-        currentUser: readonly(currentUser),
-        fetchMe,
-    }
+  return {
+    currentUser: readonly(currentUser),
+    fetchMe,
+  }
 }
