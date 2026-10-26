@@ -71,10 +71,8 @@ onMounted(() => {
 
 <template>
     <div class="main-settings">
-        <fieldset>
-            <legend>Inställningar</legend>
             <section class="text-box">
-                <h2>Typ av quiz</h2>
+                <h2>Inställningar</h2>
             </section>
             <section class="settings-length">
                 <section>
@@ -89,8 +87,8 @@ onMounted(() => {
                 <section>
                     <span>Special</span>
                     <div class="difficulty-buttons">
-                        <button :class="setLengthButton(0)" @click="setLength(0)">Första miss</button>
-                        <button :class="setLengthButton(0)" @click="setLength(0)">På tid</button>
+                        <button :class="setLengthButton('first')" @click="setLength('first')">Första miss</button>
+                        <button :class="setLengthButton('time')" @click="setLength('time')">På tid</button>
                     </div>
                 </section>
             </section>
@@ -101,8 +99,9 @@ onMounted(() => {
                 <button v-for="region in regions" :key="region" :class="togglebuttonclass(region.RegionsID)"
                     @click="toggleRegion(region.RegionsID)">{{ region.Regionname }}</button>
             </div>
+            <div class="start-quiz-button">
             <button class="default-green" @click="handleStart">Starta Quiz!</button>
-        </fieldset>
+            </div>
     </div>
 </template>
 <style scoped>
