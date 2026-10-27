@@ -27,5 +27,48 @@ export function useAuth() {
   return {
     currentUser: readonly(currentUser),
     fetchMe,
+    login,
+    logout,
+  }
+}
+
+/**
+ * login skickar inloggningsuppgifterna till backend. Vid lyckad inloggning sätts
+ * currentUser och användaren returneras. Annars kastas ett fel med backendens
+ * meddelande, så att formuläret kan visa det.
+ */
+async function login(identifier, password) {
+  let response
+  try {
+    response = await fetch(`${API_URL}/login`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, password }),
+    })
+  } catch {
+    throw new Error('Kunde inte nå servern. Försök igen senare.')
+  }
+
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Inloggningen misslyckades')
+  }
+
+  currentUser.value = data
+  return data
+}
+
+/**
+ * logout loggar ut på servern och nollställer currentUser. currentUser nollställs
+ * även om anropet misslyckas, så att ingen ser sig som inloggad efter att ha loggat ut.
+ */
+async function logout() {
+  try {
+    await fetch(`${API_URL}/logout`, { method: 'POST', credentials: 'include' })
+  } catch (error) {
+    console.error('Utloggningen misslyckades', error)
+  } finally {
+    currentUser.value = null
   }
 }
