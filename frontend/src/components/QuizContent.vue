@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, onMounted, watch } from "vue"
 import { useRoute } from "vue-router"
-
+import "@/assets/css/QuizGame.css"
 
 const props = defineProps({
     settings: {

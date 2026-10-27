@@ -1,5 +1,5 @@
 <script setup>
-import './LoginView.css'
+import '@/assets/css/LoginView.css'
 </script>
 
 <template>

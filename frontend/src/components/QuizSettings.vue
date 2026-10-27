@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue"
+import "@/assets/css/QuizGame.css"
 const selectedLength = ref(10)
 const selectedRegions = ref([])
 let regions = ref([]);

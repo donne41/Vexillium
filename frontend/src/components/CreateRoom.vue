@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import './CreateRoom.css'
+import '@/assets/css/CreateRoom.css'
 
 const props = defineProps({
   currentUser: {
