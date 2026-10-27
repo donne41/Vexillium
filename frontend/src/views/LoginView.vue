@@ -15,7 +15,7 @@ import LoginForm from '../components/LoginForm.vue'
         </p>
       </div>
 
-      <LoginForm />
+      <LoginForm @success="(user) => console.log('success', user)" />
 
       <div class="create-account">
         <p>Har du inget konto?</p>
