@@ -8,16 +8,21 @@ const router = useRouter()
 
 /**
  * goToNextPage skickar användaren vidare efter inloggning: till sidan i ?redirect=
- * om den är en sökväg inom sajten, annars till startsidan.
+ * om den är en befintlig sida inom sajten (men inte inloggningssidan), annars till startsidan.
  */
 function goToNextPage() {
   const redirect = route.query.redirect
   const isInternalPath = typeof redirect === 'string'
-    && redirect.startsWith('/')
-    && !redirect.startsWith('//')
-    && !redirect.startsWith('/\\')
+      && redirect.startsWith('/')
+      && !redirect.startsWith('//')
+      && !redirect.startsWith('/\\')
 
-  router.replace(isInternalPath ? redirect : '/')
+  const destination = isInternalPath ? router.resolve(redirect) : null
+  const isValidDestination = destination !== null
+      && destination.matched.length > 0
+      && destination.name !== 'login'
+
+  router.replace(isValidDestination ? destination.fullPath : '/')
 }
 </script>
 
