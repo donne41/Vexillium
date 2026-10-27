@@ -44,6 +44,20 @@
     color: var(--teal);
 }
 
+.navbar .desktop-nav a,
+.navbar .login-button,
+.navbar .mobile-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar .nav-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
 .navbar .login-button {
     display: inline-flex;
     align-items: center;

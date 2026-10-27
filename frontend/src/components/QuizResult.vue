@@ -25,6 +25,7 @@ const emit = defineEmits(["restart", "goToSettings"])
 let quizStatsData = ref({
     totalQuestions: props.stats.totalQuestions,
     correctAnswers: props.stats.correctAnswers,
+    amountString: props.stats.amountString,
     history: props.stats.history
 });
 
@@ -32,6 +33,7 @@ function restartGame() {
     quizStatsData.value = {
         totalQuestions: 0,
         correctAnswers: 0,
+        amountString: "",
         history: []
     }
     emit("restart")
@@ -51,7 +53,7 @@ onMounted(() => {
     <div>
         <div class="result-container">
             <h2>Quizet för {{ quizString }} är slut!</h2>
-            <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ props.settings.length }}</p>
+            <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ props.stats.totalQuestions }}</p>
             <ol>
                 <li v-for="(item, index) in quizStatsData.history" :key="index">
                     <p>Du svarade <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer

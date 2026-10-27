@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import { nextTick } from 'vue'
 import RegisterView from '../views/RegisterView.vue'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
@@ -9,14 +10,16 @@ import AchievementsView from '../views/AchievementsView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
 
-  scrollBehavior(to, from, savedPosition) {
+  async scrollBehavior(to, from, savedPosition) {
+    await nextTick()
+
     if (savedPosition) {
       return savedPosition
     }
 
     if (to.hash) {
       return {
-        el: to.hash,
+        el: to.hash === '#quiz-rooms' ? '#create-room' : to.hash,
         top: 110,
       }
     }

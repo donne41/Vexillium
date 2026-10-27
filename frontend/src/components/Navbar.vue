@@ -1,5 +1,6 @@
 <script setup>
 import './Navbar.css'
+import NavIcon from './NavIcon.vue'
 
 import {ref, watch} from 'vue'
 import {useRoute} from 'vue-router'
@@ -28,19 +29,26 @@ watch(() => route.fullPath, closeMenu)
       </RouterLink>
 
       <nav class="desktop-nav">
-        <RouterLink to="/" @click="closeMenu">Hem</RouterLink>
+        <RouterLink to="/" @click="closeMenu">
+          <NavIcon name="home" />
+          Hem
+        </RouterLink>
         <RouterLink :to="{ path: '/', hash: '#quiz' }" @click="closeMenu">
+          <NavIcon name="quiz" />
           Quiz
         </RouterLink>
         <RouterLink :to="{ path: '/', hash: '#leaderboard' }" @click="closeMenu">
+          <NavIcon name="trophy" />
           Topplista
         </RouterLink>
         <RouterLink :to="{ path: '/', hash: '#quiz-rooms' }" @click="closeMenu">
+          <NavIcon name="group" />
           Quizrum
         </RouterLink>
       </nav>
 
       <RouterLink to="/login" class="login-button desktop-login">
+        <NavIcon name="user" />
         Logga in
       </RouterLink>
 
@@ -66,19 +74,26 @@ watch(() => route.fullPath, closeMenu)
         :inert="!isMenuOpen"
         aria-label="Mobilnavigation"
     >
-      <RouterLink to="/" @click="closeMenu">Hem</RouterLink>
+      <RouterLink to="/" @click="closeMenu">
+        <NavIcon name="home" />
+        Hem
+      </RouterLink>
       <RouterLink :to="{ path: '/', hash: '#quiz' }" @click="closeMenu">
+        <NavIcon name="quiz" />
         Quiz
       </RouterLink>
 
       <RouterLink :to="{ path: '/', hash: '#leaderboard' }" @click="closeMenu">
+        <NavIcon name="trophy" />
         Topplista
       </RouterLink>
 
       <RouterLink :to="{ path: '/', hash: '#quiz-rooms' }" @click="closeMenu">
+        <NavIcon name="group" />
         Quizrum
       </RouterLink>
       <RouterLink to="/login" class="mobile-login" @click="closeMenu">
+        <NavIcon name="user" />
         Logga in
       </RouterLink>
     </nav>
