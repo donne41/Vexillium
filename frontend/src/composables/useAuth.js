@@ -1,6 +1,7 @@
 import { ref, readonly } from 'vue'
 
 const API_URL = 'http://localhost:3000/api/auth'
+const SERVER_UNREACHABLE = 'Kunde inte nå servern. Försök igen senare.'
 
 // Skapas en gång när filen laddas och delas därför av alla komponenter som anropar useAuth().
 const currentUser = ref(null)
@@ -11,24 +12,14 @@ const currentUser = ref(null)
  */
 async function fetchMe() {
   try {
-    const response = await fetch(`${API_URL}/me`, { credentials: 'include' })
+    const response = await fetch(`${API_URL}/me`, {
+      credentials: 'include',
+      signal: AbortSignal.timeout(5000),
+    })
     currentUser.value = response.ok ? await response.json() : null
   } catch (error) {
     console.error('Kunde inte hämta inloggad användare:', error)
     currentUser.value = null
-  }
-}
-
-/**
- * useAuth ger komponenter tillgång till den inloggade användaren och funktionerna
- * som ändrar den. currentUser är skrivskyddad utanför den här filen.
- */
-export function useAuth() {
-  return {
-    currentUser: readonly(currentUser),
-    fetchMe,
-    login,
-    logout,
   }
 }
 
@@ -47,12 +38,12 @@ async function login(identifier, password) {
       body: JSON.stringify({ identifier, password }),
     })
   } catch {
-    throw new Error('Kunde inte nå servern. Försök igen senare.')
+    throw new Error(SERVER_UNREACHABLE)
   }
 
-  const data = await response.json()
-  if (!response.ok) {
-    throw new Error(data.error ?? 'Inloggningen misslyckades')
+  const data = await response.json().catch(() => null)
+  if (!response.ok || !data) {
+    throw new Error(data?.error ?? 'Inloggningen misslyckades')
   }
 
   currentUser.value = data
@@ -64,11 +55,29 @@ async function login(identifier, password) {
  * även om anropet misslyckas, så att ingen ser sig som inloggad efter att ha loggat ut.
  */
 async function logout() {
+  let response
   try {
-    await fetch(`${API_URL}/logout`, { method: 'POST', credentials: 'include' })
-  } catch (error) {
-    console.error('Utloggningen misslyckades', error)
-  } finally {
-    currentUser.value = null
+    response = await fetch(`${API_URL}/logout`, { method: 'POST', credentials: 'include' })
+  } catch {
+    throw new Error(SERVER_UNREACHABLE)
+  }
+
+  if (!response.ok) {
+    throw new Error('Utloggningen misslyckades. Försök igen.')
+  }
+
+  currentUser.value = null
+}
+
+/**
+ * useAuth ger komponenter tillgång till den inloggade användaren och funktionerna
+ * som ändrar den. currentUser är skrivskyddad utanför den här filen.
+ */
+export function useAuth() {
+  return {
+    currentUser: readonly(currentUser),
+    fetchMe,
+    login,
+    logout,
   }
 }

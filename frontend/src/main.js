@@ -15,3 +15,5 @@ const { fetchMe } = useAuth()
 fetchMe().finally(() => {
     app.mount('#app')
 })
+
+window.auth = useAuth()
