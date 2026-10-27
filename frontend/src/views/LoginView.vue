@@ -1,6 +1,24 @@
 <script setup>
+import { useRoute, useRouter } from 'vue-router'
 import './LoginView.css'
 import LoginForm from '../components/LoginForm.vue'
+
+const route = useRoute()
+const router = useRouter()
+
+/**
+ * goToNextPage skickar användaren vidare efter inloggning: till sidan i ?redirect=
+ * om den är en sökväg inom sajten, annars till startsidan.
+ */
+function goToNextPage() {
+  const redirect = route.query.redirect
+  const isInternalPath = typeof redirect === 'string'
+    && redirect.startsWith('/')
+    && !redirect.startsWith('//')
+    && !redirect.startsWith('/\\')
+
+  router.replace(isInternalPath ? redirect : '/')
+}
 </script>
 
 <template>
@@ -15,7 +33,7 @@ import LoginForm from '../components/LoginForm.vue'
         </p>
       </div>
 
-      <LoginForm @success="(user) => console.log('success', user)" />
+      <LoginForm @success="goToNextPage" />
 
       <div class="create-account">
         <p>Har du inget konto?</p>
