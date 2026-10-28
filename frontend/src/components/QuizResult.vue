@@ -12,6 +12,10 @@ if (quizType === 'capitals') {
   quizString = 'huvudstäder'
 } else if (quizType === 'neighbours') {
   quizString = 'grannländer'
+} else if (quizType === 'population') {
+  quizString = 'befolkning'
+} else if (quizType === 'area') {
+  quizString = 'yta'
 }
 
 const props = defineProps({
@@ -56,16 +60,10 @@ onMounted(() => {})
       <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ props.settings.length }}</p>
       <ol>
         <li v-for="(item, index) in quizStatsData.history" :key="index">
-          <p v-if="item.question">
-            {{ item.question }}
-          </p>
           <p>
             Du svarade
             <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer }}</span>
             rätt svar var {{ item.correctCountry }}
-          </p>
-          <p v-if="item.explanation">
-            {{ item.explanation }}
           </p>
         </li>
       </ol>

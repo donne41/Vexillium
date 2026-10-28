@@ -98,7 +98,7 @@ async function presentQuestion() {
     flagQuiz()
     showFlagQuiz.value = true
     showCaptialQuiz.value = false
-  } else if (quizType === 'neighbours') {
+  } else if (quizType === 'neighbours' || quizType === 'population' || quizType === 'area') {
     buttonChoise.value = [...quizData.value.countries].sort(() => 0.5 - Math.random())
 
     showFlagQuiz.value = false
@@ -250,7 +250,7 @@ onMounted(() => {
       Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName }}</span
       >?
     </h1>
-    <h1 v-if="quizType === 'neighbours'">
+    <h1 v-if="quizType === 'neighbours' || quizType === 'population' || quizType === 'area'">
       {{ quizData.prompt }}
     </h1>
     <div class="button-container">

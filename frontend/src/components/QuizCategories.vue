@@ -3,7 +3,8 @@ import { RouterLink } from 'vue-router'
 import flagsBackground from '../assets/quizflaggor.png'
 import capitalsBackground from '../assets/quizhuvudstäder.png'
 import neighboursBackground from '../assets/quizgrannländer.png'
-import populationBackground from '../assets/quizbefolkningochyta.png'
+import populationBackground from '../assets/population.png'
+import areaBackground from '../assets/area.png'
 import currenciesBackground from '../assets/quizvalutor.png'
 import languagesBackground from '../assets/quizspråk.png'
 import './QuizCategories.css'
@@ -28,9 +29,16 @@ const categories = [
     description: 'Testa vilka länder och territorier som delar landgräns.',
   },
   {
-    title: 'Befolkning & yta',
+    title: 'Befolkning',
+    quizPath: '/quiz/population',
     background: populationBackground,
-    description: 'Sortera, väg och värdera länders storlek och demografiska densitet.',
+    description: 'Hur många människor bor i världens länder?',
+  },
+  {
+    title: 'Yta',
+    quizPath: '/quiz/area',
+    background: areaBackground,
+    description: 'Hur stora är världens länder? Testa dina kunskaper om deras yta.',
   },
   {
     title: 'Valutor',

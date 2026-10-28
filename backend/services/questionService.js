@@ -5,6 +5,10 @@ async function getRandom(regions, filter, category) {
         return getNeighbourQuestion(regions, filter);
     }
 
+    if (category === "population" || category === "area") {
+        return getStatisticsQuestion(regions, filter, category);
+    }
+
     const { sql, params } = buildSqlParams(regions, filter)
     const [rows] = await dbConnect.query(sql, params)
     return {
@@ -187,6 +191,171 @@ async function getNeighbourQuestion(regions, filter) {
             questionCountry.Countryname +
             "?",
         explanation: explanation
+    };
+}
+
+async function getStatisticsQuestion(regions, filter, category) {
+    const [countries] = await dbConnect.query(
+        `SELECT
+             Countries.CountryID,
+             Countries.Countryname,
+             Countries.RegionID,
+             CountryStatistics.Population,
+             CountryStatistics.PopulationYear,
+             CountryStatistics.PopulationSource,
+             CountryStatistics.AreaKm2,
+             CountryStatistics.AreaSource
+         FROM Countries
+         JOIN CountryStatistics
+             ON Countries.CountryID = CountryStatistics.CountryID`
+    );
+
+    if (countries.length !== 198) {
+        throw new Error(
+            "Lägg in befolkning och yta för alla 198 länder först."
+        );
+    }
+
+    let selectedCountries = countries;
+
+    if (regions) {
+        const regionIds = regions.split(",").map(Number);
+
+        if (regionIds.includes(2) && !regionIds.includes(1)) {
+            regionIds.push(1);
+        }
+
+        selectedCountries = countries.filter(function (country) {
+            return regionIds.includes(country.RegionID);
+        });
+    }
+
+    if (selectedCountries.length === 0) {
+        throw new Error(
+            "Det finns inga länder i den valda regionen."
+        );
+    }
+
+    if (filter) {
+        const previousIds = String(filter).split(",").map(Number);
+
+        const newCountries = selectedCountries.filter(function (country) {
+            return !previousIds.includes(country.CountryID);
+        });
+
+        if (newCountries.length > 0) {
+            selectedCountries = newCountries;
+        }
+    }
+
+    const countryIndex = Math.floor(
+        Math.random() * selectedCountries.length
+    );
+
+    const questionCountry = selectedCountries[countryIndex];
+
+    let value;
+    let unit;
+    let prompt;
+    let source;
+
+    if (category === "population") {
+        value = Number(questionCountry.Population);
+        unit = "invånare";
+        source = questionCountry.PopulationSource;
+
+        prompt =
+            "Ungefär hur många invånare hade " +
+            questionCountry.Countryname +
+            " år " +
+            questionCountry.PopulationYear +
+            "?";
+    } else {
+        value = Number(questionCountry.AreaKm2);
+        unit = "km²";
+        source = questionCountry.AreaSource;
+
+        prompt =
+            "Ungefär hur stor yta har " +
+            questionCountry.Countryname +
+            "?";
+    }
+
+    if (!Number.isFinite(value) || value <= 0) {
+        throw new Error(
+            "Ogiltig statistik för " + questionCountry.Countryname
+        );
+    }
+
+    const roundedValue = Number(value.toPrecision(2));
+
+    const correctAnswer =
+        roundedValue.toLocaleString("sv-SE") +
+        " " +
+        unit;
+
+    const wrongAnswers = [];
+
+    const multipliers = [0.25, 0.5, 0.75, 1.5, 2, 3];
+
+    for (const multiplier of multipliers) {
+        const wrongValue = Number(
+            (roundedValue * multiplier).toPrecision(2)
+        );
+
+        const wrongAnswer =
+            wrongValue.toLocaleString("sv-SE") +
+            " " +
+            unit;
+
+        if (
+            wrongAnswer !== correctAnswer &&
+            !wrongAnswers.includes(wrongAnswer)
+        ) {
+            wrongAnswers.push(wrongAnswer);
+        }
+    }
+
+    if (wrongAnswers.length < 3) {
+        throw new Error(
+            "Kunde inte skapa tillräckligt många svarsalternativ."
+        );
+    }
+
+    const answers = [];
+
+    while (answers.length < 3) {
+        const index = Math.floor(
+            Math.random() * wrongAnswers.length
+        );
+
+        const wrongAnswer = wrongAnswers.splice(index, 1)[0];
+
+        answers.push({
+            CountryID: questionCountry.CountryID,
+            Countryname: wrongAnswer
+        });
+    }
+
+    const correctIndex = Math.floor(Math.random() * 4);
+
+    answers.splice(correctIndex, 0, {
+        CountryID: questionCountry.CountryID,
+        Countryname: correctAnswer
+    });
+
+    return {
+        correctIndex: correctIndex,
+        countries: answers,
+        prompt: prompt,
+        explanation:
+            "Uppgiften i databasen är " +
+            value.toLocaleString("sv-SE") +
+            " " +
+            unit +
+            ". Källa: " +
+            source +
+            "."
     };
 }
 
