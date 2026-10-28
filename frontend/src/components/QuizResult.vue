@@ -56,7 +56,7 @@ onMounted(() => {})
   <div>
     <div class="result-container">
       <h2>Quizet för {{ quizString }} är slut!</h2>
-      <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ props.settings.length }}</p>
+      <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ quizStatsData.totalQuestions }}</p>
       <ol>
         <li v-for="(item, index) in quizStatsData.history" :key="index">
           <p>

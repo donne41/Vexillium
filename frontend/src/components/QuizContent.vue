@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import '@/assets/css/QuizGame.css'
 
 const props = defineProps({
   settings: {
@@ -17,7 +18,7 @@ let hasEnded = false
 watch(
   () => props.timer,
   (timer) => {
-    if (timer <= 0) quizEnd()
+    if (timer <= 0 && isTimed) quizEnd()
   },
 )
 
@@ -36,11 +37,18 @@ let errorFirstFetch = ref(false)
 const route = useRoute()
 const quizType = route.params.quizType
 const maxLen = props.settings.length
-const infinite = maxLen === 0 ? true : false
-const lengthString = infinite ? 'Oändligt' : maxLen
+const infinite = maxLen === 'first'
+const isTimed = maxLen === 'time'
+const delayTime = isTimed ? 500 : 2000
+
+const lengthString = computed(() => {
+  if (infinite) return 'Oändligt'
+  if (isTimed) return quizStatsData.value.totalQuestions
+  return maxLen
+})
 let questionNumber = ref(0)
 const progressPercent = computed(() =>
-  maxLen <= 0 ? 0 : Math.min((questionNumber / maxLen) * 100, 100),
+  infinite || isTimed ? 0 : Math.min((questionNumber.value / maxLen) * 100, 100),
 )
 
 const quizStatsData = ref({
@@ -134,7 +142,7 @@ function flagQuiz() {
 }
 
 function submit(answer) {
-  if (isChecking.value) return
+  if (isChecking.value || hasEnded) return
   isChecking.value = true
   selectedAnswer.value = answer
 
@@ -156,7 +164,7 @@ function submit(answer) {
   })
   if (infinite && !isCorrect) {
     quizEnd()
-  } else if (!infinite && quizStatsData.value.totalQuestions >= maxLen) {
+  } else if (!infinite && !isTimed && quizStatsData.value.totalQuestions >= maxLen) {
     quizEnd()
   } else {
     delayNext()
@@ -165,12 +173,18 @@ function submit(answer) {
 
 function delayNext() {
   setTimeout(async () => {
+    if (hasEnded) return
+
     selectedAnswer.value = null
     isChecking.value = false
+
     await getQuiz()
+
+    if (hasEnded || errorFirstFetch.value) return
+
     await presentQuestion()
     isLoading.value = false
-  }, 3000)
+  }, delayTime)
 }
 
 function quizEnd() {
@@ -186,7 +200,7 @@ function quizEnd() {
     } finally {
       emit('finished', quizStatsData.value)
     }
-  }, 2000)
+  }, delayTime)
 }
 
 function getButtonClass(option) {
@@ -222,15 +236,15 @@ onMounted(() => {
   <div v-if="!isLoading" class="quiz-content">
     <div class="quiz-stats">
       <div class="quiz-stat">
-        <span>Framsteg</span>
+        <span>Fråga</span>
 
-        <strong> {{ questionNumber }} / {{ lengthString }} </strong>
+        <strong>{{ questionNumber }}</strong>
 
         <div
-          v-if="!infinite"
+          v-if="!infinite && !isTimed"
           class="progress-track"
           role="progressbar"
-          :aria-valuenow="questionNumber.value"
+          :aria-valuenow="questionNumber"
           :aria-valuemin="0"
           :aria-valuemax="maxLen"
           :aria-label="`Framsteg: ${questionNumber} av ${lengthString} frågor`"
@@ -245,7 +259,7 @@ onMounted(() => {
         <strong> {{ quizStatsData.correctAnswers }} / {{ lengthString }} </strong>
       </div>
 
-      <div class="quiz-stat">
+      <div v-if="isTimed" class="quiz-stat">
         <span>Tid kvar</span>
         <strong>{{ props.timer }} s</strong>
       </div>
