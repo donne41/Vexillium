@@ -1,5 +1,29 @@
 <script setup>
+import { useRoute, useRouter } from 'vue-router'
 import './LoginView.css'
+import LoginForm from '../components/LoginForm.vue'
+
+const route = useRoute()
+const router = useRouter()
+
+/**
+ * goToNextPage skickar användaren vidare efter inloggning: till sidan i ?redirect=
+ * om den är en befintlig sida inom sajten (men inte inloggningssidan), annars till startsidan.
+ */
+function goToNextPage() {
+  const redirect = route.query.redirect
+  const isInternalPath = typeof redirect === 'string'
+      && redirect.startsWith('/')
+      && !redirect.startsWith('//')
+      && !redirect.startsWith('/\\')
+
+  const destination = isInternalPath ? router.resolve(redirect) : null
+  const isValidDestination = destination !== null
+      && destination.matched.length > 0
+      && destination.name !== 'login'
+
+  router.replace(isValidDestination ? destination.fullPath : '/')
+}
 </script>
 
 <template>
@@ -14,37 +38,7 @@ import './LoginView.css'
         </p>
       </div>
 
-      <form class="login-form">
-
-        <div class="form-group">
-          <label for="email">E-post eller användarnamn</label>
-
-          <input
-              id="email"
-              type="text"
-              placeholder="Ange e-post eller användarnamn"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="password">Lösenord</label>
-
-          <input
-              id="password"
-              type="password"
-              placeholder="Ange ditt lösenord"
-          />
-        </div>
-
-        <a href="#" class="forgot-password">
-          Glömt lösenord?
-        </a>
-
-        <button type="submit" class="login-submit">
-          Logga in
-        </button>
-
-      </form>
+      <LoginForm @success="goToNextPage" />
 
       <div class="create-account">
         <p>Har du inget konto?</p>
