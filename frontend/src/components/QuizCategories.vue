@@ -1,11 +1,11 @@
 <script setup>
 import {RouterLink} from 'vue-router'
-import flagsBackground from '@/assets/images/quizflaggor'
-import capitalsBackground from '@/assets/images/quizhuvudstäder'
-import neighboursBackground from '@/assets/images/quizgrannländer'
-import populationBackground from '@/assets/images/quizbefolkningochyta'
-import currenciesBackground from '@/assets/images/quizvalutor'
-import languagesBackground from '@/assets/images/quizspråk'
+import flagsBackground from '@/assets/images/quizflaggor.png'
+import capitalsBackground from '@/assets/images/quizhuvudstäder.png'
+import neighboursBackground from '@/assets/images/quizgrannländer.png'
+import populationBackground from '@/assets/images/quizbefolkningochyta.png'
+import currenciesBackground from '@/assets/images/quizvalutor.png'
+import languagesBackground from '@/assets/images/quizspråk.png'
 import '@/assets/css/QuizCategories.css'
 const categories = [
   {

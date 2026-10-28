@@ -1,9 +1,9 @@
 <script setup>
 import {RouterLink} from 'vue-router'
-import globe from '../assets/images/globe'
-import vexilliumOverlay from '../assets/images/vexillium-overlay'
-import flagsBackground from '../assets/images/flaggor'
-import roomsBackground from '../assets/images/quizrum'
+import globe from '../assets/images/globe.png'
+import vexilliumOverlay from '../assets/images/vexillium-overlay.png'
+import flagsBackground from '../assets/images/flaggor.png'
+import roomsBackground from '../assets/images/quizrum.png'
 import '@/assets/css/HeroSection.css'
 
 </script>
