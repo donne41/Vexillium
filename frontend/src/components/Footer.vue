@@ -1,5 +1,5 @@
 <script setup>
-import './Footer.css'
+import '@/assets/css/Footer.css'
 </script>
 
 <template>

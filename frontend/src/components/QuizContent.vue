@@ -1,24 +1,19 @@
 <script setup>
-import {computed, ref, onMounted, watch} from "vue"
+import { computed, ref, onMounted, watch } from "vue"
 import { useRoute } from "vue-router"
-
+import "@/assets/css/QuizGame.css"
 
 const props = defineProps({
-  settings: {
-    type: Object,
-    required: true
-  },
-  timer: {
-    type: Number,
-    required: true
-  }
+    settings: {
+        type: Object,
+        required: true
+    },
+    timer: {
+        type: Number,
+        required: true
+    }
 })
-
 let hasEnded = false
-watch(() => props.timer, (timer) => {
-  if (timer <= 0) quizEnd()
-})
-
 const emit = defineEmits(["finished", "error"])
 let isLoading = ref(true)
 let showFlagQuiz = ref(false)
@@ -34,20 +29,36 @@ let errorFirstFetch = ref(false)
 const route = useRoute()
 const quizType = route.params.quizType
 const maxLen = props.settings.length
-const infinite = maxLen === 0 ? true : false
-const lengthString = infinite ? "Oändligt" : maxLen
+const infinite = props.settings.length === "first"
+const isTimed = props.settings.length === "time"
+const delayTime = isTimed ? 500 : 2000
+let lengthString = computed(() => {
+    if (infinite) {
+        return "Oändligt"
+    } else if (isTimed) {
+        return quizStatsData.value.totalQuestions
+    } else {
+        return maxLen
+    }
+})
+
 let questionNumber = ref(0)
 const progressPercent = computed(() =>
     maxLen <= 0
         ? 0
-        : Math.min((questionNumber / maxLen) * 100, 100))
+        : Math.min((questionNumber.value / maxLen) * 100, 100))
 
 
 const quizStatsData = ref({
     totalQuestions: 0,
     correctAnswers: 0,
+    amountString: lengthString,
     history: []
 })
+watch(() => props.timer, (timer) => {
+    if (timer <= 0 && isTimed) quizEnd()
+})
+
 
 function getLatestFilter(regions) {
     let split = 10
@@ -74,7 +85,7 @@ async function getQuiz() {
         }
         if (answeredCountries.length > 0) {
             const filterName = answeredCountries.join(',')
-          url += `${url.includes('?') ? '&' : '?'}filter=${filterName}`
+            url += `${url.includes('?') ? '&' : '?'}filter=${filterName}`
         }
         let resp = await fetch(url)
         if (!resp.ok)
@@ -159,12 +170,12 @@ function delayNext() {
         await getQuiz()
         await presentQuestion()
         isLoading.value = false
-    }, 3000)
+    }, delayTime)
 }
 
 function quizEnd() {
-  if (hasEnded) return
-  hasEnded = true
+    if (hasEnded) return
+    hasEnded = true
     setTimeout(async () => {
         let list = loadFromLocal("quizData") || [];
         list.push(quizStatsData.value);
@@ -175,7 +186,7 @@ function quizEnd() {
         } finally {
             emit("finished", quizStatsData.value)
         }
-    }, 2000)
+    }, delayTime)
 
 }
 
@@ -212,45 +223,36 @@ onMounted(() => {
 </script>
 <template>
 
-  
+
     <div v-if="!isLoading" class="quiz-content">
-      <div class="quiz-stats">
-        <div class="quiz-stat">
-          <span>Framsteg</span>
+        <div class="quiz-stats">
+            <div class="quiz-stat">
+                <span>Fråga</span>
 
-          <strong>
-            {{ questionNumber }} / {{ lengthString }}
-          </strong>
+                <strong>
+                    {{ questionNumber }} 
+                </strong>
 
-          <div
-              v-if="!infinite"
-              class="progress-track"
-              role="progressbar"
-              :aria-valuenow="questionNumber.value"
-              :aria-valuemin="0"
-              :aria-valuemax="maxLen"
-              :aria-label="`Framsteg: ${questionNumber} av ${lengthString} frågor`"
-          >
-            <div
-                class="progress-fill"
-                :style="{ width: `${progressPercent}%` }"
-            ></div>
-          </div>
+                <div v-if="!infinite && !isTimed" class="progress-track" role="progressbar"
+                    :aria-valuenow="questionNumber.value" :aria-valuemin="0" :aria-valuemax="maxLen"
+                    :aria-label="`Framsteg: ${questionNumber} av ${lengthString} frågor`">
+                    <div class="progress-fill" :style="{ width: `${progressPercent}%` }"></div>
+                </div>
+            </div>
+
+            <div class="quiz-stat">
+                <span>Poäng</span>
+
+                <strong>
+                    {{ quizStatsData.correctAnswers }} / {{ lengthString }}
+                </strong>
+            </div>
+
+            <div class="quiz-stat" v-if="isTimed">
+                <span>Tid kvar</span>
+                <strong>{{ props.timer }} s</strong>
+            </div>
         </div>
-
-        <div class="quiz-stat">
-          <span>Poäng</span>
-
-          <strong>
-            {{ quizStatsData.correctAnswers }} / {{ lengthString }}
-          </strong>
-        </div>
-
-        <div class="quiz-stat">
-          <span>Tid kvar</span>
-          <strong>{{ props.timer }} s</strong>
-        </div>
-      </div>
         <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
         <h1 v-if="showCaptialQuiz">Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName
                 }}</span>?</h1>
