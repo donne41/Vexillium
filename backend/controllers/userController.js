@@ -52,13 +52,11 @@ function parseId(req) {
  */
 function handleError(res, error) {
     if (error.code === 'ER_DUP_ENTRY') {
-        const field = error.sqlMessage.endsWith("email'")
-        ? 'E-postadressen'
-            : "Användarnamnet";
+        const message = error.sqlMessage.endsWith("email'")
+            ? 'E-postadressen är redan upptagen'
+            : 'Användarnamnet är redan upptaget';
 
-        return res.status(409).json({
-            error:`${field} är redan upptaget`
-        });
+        return res.status(409).json({ error: message });
     }
     console.error(error);
     return res.status(500).json({ error: 'Ett internt serverfel uppstod' });
