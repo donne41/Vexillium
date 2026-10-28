@@ -1,5 +1,5 @@
 <script setup>
-import './Navbar.css'
+import '@/assets/css/Navbar.css'
 import NavIcon from './NavIcon.vue'
 
 import {ref, watch} from 'vue'

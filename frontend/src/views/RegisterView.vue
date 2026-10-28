@@ -1,5 +1,5 @@
 <script setup>
-import './RegisterView.css'
+import '@/assets/css/RegisterView.css'
 </script>
 
 <template>

@@ -2,7 +2,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { io } from 'socket.io-client'
-import './QuizRoom.css'
+import '@/assets/css/QuizRoom.css'
 
 const availableRooms = ref([])
 const inviteCode = ref('')

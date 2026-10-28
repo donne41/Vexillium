@@ -1,5 +1,5 @@
 <script setup>
-import './Leaderboard.css'
+import '@/assets/css/Leaderboard.css'
 
 // Riktiga användare och poäng hämtas från backend senare.
 const players = []

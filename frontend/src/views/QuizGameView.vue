@@ -4,6 +4,7 @@ import QuizResult from "@/components/QuizResult.vue"
 import QuizSettings from "@/components/QuizSettings.vue"
 import QuizContent from "@/components/QuizContent.vue"
 import QuizError from "@/components/QuizError.vue"
+import "@/assets/css/QuizGame.css"
 
 const gameState = ref("settings")
 

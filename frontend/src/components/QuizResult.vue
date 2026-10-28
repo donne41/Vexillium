@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import { useRoute } from "vue-router"
-import "@/assets/QuizGame.css"
+import "@/assets/css/QuizGame.css"
 
 const route = useRoute()
 
