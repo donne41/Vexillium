@@ -1,12 +1,22 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import { useRoute } from "vue-router"
-import "@/assets/css/QuizGame.css"
+import "@/assets/QuizGame.css"
 
 const route = useRoute()
 
 const quizType = route.params.quizType
-const quizString = quizType === "capitals" ? "huvudstäder" : "flaggor"
+let quizString = 'flaggor'
+
+if (quizType === 'capitals') {
+  quizString = 'huvudstäder'
+} else if (quizType === 'neighbours') {
+  quizString = 'grannländer'
+} else if (quizType === 'population') {
+  quizString = 'befolkning'
+} else if (quizType === 'area') {
+  quizString = 'yta'
+}
 
 const props = defineProps({
     stats: {
@@ -25,7 +35,6 @@ const emit = defineEmits(["restart", "goToSettings"])
 let quizStatsData = ref({
     totalQuestions: props.stats.totalQuestions,
     correctAnswers: props.stats.correctAnswers,
-    amountString: props.stats.amountString,
     history: props.stats.history
 });
 
@@ -33,7 +42,6 @@ function restartGame() {
     quizStatsData.value = {
         totalQuestions: 0,
         correctAnswers: 0,
-        amountString: "",
         history: []
     }
     emit("restart")
@@ -53,7 +61,7 @@ onMounted(() => {
     <div>
         <div class="result-container">
             <h2>Quizet för {{ quizString }} är slut!</h2>
-            <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ props.stats.totalQuestions }}</p>
+            <p>Du fick {{ quizStatsData.correctAnswers }} utav {{ props.settings.length }}</p>
             <ol>
                 <li v-for="(item, index) in quizStatsData.history" :key="index">
                     <p>Du svarade <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer

@@ -1,10 +1,10 @@
 <script setup>
-import {RouterLink} from 'vue-router'
+import { RouterLink } from 'vue-router'
 import flagsBackground from '@/assets/images/quizflaggor.png'
 import capitalsBackground from '@/assets/images/quizhuvudstader.png'
 import neighboursBackground from '@/assets/images/quizgrannlander.png'
-import populationBackground from '@/assets/images/quizbefolkningochyta.png'
-import currenciesBackground from '@/assets/images/quizvalutor.png'
+import populationBackground from '@/assets/images/population.png'
+import areaBackground from '@/assets/images/area.png'
 import languagesBackground from '@/assets/images/quizsprak.png'
 import '@/assets/css/QuizCategories.css'
 
