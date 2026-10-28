@@ -1,10 +1,10 @@
 <script setup>
-import {RouterLink} from 'vue-router'
+import { RouterLink } from 'vue-router'
 import flagsBackground from '@/assets/images/quizflaggor.png'
 import capitalsBackground from '@/assets/images/quizhuvudstader.png'
 import neighboursBackground from '@/assets/images/quizgrannlander.png'
-import populationBackground from '@/assets/images/quizbefolkningochyta.png'
-import currenciesBackground from '@/assets/images/quizvalutor.png'
+import populationBackground from '@/assets/images/population.png'
+import areaBackground from '@/assets/images/area.png'
 import languagesBackground from '@/assets/images/quizsprak.png'
 import '@/assets/css/QuizCategories.css'
 
@@ -24,17 +24,20 @@ const categories = [
   {
     title: 'Grannländer',
     background: neighboursBackground,
-    description: 'Gränsanalys och geopolitiska relationer i ett unikt pusselformat.',
+    quizPath: '/quiz/neighbours',
+    description: 'Testa vilka länder som har landgräns mot varandra.',
   },
   {
-    title: 'Befolkning & yta',
+    title: 'Befolkning',
     background: populationBackground,
-    description: 'Sortera, väg och värdera länders storlek och demografiska densitet.',
+    quizPath: '/quiz/population',
+    description: 'Testa dina kunskaper om ländernas befolkning år 2025.',
   },
   {
-    title: 'Valutor',
-    background: currenciesBackground,
-    description: 'Ekonomisk geografi. Koppla ihop rätt valutaenhet med motsvarande rike.',
+    title: 'Yta',
+    background: areaBackground,
+    quizPath: '/quiz/area',
+    description: 'Testa dina kunskaper om hur stora världens länder är.',
   },
   {
     title: 'Språk',
