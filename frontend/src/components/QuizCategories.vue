@@ -1,12 +1,12 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-import flagsBackground from '../assets/quizflaggor.png'
-import capitalsBackground from '../assets/quizhuvudstäder.png'
-import neighboursBackground from '../assets/quizgrannländer.png'
-import populationBackground from '../assets/population.png'
-import areaBackground from '../assets/area.png'
-import languagesBackground from '../assets/quizspråk.png'
-import './QuizCategories.css'
+import flagsBackground from '@/assets/images/quizflaggor.png'
+import capitalsBackground from '@/assets/images/quizhuvudstader.png'
+import neighboursBackground from '@/assets/images/quizgrannlander.png'
+import populationBackground from '@/assets/images/population.png'
+import areaBackground from '@/assets/images/area.png'
+import languagesBackground from '@/assets/images/quizsprak.png'
+import '@/assets/css/QuizCategories.css'
 
 const categories = [
   {
@@ -23,21 +23,18 @@ const categories = [
   },
   {
     title: 'Grannländer',
-    quizPath: '/quiz/neighbours',
     background: neighboursBackground,
-    description: 'Testa vilka länder och territorier som delar landgräns.',
+    description: 'Gränsanalys och geopolitiska relationer i ett unikt pusselformat.',
   },
   {
-    title: 'Befolkning',
-    quizPath: '/quiz/population',
+    title: 'Befolkning & yta',
     background: populationBackground,
-    description: 'Hur många människor bor i världens länder?',
+    description: 'Sortera, väg och värdera länders storlek och demografiska densitet.',
   },
   {
-    title: 'Yta',
-    quizPath: '/quiz/area',
-    background: areaBackground,
-    description: 'Hur stora är världens länder? Testa dina kunskaper om deras yta.',
+    title: 'Valutor',
+    background: currenciesBackground,
+    description: 'Ekonomisk geografi. Koppla ihop rätt valutaenhet med motsvarande rike.',
   },
   {
     title: 'Språk',

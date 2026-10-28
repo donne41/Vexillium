@@ -1,5 +1,5 @@
 <script setup>
-import './LoginView.css'
+import '@/assets/css/LoginView.css'
 </script>
 
 <template>
@@ -14,37 +14,7 @@ import './LoginView.css'
         </p>
       </div>
 
-      <form class="login-form">
-
-        <div class="form-group">
-          <label for="email">E-post eller användarnamn</label>
-
-          <input
-              id="email"
-              type="text"
-              placeholder="Ange e-post eller användarnamn"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="password">Lösenord</label>
-
-          <input
-              id="password"
-              type="password"
-              placeholder="Ange ditt lösenord"
-          />
-        </div>
-
-        <a href="#" class="forgot-password">
-          Glömt lösenord?
-        </a>
-
-        <button type="submit" class="login-submit">
-          Logga in
-        </button>
-
-      </form>
+      <LoginForm @success="goToNextPage" />
 
       <div class="create-account">
         <p>Har du inget konto?</p>

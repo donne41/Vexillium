@@ -1,10 +1,10 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-import globe from '../assets/globe.png'
-import vexilliumOverlay from '../assets/vexillium-overlay.png'
-import flagsBackground from '../assets/flaggor.png'
-import roomsBackground from '../assets/quizrum.png'
-import './HeroSection.css'
+import globe from '../assets/images/globe.png'
+import vexilliumOverlay from '../assets/images/vexillium-overlay.png'
+import flagsBackground from '../assets/images/flaggor.png'
+import roomsBackground from '../assets/images/quizrum.png'
+import '@/assets/css/HeroSection.css'
 </script>
 
 <template>
@@ -26,8 +26,8 @@ import './HeroSection.css'
         <h2>Hur väl känner du till världen?</h2>
 
         <p class="hero-description">
-          Testa dina kunskaper om flaggor, huvudstäder, grannländer samt länders befolkning och yta.
-          Spela direkt – inget konto behövs.
+          Testa dina kunskaper om flaggor, länder och huvudstäder. Spela direkt – inget konto
+          behövs.
         </p>
 
         <div class="hero-actions">
@@ -94,10 +94,7 @@ import './HeroSection.css'
           :style="{ '--card-image': `url(${flagsBackground})` }"
         >
           <h3>Quiz</h3>
-          <p>
-            Testa dina kunskaper om flaggor, huvudstäder, grannländer samt länders befolkning och
-            yta.
-          </p>
+          <p>Testa dina kunskaper om flaggor, och länder.</p>
         </RouterLink>
 
         <RouterLink

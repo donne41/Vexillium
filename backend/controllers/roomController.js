@@ -1,4 +1,4 @@
-const roomService = require('../service/roomService');
+const roomService = require('../services/roomService');
 
 exports.createRoom = async (req, res) => {
     try {

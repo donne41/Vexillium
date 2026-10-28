@@ -1,6 +1,6 @@
 
 <script setup>
-import './RecentGames.css'
+import '@/assets/css/RecentGames.css'
 
 // Hämtas från backend längre fram.
 const recentGames = []

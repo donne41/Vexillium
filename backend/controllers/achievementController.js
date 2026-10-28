@@ -1,4 +1,4 @@
-const achievementService = require("../service/achievementService");
+const achievementService = require("../services/achievementService");
 
 
 exports.getAchievements = async (req, res) => {
