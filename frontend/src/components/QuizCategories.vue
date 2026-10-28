@@ -5,7 +5,6 @@ import capitalsBackground from '../assets/quizhuvudstäder.png'
 import neighboursBackground from '../assets/quizgrannländer.png'
 import populationBackground from '../assets/population.png'
 import areaBackground from '../assets/area.png'
-import currenciesBackground from '../assets/quizvalutor.png'
 import languagesBackground from '../assets/quizspråk.png'
 import './QuizCategories.css'
 
@@ -39,11 +38,6 @@ const categories = [
     quizPath: '/quiz/area',
     background: areaBackground,
     description: 'Hur stora är världens länder? Testa dina kunskaper om deras yta.',
-  },
-  {
-    title: 'Valutor',
-    background: currenciesBackground,
-    description: 'Ekonomisk geografi. Koppla ihop rätt valutaenhet med motsvarande rike.',
   },
   {
     title: 'Språk',
