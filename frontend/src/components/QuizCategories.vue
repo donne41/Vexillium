@@ -24,17 +24,20 @@ const categories = [
   {
     title: 'Grannländer',
     background: neighboursBackground,
-    description: 'Gränsanalys och geopolitiska relationer i ett unikt pusselformat.',
+    quizPath: '/quiz/neighbours',
+    description: 'Testa vilka länder som har landgräns mot varandra.',
   },
   {
-    title: 'Befolkning & yta',
+    title: 'Befolkning',
     background: populationBackground,
-    description: 'Sortera, väg och värdera länders storlek och demografiska densitet.',
+    quizPath: '/quiz/population',
+    description: 'Testa dina kunskaper om ländernas befolkning år 2025.',
   },
   {
-    title: 'Valutor',
-    background: currenciesBackground,
-    description: 'Ekonomisk geografi. Koppla ihop rätt valutaenhet med motsvarande rike.',
+    title: 'Yta',
+    background: areaBackground,
+    quizPath: '/quiz/area',
+    description: 'Testa dina kunskaper om hur stora världens länder är.',
   },
   {
     title: 'Språk',
