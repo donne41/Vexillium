@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuth } from '../composables/useAuth'
-import './LoginForm.css'
+import '@/assets/css/LoginForm.css'
 
 const emit = defineEmits(['success'])
 
