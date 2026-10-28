@@ -149,3 +149,8 @@
         font-size: 28px;
     }
 }
+
+.register-error {
+    margin: 0 0 16px;
+    color: #ffaaaa;
+}

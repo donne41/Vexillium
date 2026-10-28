@@ -1,5 +1,6 @@
 <script setup>
 import '@/assets/css/LoginView.css'
+import LoginForm from '../components/LoginForm.vue'
 </script>
 
 <template>
