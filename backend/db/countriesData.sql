@@ -1,4 +1,4 @@
-use vexilliumDB;
+use vexillium;
 
 ## fix utf-8
 
