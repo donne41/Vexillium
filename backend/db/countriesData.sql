@@ -13,15 +13,15 @@ values ('Norden', 1),
        ('Ocianien', 8);
 
 ## Nordic
-insert into Countries(Countryname, Capital, Flag, RegionID)
-values ('Danmark', 'Köpenhamn', 'https://flagpedia.net/data/flags/w1160/dk.webp', 1),
-       ('Finland', 'Helsinki', 'https://flagpedia.net/data/flags/w1160/fi.webp', 1),
-       ('Island', 'Reykjavik', 'https://flagpedia.net/data/flags/w1160/is.webp', 1),
-       ('Norge', 'Oslo', 'https://flagpedia.net/data/flags/w1160/no.webp', 1),
-       ('Sverige', 'Stockholm', 'https://flagpedia.net/data/flags/w1160/se.webp', 1),
-       ('Åland', 'Mariehamn', 'https://flagpedia.net/data/flags/w1160/ax.webp', 1),
-       ('Färöarna', 'Tórshavn', 'https://flagpedia.net/data/flags/w1160/fo.webp', 1),
-       ('Grönland', 'Nuuk', 'https://flagpedia.net/data/flags/w1160/gl.webp', 1);
+insert into Countries(Countryname, Capital, Flag, RegionID, Language)
+values ('Danmark', 'Köpenhamn', 'https://flagpedia.net/data/flags/w1160/dk.webp', 1, 'Danish'),
+       ('Finland', 'Helsinki', 'https://flagpedia.net/data/flags/w1160/fi.webp', 1, 'Finish'),
+       ('Island', 'Reykjavik', 'https://flagpedia.net/data/flags/w1160/is.webp', 1, 'Icelandic'),
+       ('Norge', 'Oslo', 'https://flagpedia.net/data/flags/w1160/no.webp', 1, 'Norwegian'),
+       ('Sverige', 'Stockholm', 'https://flagpedia.net/data/flags/w1160/se.webp', 1, 'Swedish'),
+       ('Åland', 'Mariehamn', 'https://flagpedia.net/data/flags/w1160/ax.webp', 1, 'Swedish'),
+       ('Färöarna', 'Tórshavn', 'https://flagpedia.net/data/flags/w1160/fo.webp', 1, ''),
+       ('Grönland', 'Nuuk', 'https://flagpedia.net/data/flags/w1160/gl.webp', 1, '');
 
 ## Europe
 INSERT INTO Countries(Countryname, Capital, Flag, RegionID)

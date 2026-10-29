@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import '@/assets/css/QuizGame.css'
 
@@ -26,6 +26,7 @@ const emit = defineEmits(['finished', 'error'])
 let isLoading = ref(true)
 let showFlagQuiz = ref(false)
 let showCaptialQuiz = ref(false)
+let showLanguageQuiz = ref(false)
 let flagurl = ref(null)
 let capitalName = ref(null)
 let buttonChoise = ref(null)
@@ -40,6 +41,22 @@ const maxLen = props.settings.length
 const infinite = maxLen === 'first'
 const isTimed = maxLen === 'time'
 const delayTime = isTimed ? 500 : 2000
+const audioPlayer = ref(null)
+const currentLanguage = ref(null)
+const audioFile = computed(() => {
+  return `/speech/${currentLanguage.value}.mp3`
+})
+
+const changeLanguage = async (lang) => {
+currentLanguage.value = lang
+await nextTick()
+
+if(audioPlayer.value) {
+  audioPlayer.value.play().catch(error => {
+    console.error("Autoplay har blockerats av webbläsaren: ", error)
+  })
+}
+}
 
 const lengthString = computed(() => {
   if (infinite) return 'Oändligt'
@@ -119,6 +136,11 @@ async function presentQuestion() {
     flagQuiz()
     showFlagQuiz.value = true
     showCaptialQuiz.value = false
+  } if(quizType === 'language'){
+    languageQuiz()
+    showLanguageQuiz.value = true
+    showFlagQuiz.value = false
+    showFlagQuiz.value = false
   } else if (quizType === 'neighbours' || quizType === 'population' || quizType === 'area') {
     buttonChoise.value = [...quizData.value.countries].sort(() => 0.5 - Math.random())
     showFlagQuiz.value = false
@@ -141,13 +163,26 @@ function flagQuiz() {
   flagurl.value = quizData.value.countries[quizData.value.correctIndex].Flag
 }
 
+
+function languageQuiz(){
+  const speech = quizData.value.countries[quizData.value.correctIndex].Language
+  console.log("alla länder: ", quizData.value)
+  console.log("Antal länder: ", quizData.value.countries.length)
+  changeLanguage(speech)
+  buttonChoise.value = [...quizData.value.countries].sort(() => 0.5 - Math.random())
+}
+
 function submit(answer) {
   if (isChecking.value || hasEnded) return
   isChecking.value = true
   selectedAnswer.value = answer
+  console.log("Pressed country: ", answer)
+  console.log("alternativ: ", buttonChoise.value.countries)
 
   const correctAnswer = quizData.value.countries[quizData.value.correctIndex]
   const isCorrect = answer === correctAnswer.Countryname
+
+  console.log("Rätt svar: ", correctAnswer)
 
   playAnswerSound(isCorrect)
 
@@ -279,8 +314,11 @@ onMounted(() => {
     <h1 v-if="quizType === 'neighbours' || quizType === 'population' || quizType === 'area'">
       {{ quizData.prompt }}
     </h1>
+    <h1 v-if="showLanguageQuiz">I vilket land pratar man detta spåket? <audio ref="audioPlayer" controls autoplay :src="audioFile">
+      <source :src="audioFile">
+    </audio></h1>
     <div class="button-container">
-      <button
+      <button 
         v-for="option in buttonChoise"
         :key="option.Countryname"
         :class="getButtonClass(option.Countryname)"

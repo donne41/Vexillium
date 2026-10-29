@@ -8,11 +8,15 @@ async function getRandom(regions, filter, category) {
     if (category === "population" || category === "area") {
         return getStatisticsQuestion(regions, filter, category);
     }
+    
+    let isLanguage = false;
+    if (category === "language") isLanguage = true;
 
-    const { sql, params } = buildSqlParams(regions, filter)
+    const correctIndex = Math.floor(Math.random() * 4);
+    const { sql, params } = buildSqlParams(regions, filter, isLanguage);
     const [rows] = await dbConnect.query(sql, params)
     return {
-        "correctIndex": Math.floor(Math.random() * 4),
+        "correctIndex": correctIndex,
         "countries": rows
     }
 }
@@ -23,7 +27,7 @@ async function getRegions() {
     return rows
 }
 
-function buildSqlParams(regions, filter){
+function buildSqlParams(regions, filter, isLanguage){
     let sql = "SELECT * FROM Countries";
     const params = []
     if (regions) {
@@ -42,6 +46,7 @@ function buildSqlParams(regions, filter){
             ? ' AND CountryID NOT IN (?)'
             : ' WHERE CountryID NOT IN (?)'
     }
+    if(isLanguage) sql += " AND Language != ''"
     sql += " ORDER BY RAND() LIMIT 4"
 
     return {
