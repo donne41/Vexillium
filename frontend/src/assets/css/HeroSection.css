@@ -301,6 +301,7 @@
     margin: 0;
     color: #fff;
     line-height: 1.6;
+    text-wrap: balance;
 }
 
 .hero-feature-card:hover {
@@ -369,4 +370,8 @@
     .hero-actions > a {
         flex: 1 1 150px;
     }
+}
+
+.hero-description {
+    text-wrap: balance;
 }

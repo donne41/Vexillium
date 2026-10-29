@@ -26,8 +26,8 @@ import '@/assets/css/HeroSection.css'
         <h2>Hur väl känner du till världen?</h2>
 
         <p class="hero-description">
-          Testa dina kunskaper om flaggor, länder och huvudstäder. Spela direkt – inget konto
-          behövs.
+          Testa dina kunskaper om flaggor, huvudstäder, grannländer samt länders befolkning och yta.
+          Spela direkt – inget konto behövs.
         </p>
 
         <div class="hero-actions">
@@ -94,7 +94,10 @@ import '@/assets/css/HeroSection.css'
           :style="{ '--card-image': `url(${flagsBackground})` }"
         >
           <h3>Quiz</h3>
-          <p>Testa dina kunskaper om flaggor, och länder.</p>
+          <p>
+            Testa dina kunskaper om flaggor, huvudstäder, grannländer samt länders befolkning och
+            yta.
+          </p>
         </RouterLink>
 
         <RouterLink
