@@ -2,11 +2,20 @@
 import '@/assets/css/Navbar.css'
 import NavIcon from './NavIcon.vue'
 
-import {ref, watch} from 'vue'
+import {computed, ref, watch} from 'vue'
 import {useRoute} from 'vue-router'
 
 const isMenuOpen = ref(false)
 const route = useRoute()
+
+// "Logga in" tar med nuvarande sida som ?redirect=, så att användaren kommer tillbaka
+// hit efter inloggningen. På inloggnings- och registreringssidan behövs ingen redirect.
+const loginLink = computed(() => {
+  if (route.name === 'login' || route.name === 'register') {
+    return { name: 'login' }
+  }
+  return { name: 'login', query: { redirect: route.fullPath } }
+})
 
 function toggleMenu() {
   isMenuOpen.value = !isMenuOpen.value
@@ -47,7 +56,7 @@ watch(() => route.fullPath, closeMenu)
         </RouterLink>
       </nav>
 
-      <RouterLink to="/login" class="login-button desktop-login">
+      <RouterLink :to="loginLink" class="login-button desktop-login">
         <NavIcon name="user" />
         Logga in
       </RouterLink>
@@ -92,7 +101,7 @@ watch(() => route.fullPath, closeMenu)
         <NavIcon name="group" />
         Quizrum
       </RouterLink>
-      <RouterLink to="/login" class="mobile-login" @click="closeMenu">
+      <RouterLink :to="loginLink" class="mobile-login" @click="closeMenu">
         <NavIcon name="user" />
         Logga in
       </RouterLink>
