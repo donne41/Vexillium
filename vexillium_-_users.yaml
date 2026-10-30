@@ -14,29 +14,31 @@ collection:
       modified: 1793388827290
       sortKey: -1793388827290
       description: |
-        15 representative saved requests for backend authentication and authorization. The full local API was separately checked with 55 passing terminal checks. These 15 imported requests have NOT all been rerun.
-        
-        PREREQUISITES (local disposable test database only):
+        15 authentication and authorization tests verified in Insomnia.
+        All 55 separate terminal checks also passed.
+
+        Setup:
         - Start backend at http://127.0.0.1:3000.
-        - Create these three disposable accounts via POST /api/users with JSON. If their names already exist, use the existing test accounts only after resetting their expected test data; never run against real accounts.
-        A: {"username":"test_user_a","email":"test_user_a@example.com","password":"Testkonto2026!"}
-        B: {"username":"test_user_b","email":"test_user_b@example.com","password":"Testkonto2026!"}
-        Future admin: {"username":"test_admin","email":"test_admin@example.com","password":"Testkonto2026!","role":"admin"}
-        - Check in SQL that the future admin was created with role user despite the supplied role field. Then promote only that disposable account:
-        UPDATE users SET role = 'admin' WHERE username = 'test_admin';
-        - Set Base Environment variables qa_a_id, qa_b_id and qa_admin_id to the IDs returned during creation. Do not store session cookies in Git.
-        
-        RUN ORDER:
-        01-02: No Cookie is sent (Send cookies disabled), so both requests must return 401 even if Insomnia currently has a login cookie. Keep this setting.
-        03: Login A. Then 04-12 run with that same session. Do not run legacy tests or logout in between.
-        09-10: Both email and password changes are requested with missing/wrong currentPassword. Both must be rejected with the specific current-password error.
-        11 changes A email; 12 changes A password and must be executed by the user themselves. A's new password is NyttTestkonto2026! after 12.
-        13: Login disposable admin. Run 14-15 as admin. 15 deletes only disposable B.
-        
-        CLEANUP:
-        After testing, delete only the disposable A and admin accounts using the exact qa_a_id and qa_admin_id. B was deleted by 15.
-        
-        Terminal checks also covered old/new-password login, logged-out read/lookup, admin lookups, admin sensitive-field changes, self-deletion and session rejection after deletion. Those are not duplicated in this smaller collection. Do not treat this 15-request subset as proof that every possible authorization case has been tested.
+        - Create three disposable test accounts:
+          test_user_a / test_user_a@example.com
+          test_user_b / test_user_b@example.com
+          test_admin / test_admin@example.com
+        - Use Testkonto2026! as the password for all three accounts.
+        - Set the test administrator's role using SQL:
+          UPDATE users SET role = 'admin' WHERE username = 'test_admin';
+        - Set qa_a_id, qa_b_id and qa_admin_id in Base Environment
+          to the IDs returned when creating the accounts.
+
+        Run tests 01-15 in order.
+        - Keep cookie sending disabled for tests 01-02.
+        - Test 03 logs in user A. Test 13 logs in the administrator.
+        - Test 11 changes A's email to test_user_a_updated@example.com.
+        - Test 12 changes A's password to NyttTestkonto2026!.
+        - Test 15 deletes test account B.
+
+        Use disposable test accounts only. Reset the test accounts before
+        repeating the full sequence. Delete remaining test accounts afterward.
+        Do not commit session cookies.
     children:
       - name: 01 - Logged out PUT /api/users/{{ qa_a_id }} - 401
         url: http://127.0.0.1:3000/api/users/{{ qa_a_id }}
