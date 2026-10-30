@@ -10,7 +10,7 @@ const USERNAME_ERROR = 'Användarnamnet måste vara 3–50 tecken och får inte 
  * isValidUsername kollar om ett användarnamn är längre än 3 tecken och högst 50
  * tecken för att inte överstiga varchar(50) begränsningen från sql databasen samt
  * att @ tecken inte används.
-*/
+ */
 function isValidUsername(username) {
     return typeof username === 'string'
         && username.trim().length >= 3
@@ -21,7 +21,7 @@ function isValidUsername(username) {
 /**
  * isValidPassword testar att lösenordet är minst 8 tecken och inte överstiger antalet bytes som
  * bcrypt läser av (72) med hänsyn till svenska tecken (å, ä, ö) som tar upp 2 bytes istället för 1.
-*/
+ */
 function isValidPassword(password) {
     return typeof password === 'string'
         && password.length >= 8
@@ -56,10 +56,10 @@ function handleError(res, error) {
             ? 'E-postadressen är redan upptagen'
             : 'Användarnamnet är redan upptaget';
 
-        return res.status(409).json({ error: message });
+        return res.status(409).json({error: message});
     }
     console.error(error);
-    return res.status(500).json({ error: 'Ett internt serverfel uppstod' });
+    return res.status(500).json({error: 'Ett internt serverfel uppstod'});
 }
 
 // ---------- CREATE ----------
@@ -70,16 +70,16 @@ function handleError(res, error) {
  * status meddelanden till klienten.
  */
 exports.createUser = async (req, res) => {
-    const { username, password, email } = req.body ?? {};
+    const {username, password, email} = req.body ?? {};
 
     if (!isValidUsername(username)) {
-        return res.status(400).json({ error: USERNAME_ERROR });
+        return res.status(400).json({error: USERNAME_ERROR});
     }
     if (!isValidPassword(password)) {
-        return res.status(400).json({ error: 'Lösenordet måste vara minst 8 tecken och högst 72 byte' });
+        return res.status(400).json({error: 'Lösenordet måste vara minst 8 tecken och högst 72 byte'});
     }
     if (!isValidEmail(email)) {
-        return res.status(400).json({ error: 'En giltig e-postadress krävs' });
+        return res.status(400).json({error: 'En giltig e-postadress krävs'});
     }
 
     try {
@@ -113,13 +113,13 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
     const id = parseId(req);
     if (!id) {
-        return res.status(400).json({ error: 'Ogiltigt användar-ID' });
+        return res.status(400).json({error: 'Ogiltigt användar-ID'});
     }
 
     try {
         const user = await userService.getUserById(id);
         if (!user) {
-            return res.status(404).json({ error: 'Användaren hittades inte' });
+            return res.status(404).json({error: 'Användaren hittades inte'});
         }
         res.json(user);
     } catch (error) {
@@ -136,7 +136,7 @@ exports.getUserByUsername = async (req, res) => {
     try {
         const user = await userService.getUserByUsername(req.params.username);
         if (!user) {
-            return res.status(404).json({ error: 'Användaren hittades inte' });
+            return res.status(404).json({error: 'Användaren hittades inte'});
         }
         res.json(user);
     } catch (error) {
@@ -153,7 +153,7 @@ exports.getUserByEmail = async (req, res) => {
     try {
         const user = await userService.getUserByEmail(req.params.email);
         if (!user) {
-            return res.status(404).json({ error: 'Användaren hittades inte' });
+            return res.status(404).json({error: 'Användaren hittades inte'});
         }
         res.json(user);
     } catch (error) {
@@ -171,32 +171,45 @@ exports.getUserByEmail = async (req, res) => {
 exports.updateUser = async (req, res) => {
     const id = parseId(req);
     if (!id) {
-        return res.status(400).json({ error: 'Ogiltigt användar-ID' });
+        return res.status(400).json({error: 'Ogiltigt användar-ID'});
     }
 
-    const { username, email, password } = req.body ?? {};
+    const {username, email, password, currentPassword} = req.body ?? {};
 
     if (username === undefined && email === undefined && password === undefined) {
-        return res.status(400).json({ error: 'Ange användarnamn, e-post och/eller lösenord' });
+        return res.status(400).json({error: 'Ange användarnamn, e-post och/eller lösenord'});
     }
     if (username !== undefined && !isValidUsername(username)) {
-        return res.status(400).json({ error: USERNAME_ERROR  });
+        return res.status(400).json({error: USERNAME_ERROR});
     }
     if (email !== undefined && !isValidEmail(email)) {
-        return res.status(400).json({ error: 'E-postadressen är ogiltig' });
+        return res.status(400).json({error: 'E-postadressen är ogiltig'});
     }
     if (password !== undefined && !isValidPassword(password)) {
-        return res.status(400).json({ error: 'Lösenordet måste vara minst 8 tecken och högst 72 byte' });
+        return res.status(400).json({error: 'Lösenordet måste vara minst 8 tecken och högst 72 byte'});
     }
 
     try {
+        if (email !== undefined || password !== undefined) {
+            const passwordIsCorrect = await userService.verifyCurrentPassword(
+                req.user.id,
+                currentPassword
+            );
+
+            if (!passwordIsCorrect) {
+                return res.status(401).json({
+                    error: 'Fel eller saknat nuvarande lösenord'
+                });
+            }
+        }
+
         const updated = await userService.updateUser(id, {
             username: username?.trim(),
             email: email?.trim(),
             password
         });
         if (!updated) {
-            return res.status(404).json({ error: 'Användaren hittades inte' });
+            return res.status(404).json({error: 'Användaren hittades inte'});
         }
         const user = await userService.getUserById(id);
         res.json(user);
@@ -216,13 +229,13 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     const id = parseId(req);
     if (!id) {
-        return res.status(400).json({ error: 'Ogiltigt användar-ID' });
+        return res.status(400).json({error: 'Ogiltigt användar-ID'});
     }
 
     try {
         const deleted = await userService.deleteUser(id);
         if (!deleted) {
-            return res.status(404).json({ error: 'Användaren hittades inte' });
+            return res.status(404).json({error: 'Användaren hittades inte'});
         }
         res.status(204).send();
     } catch (error) {

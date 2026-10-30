@@ -2,7 +2,7 @@ const pool = require('../connectionMySQL');
 const bcrypt = require('bcryptjs');
 
 const SALT_ROUNDS = 10;
-const PUBLIC_COLUMNS = 'id, username, created_at, last_login_at';
+const PUBLIC_COLUMNS = 'id, username, role, created_at, last_login_at';
 
 async function createUser(username, password, email) {
     const hash = await bcrypt.hash(password, SALT_ROUNDS);
@@ -74,6 +74,27 @@ async function deleteUser(id) {
     return result.affectedRows > 0;
 }
 
+async function verifyCurrentPassword(id, currentPassword) {
+    if (
+        typeof currentPassword !== 'string' ||
+        currentPassword.length === 0 ||
+        Buffer.byteLength(currentPassword, 'utf8') > 72
+    ) {
+        return false;
+    }
+
+    const [rows] = await pool.execute(
+        'SELECT password_hash FROM users WHERE id = ?',
+        [id]
+    );
+
+    if (rows.length === 0) {
+        return false;
+    }
+
+    return bcrypt.compare(currentPassword, rows[0].password_hash);
+}
+
 module.exports = {
     createUser,
     getAllUsers,
@@ -81,5 +102,6 @@ module.exports = {
     getUserByUsername,
     getUserByEmail,
     updateUser,
-    deleteUser
+    deleteUser,
+    verifyCurrentPassword
 };

@@ -7,6 +7,524 @@ meta:
   modified: 1792608459034
   description: ""
 collection:
+  - name: Auth - 15 focused checks
+    meta:
+      id: fld_32ead609670843a1f5deef9bc8ad7202
+      created: 1793388827290
+      modified: 1793388827290
+      sortKey: -1793388827290
+      description: |
+        15 representative saved requests for backend authentication and authorization. The full local API was separately checked with 55 passing terminal checks. These 15 imported requests have NOT all been rerun.
+        
+        PREREQUISITES (local disposable test database only):
+        - Start backend at http://127.0.0.1:3000.
+        - Create these three disposable accounts via POST /api/users with JSON. If their names already exist, use the existing test accounts only after resetting their expected test data; never run against real accounts.
+        A: {"username":"test_user_a","email":"test_user_a@example.com","password":"Testkonto2026!"}
+        B: {"username":"test_user_b","email":"test_user_b@example.com","password":"Testkonto2026!"}
+        Future admin: {"username":"test_admin","email":"test_admin@example.com","password":"Testkonto2026!","role":"admin"}
+        - Check in SQL that the future admin was created with role user despite the supplied role field. Then promote only that disposable account:
+        UPDATE users SET role = 'admin' WHERE username = 'test_admin';
+        - Set Base Environment variables qa_a_id, qa_b_id and qa_admin_id to the IDs returned during creation. Do not store session cookies in Git.
+        
+        RUN ORDER:
+        01-02: No Cookie is sent (Send cookies disabled), so both requests must return 401 even if Insomnia currently has a login cookie. Keep this setting.
+        03: Login A. Then 04-12 run with that same session. Do not run legacy tests or logout in between.
+        09-10: Both email and password changes are requested with missing/wrong currentPassword. Both must be rejected with the specific current-password error.
+        11 changes A email; 12 changes A password and must be executed by the user themselves. A's new password is NyttTestkonto2026! after 12.
+        13: Login disposable admin. Run 14-15 as admin. 15 deletes only disposable B.
+        
+        CLEANUP:
+        After testing, delete only the disposable A and admin accounts using the exact qa_a_id and qa_admin_id. B was deleted by 15.
+        
+        Terminal checks also covered old/new-password login, logged-out read/lookup, admin lookups, admin sensitive-field changes, self-deletion and session rejection after deletion. Those are not duplicated in this smaller collection. Do not treat this 15-request subset as proof that every possible authorization case has been tested.
+    children:
+      - name: 01 - Logged out PUT /api/users/{{ qa_a_id }} - 401
+        url: http://127.0.0.1:3000/api/users/{{ qa_a_id }}
+        method: PUT
+        meta:
+          id: req_0b2e293c5bc000ed2574e2993dff8d83
+          sortKey: 1
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers:
+          - name: Content-Type
+            value: application/json
+            disabled: false
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "username": "blocked_change"
+            }
+        scripts:
+          afterResponse: |-
+            insomnia.test("Logged out PUT /api/users/{{ qa_a_id }} - 401", () => {
+              insomnia.expect(insomnia.response.code).to.eql(401);
+            
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: false
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 02 - Logged out DELETE /api/users/{{ qa_a_id }} - 401
+        url: http://127.0.0.1:3000/api/users/{{ qa_a_id }}
+        method: DELETE
+        meta:
+          id: req_0f0b9353b70867faf3016ed47d0ca5b3
+          sortKey: 2
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers: []
+        body: {}
+        scripts:
+          afterResponse: |-
+            insomnia.test("Logged out DELETE /api/users/{{ qa_a_id }} - 401", () => {
+              insomnia.expect(insomnia.response.code).to.eql(401);
+            
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: false
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 03 - Login A - 200
+        url: http://127.0.0.1:3000/api/auth/login
+        method: POST
+        meta:
+          id: req_b997693e13238fdd01b58828a1a7b28a
+          sortKey: 3
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers:
+          - name: Content-Type
+            value: application/json
+            disabled: false
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "identifier": "test_user_a",
+              "password": "Testkonto2026!"
+            }
+        scripts:
+          afterResponse: |-
+            insomnia.test("Login A - 200", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 04 - A reads own account - 200
+        url: http://127.0.0.1:3000/api/users/{{ qa_a_id }}
+        method: GET
+        meta:
+          id: req_503eedca9b0d6535a60a322c8c9b430a
+          sortKey: 4
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers: []
+        body: {}
+        scripts:
+          afterResponse: |-
+            insomnia.test("A reads own account - 200", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+              const user = insomnia.response.json();
+              insomnia.expect(user.id).to.eql(Number(insomnia.environment.get('qa_a_id')));
+              insomnia.expect(user.role).to.eql('user');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 05 - A forbidden PUT /api/users/{{ qa_b_id }} - 403
+        url: http://127.0.0.1:3000/api/users/{{ qa_b_id }}
+        method: PUT
+        meta:
+          id: req_380ec79203e97fde74e30a57c670f47f
+          sortKey: 5
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers:
+          - name: Content-Type
+            value: application/json
+            disabled: false
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "username": "blocked_change"
+            }
+        scripts:
+          afterResponse: |-
+            insomnia.test("A forbidden PUT /api/users/{{ qa_b_id }} - 403", () => {
+              insomnia.expect(insomnia.response.code).to.eql(403);
+            
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 06 - A forbidden DELETE /api/users/{{ qa_b_id }} - 403
+        url: http://127.0.0.1:3000/api/users/{{ qa_b_id }}
+        method: DELETE
+        meta:
+          id: req_3ba680a4345024478f26dd42b1af3aba
+          sortKey: 6
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers: []
+        body: {}
+        scripts:
+          afterResponse: |-
+            insomnia.test("A forbidden DELETE /api/users/{{ qa_b_id }} - 403", () => {
+              insomnia.expect(insomnia.response.code).to.eql(403);
+            
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 07 - A forbidden GET /api/users/username/test_user_b - 403
+        url: http://127.0.0.1:3000/api/users/username/test_user_b
+        method: GET
+        meta:
+          id: req_9cf0f63be04232b6171d70493c6f1f9d
+          sortKey: 7
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers: []
+        body: {}
+        scripts:
+          afterResponse: |-
+            insomnia.test("A forbidden GET /api/users/username/test_user_b - 403", () => {
+              insomnia.expect(insomnia.response.code).to.eql(403);
+            
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: '08 - A forbidden GET /api/users/email/test_user_b@example.com - 403'
+        url: http://127.0.0.1:3000/api/users/email/test_user_b@example.com
+        method: GET
+        meta:
+          id: req_8be07f212972f0958e9827b77a593c6b
+          sortKey: 8
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers: []
+        body: {}
+        scripts:
+          afterResponse: |-
+            insomnia.test("A forbidden GET /api/users/email/test_user_b@example.com - 403", () => {
+              insomnia.expect(insomnia.response.code).to.eql(403);
+            
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: '09 - Email or password change without current password - 401'
+        url: http://127.0.0.1:3000/api/users/{{ qa_a_id }}
+        method: PUT
+        meta:
+          id: req_c191c180455657825f7a2bd0820de4d8
+          sortKey: 9
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers:
+          - name: Content-Type
+            value: application/json
+            disabled: false
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "email": "test_user_a_updated@example.com",
+              "password": "NyttTestkonto2026!"
+            }
+        scripts:
+          afterResponse: |-
+            insomnia.test("Email missing current password - 401", () => {
+              insomnia.expect(insomnia.response.code).to.eql(401);
+              insomnia.expect(insomnia.response.json().error).to.eql('Fel eller saknat nuvarande lösenord');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 10 - Email or password change with wrong current password - 401
+        url: http://127.0.0.1:3000/api/users/{{ qa_a_id }}
+        method: PUT
+        meta:
+          id: req_d030b2f7cb760c330b75e7b02727e54d
+          sortKey: 10
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers:
+          - name: Content-Type
+            value: application/json
+            disabled: false
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "email": "test_user_a_updated@example.com",
+              "password": "NyttTestkonto2026!",
+              "currentPassword": "fel-losenord"
+            }
+        scripts:
+          afterResponse: |-
+            insomnia.test("Email wrong current password - 401", () => {
+              insomnia.expect(insomnia.response.code).to.eql(401);
+              insomnia.expect(insomnia.response.json().error).to.eql('Fel eller saknat nuvarande lösenord');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 11 - Email correct current password - 200
+        url: http://127.0.0.1:3000/api/users/{{ qa_a_id }}
+        method: PUT
+        meta:
+          id: req_42a804074da53c20c6d977e88f9e8b42
+          sortKey: 11
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers:
+          - name: Content-Type
+            value: application/json
+            disabled: false
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "email": "test_user_a_updated@example.com",
+              "currentPassword": "Testkonto2026!"
+            }
+        scripts:
+          afterResponse: |-
+            insomnia.test("Email correct current password - 200", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 12 - Password correct current password - 200 - run yourself
+        url: http://127.0.0.1:3000/api/users/{{ qa_a_id }}
+        method: PUT
+        meta:
+          id: req_aaea6fb77123ee253a1d4f0a92a82bf4
+          sortKey: 12
+          description: Changes only disposable A. User must execute this password-change
+            request themselves.
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers:
+          - name: Content-Type
+            value: application/json
+            disabled: false
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "password": "NyttTestkonto2026!",
+              "currentPassword": "Testkonto2026!"
+            }
+        scripts:
+          afterResponse: |-
+            insomnia.test("Password correct current password - 200 - run yourself", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 13 - Login future admin - 200
+        url: http://127.0.0.1:3000/api/auth/login
+        method: POST
+        meta:
+          id: req_8fab509a380af6ab30072cf1533420dc
+          sortKey: 13
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers:
+          - name: Content-Type
+            value: application/json
+            disabled: false
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "identifier": "test_admin",
+              "password": "Testkonto2026!"
+            }
+        scripts:
+          afterResponse: |-
+            insomnia.test('Admin login succeeds', () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+              insomnia.expect(insomnia.response.json().id).to.eql(Number(insomnia.environment.get('qa_admin_id')));
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 14 - Admin updates B username - 200
+        url: http://127.0.0.1:3000/api/users/{{ qa_b_id }}
+        method: PUT
+        meta:
+          id: req_ade6925a2c4f1a1792fb32f3699cb32d
+          sortKey: 14
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers:
+          - name: Content-Type
+            value: application/json
+            disabled: false
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "username": "test_user_b_changed"
+            }
+        scripts:
+          afterResponse: |-
+            insomnia.test("Admin updates B username - 200", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
+      - name: 15 - Admin deletes disposable B - 204
+        url: http://127.0.0.1:3000/api/users/{{ qa_b_id }}
+        method: DELETE
+        meta:
+          id: req_11ed58a63ff7a2e49762cb1210bc0e01
+          sortKey: 15
+          description: ''
+          created: 1793389158824
+          modified: 1793389158824
+          isPrivate: false
+        headers: []
+        body: {}
+        scripts:
+          afterResponse: |-
+            insomnia.test("Admin deletes disposable B - 204", () => {
+              insomnia.expect(insomnia.response.code).to.eql(204);
+            
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        authentication: {}
   - name: USER
     meta:
       id: fld_fa50493a095f47219032cd7b432af684
