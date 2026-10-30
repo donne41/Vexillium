@@ -90,7 +90,10 @@ function playAnswerSound(isCorrect) {
 function getLatestFilter(regions) {
   let split = 10
   if (regions.length === 1 && regions.includes(1)) {
-    split = 4
+    split = 7
+  }
+  if(regions.length === 1 && regions.includes(5)){
+    split = 6
   }
   let lateHistory = []
   if (quizStatsData.value?.history.length >= split)
@@ -175,15 +178,15 @@ function getCorrectArray() {
   if (quizType === 'language') {
     const correctSpeech = quizData.value.countries[quizData.value.correctIndex].Language
     quizData.value.countries.forEach(c => {
-      if (c.Language === correctSpeech) correctAnswers.push({ ...c})
+      if (c.Language === correctSpeech) correctAnswers.push({ ...c })
     })
-  }else {
-    correctAnswers.push({ ...quizData.value.countries[quizData.value.correctIndex]})
+  } else {
+    correctAnswers.push({ ...quizData.value.countries[quizData.value.correctIndex] })
   }
   return correctAnswers
 }
 
-function checkCorrect(options, correctArray){
+function checkCorrect(options, correctArray) {
   const arrayIds = correctArray.map(c => c.CountryID)
   return arrayIds.includes(options.CountryID)
 }
@@ -200,7 +203,7 @@ function submit(answer) {
 
   console.log("IsCorrect: ", isCorrect)
 
-  
+
   playAnswerSound(isCorrect)
 
   quizStatsData.value.totalQuestions++
