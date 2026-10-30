@@ -184,7 +184,8 @@ function getCorrectArray() {
 }
 
 function checkCorrect(options, correctArray){
-  return correctArray.includes(options)
+  const arrayIds = correctArray.map(c => c.CountryID)
+  return arrayIds.includes(options.CountryID)
 }
 
 
@@ -192,9 +193,13 @@ function submit(answer) {
   if (isChecking.value || hasEnded) return
   isChecking.value = true
   selectedAnswer.value = answer
+  console.log("Answer: ", answer)
   const correctArray = getCorrectArray()
   const isCorrect = checkCorrect(answer, correctArray)
   const correctIDs = correctArray.map(c => c.CountryID)
+
+  console.log("IsCorrect: ", isCorrect)
+
   
   playAnswerSound(isCorrect)
 
@@ -252,7 +257,6 @@ function quizEnd() {
 
 function getButtonClass(option) {
   if (!selectedAnswer.value) return ''
-  //const correctCountryname = quizData.value.countries[quizData.value.correctIndex].Countryname
   const correctArray = getCorrectArray()
   const isOptionCorrect = checkCorrect(option, correctArray)
   const isSelected = selectedAnswer.value === option

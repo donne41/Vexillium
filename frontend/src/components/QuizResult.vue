@@ -50,8 +50,9 @@ function goToSettings() {
 }
 
 const formatAnswers = (answers) => {
-  if(answers.length === 1) return answers[0]
-  if(answers.length === 2) return `${answers[0]} och ${answers[1]}`
+  console.log("svar som formaters: ", answers)
+  if(answers.length === 1) return answers[0].Countryname
+  if(answers.length === 2) return `${answers[0].Countryname} och ${answers[1].Countryname}`
 }
 
 onMounted(() => {})
@@ -66,7 +67,7 @@ onMounted(() => {})
         <li v-for="(item, index) in quizStatsData.history" :key="index">
           <p>
             Du svarade
-            <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer }}</span>
+            <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer.Countryname }}</span>
             rätt svar var {{ formatAnswers(item.correctCountry) }}
           </p>
         </li>
