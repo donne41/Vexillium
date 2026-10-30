@@ -15,6 +15,7 @@ async function getRandom(regions, filter, category) {
     const correctIndex = Math.floor(Math.random() * 4);
     const { sql, params } = buildSqlParams(regions, filter, isLanguage);
     const [rows] = await dbConnect.query(sql, params)
+
     return {
         "correctIndex": correctIndex,
         "countries": rows

@@ -49,6 +49,11 @@ function goToSettings() {
   emit('goToSettings')
 }
 
+const formatAnswers = (answers) => {
+  if(answers.length === 1) return answers[0]
+  if(answers.length === 2) return `${answers[0]} och ${answers[1]}`
+}
+
 onMounted(() => {})
 </script>
 
@@ -62,7 +67,7 @@ onMounted(() => {})
           <p>
             Du svarade
             <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer }}</span>
-            rätt svar var {{ item.correctCountry }}
+            rätt svar var {{ formatAnswers(item.correctCountry) }}
           </p>
         </li>
       </ol>
