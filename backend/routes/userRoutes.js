@@ -1,20 +1,56 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const requireAuth = require('../middleware/requireAuth');
+const requireAdmin = require('../middleware/requireAdmin');
+const requireOwnerOrAdmin = require('../middleware/requireOwnerOrAdmin');
 
 // CREATE
 router.post('/', userController.createUser);
 
 // READ
-router.get('/', userController.getAllUsers);
-router.get('/username/:username', userController.getUserByUsername);
-router.get('/email/:email', userController.getUserByEmail);
-router.get('/:id', userController.getUserById);
+router.get(
+    '/',
+    requireAuth,
+    requireAdmin,
+    userController.getAllUsers
+);
+
+router.get(
+    '/username/:username',
+    requireAuth,
+    requireAdmin,
+    userController.getUserByUsername
+);
+
+router.get(
+    '/email/:email',
+    requireAuth,
+    requireAdmin,
+    userController.getUserByEmail
+);
+
+router.get(
+    '/:id',
+    requireAuth,
+    requireOwnerOrAdmin,
+    userController.getUserById
+);
 
 // UPDATE
-router.put('/:id', userController.updateUser);
+router.put(
+    '/:id',
+    requireAuth,
+    requireOwnerOrAdmin,
+    userController.updateUser
+);
 
 // DELETE
-router.delete('/:id', userController.deleteUser);
+router.delete(
+    '/:id',
+    requireAuth,
+    requireOwnerOrAdmin,
+    userController.deleteUser
+);
 
 module.exports = router;
