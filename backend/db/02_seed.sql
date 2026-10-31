@@ -74,3 +74,54 @@ VALUES
         'flags'
     );
 
+INSERT IGNORE INTO achievements
+(code, name, description, icon, image,
+ trigger_type, threshold, category)
+VALUES
+    (
+        'CAPITALS_EXPERT',
+        'Huvudstadsexpert',
+        'Få 100 % rätt på ett quiz om huvudstäder.',
+        '🏛️',
+        NULL,
+        'high_score',
+        100,
+        'capitals'
+    );
+
+
+SELECT
+    u.username,
+    a.code,
+    a.name,
+    a.category,
+    ua.unlocked_at
+FROM user_achievements ua
+         JOIN users u
+              ON u.id = ua.user_id
+         JOIN achievements a
+              ON a.id = ua.achievement_id
+WHERE ua.user_id = 4
+ORDER BY ua.unlocked_at DESC;
+
+SELECT
+    code,
+    trigger_type,
+    threshold,
+    category
+FROM achievements
+WHERE code IN (
+               'GOOD_JOB',
+               'PERFECT_GAME',
+               'FLAGS_EXPERT',
+               'CAPITALS_EXPERT'
+    )
+ORDER BY code;
+
+SELECT
+    user_id,
+    achievement_id,
+    COUNT(*) AS antal
+FROM user_achievements
+GROUP BY user_id, achievement_id
+HAVING COUNT(*) > 1;

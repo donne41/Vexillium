@@ -3,6 +3,26 @@ import '@/assets/css/Leaderboard.css'
 
 // Riktiga användare och poäng hämtas från backend senare.
 const players = []
+
+async function fetchLeaderboard() {
+  try {
+    const response = await fetch('http://localhost:3000/api/leaderboard', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+    const data = await response.json()
+    players.splice(0, players.length, ...data)
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error)
+  }
+}
+
 </script>
 
 <template>

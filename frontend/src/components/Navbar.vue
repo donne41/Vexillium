@@ -37,7 +37,7 @@ watch(() => route.fullPath, closeMenu)
           <NavIcon name="quiz" />
           Quiz
         </RouterLink>
-        <RouterLink :to="{ path: '/', hash: '#leaderboard' }" @click="closeMenu">
+        <RouterLink :to="{ path: '/leaderboard', hash: '#leaderboard' }" @click="closeMenu">
           <NavIcon name="trophy" />
           Topplista
         </RouterLink>
