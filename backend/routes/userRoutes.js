@@ -4,9 +4,28 @@ const userController = require('../controllers/userController');
 const requireAuth = require('../middleware/requireAuth');
 const requireAdmin = require('../middleware/requireAdmin');
 const requireOwnerOrAdmin = require('../middleware/requireOwnerOrAdmin');
+const attachUser = require('../middleware/attachUser');
+const rateLimit = require('express-rate-limit');
+
+// Högst 10 profiländringsförsök per användare under 15 minuter.
+const updateUserLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: function (req) {
+        return String(req.user.id);
+    },
+    message: {
+        error: 'För många försök att ändra kontot. Försök igen om 15 minuter.'
+    }
+});
 
 // CREATE
 router.post('/', userController.createUser);
+
+// Hämta aktuell användare för de återstående användarvägarna.
+router.use(attachUser);
 
 // READ
 router.get(
@@ -42,6 +61,7 @@ router.put(
     '/:id',
     requireAuth,
     requireOwnerOrAdmin,
+    updateUserLimiter,
     userController.updateUser
 );
 
