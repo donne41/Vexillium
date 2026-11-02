@@ -37,6 +37,7 @@ let nextQuestion = ref(null)
 let errorFirstFetch = ref(false)
 const route = useRoute()
 const quizType = route.params.quizType
+const isLanguage = quizType === "language"
 const maxLen = props.settings.length
 const infinite = maxLen === 'first'
 const isTimed = maxLen === 'time'
@@ -89,12 +90,11 @@ function playAnswerSound(isCorrect) {
 
 function getLatestFilter(regions) {
   let split = 10
-  const isLanguage = quizType === "language"
   if (regions.length === 1 && regions.includes(1)) {
-    if(isLanguage) split = 3
-      else split = 7
+    if (isLanguage) split = 3
+    else split = 7
   }
-  if(regions.length === 1 && regions.includes(5)){
+  if (regions.length === 1 && regions.includes(5)) {
     split = 6
   }
   let lateHistory = []
@@ -141,7 +141,7 @@ async function presentQuestion() {
     flagQuiz()
     showFlagQuiz.value = true
     showCaptialQuiz.value = false
-  } if (quizType === 'language') {
+  } if (isLanguage) {
     languageQuiz()
     showLanguageQuiz.value = true
     showFlagQuiz.value = false
@@ -177,7 +177,7 @@ function languageQuiz() {
 
 function getCorrectArray() {
   let correctAnswers = []
-  if (quizType === 'language') {
+  if (isLanguage) {
     const correctSpeech = quizData.value.countries[quizData.value.correctIndex].Language
     quizData.value.countries.forEach(c => {
       if (c.Language === correctSpeech) correctAnswers.push({ ...c })
@@ -199,9 +199,16 @@ function submit(answer) {
   isChecking.value = true
   selectedAnswer.value = answer
   console.log("Answer: ", answer)
-  const correctArray = getCorrectArray()
-  const isCorrect = checkCorrect(answer, correctArray)
-  const correctIDs = correctArray.map(c => c.CountryID)
+  let isCorrect = false
+  let correctIDs = []
+  let correctArray = [];
+  if (isLanguage || quizType === "flags" || quizType === "capitals") {
+    correctArray = getCorrectArray()
+    isCorrect = checkCorrect(answer, correctArray)
+    correctIDs = correctArray.map(c => c.CountryID)
+  } else {
+    isCorrect = answer.Countryname === quizData.value.countries[quizData.value.correctIndex].Countryname
+  }
 
   console.log("IsCorrect: ", isCorrect)
 
@@ -262,9 +269,18 @@ function quizEnd() {
 
 function getButtonClass(option) {
   if (!selectedAnswer.value) return ''
-  const correctArray = getCorrectArray()
-  const isOptionCorrect = checkCorrect(option, correctArray)
-  const isSelected = selectedAnswer.value === option
+  let correctArray = []
+  let isOptionCorrect = null
+  let isSelected = false
+  if(isLanguage || quizType === "flags" || quizType === "capitals"){
+  correctArray.push(getCorrectArray())
+  isOptionCorrect = checkCorrect(option, correctArray)
+  isSelected = selectedAnswer.value === option
+  }else {
+    const correct = quizData.value.countries[quizData.value.correctIndex].Countryname
+    isOptionCorrect = option.Countryname === correct
+    isSelected = selectedAnswer.value === option
+  }
 
   if (isOptionCorrect) return 'correct'
   if (isSelected && !isOptionCorrect) return 'wrong'
@@ -283,6 +299,8 @@ function saveToLocal(name, content) {
 async function loadFirst() {
   await getQuiz()
   await presentQuestion()
+  console.log("länder: ", quizData.value.countries)
+  console.log("korrekt land: ", quizData.value.countries[quizData.value.correctIndex])
 }
 
 onMounted(() => {
