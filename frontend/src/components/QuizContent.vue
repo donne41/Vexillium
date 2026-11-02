@@ -198,7 +198,6 @@ function submit(answer) {
   if (isChecking.value || hasEnded) return
   isChecking.value = true
   selectedAnswer.value = answer
-  console.log("Answer: ", answer)
   let isCorrect = false
   let correctIDs = []
   let correctArray = [];
@@ -209,9 +208,6 @@ function submit(answer) {
   } else {
     isCorrect = answer.Countryname === quizData.value.countries[quizData.value.correctIndex].Countryname
   }
-
-  console.log("IsCorrect: ", isCorrect)
-
 
   playAnswerSound(isCorrect)
 
@@ -299,8 +295,6 @@ function saveToLocal(name, content) {
 async function loadFirst() {
   await getQuiz()
   await presentQuestion()
-  console.log("länder: ", quizData.value.countries)
-  console.log("korrekt land: ", quizData.value.countries[quizData.value.correctIndex])
 }
 
 onMounted(() => {
