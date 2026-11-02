@@ -89,8 +89,10 @@ function playAnswerSound(isCorrect) {
 
 function getLatestFilter(regions) {
   let split = 10
+  const isLanguage = quizType === "language"
   if (regions.length === 1 && regions.includes(1)) {
-    split = 7
+    if(isLanguage) split = 3
+      else split = 7
   }
   if(regions.length === 1 && regions.includes(5)){
     split = 6

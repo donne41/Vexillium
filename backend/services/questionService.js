@@ -13,11 +13,9 @@ async function getRandom(regions, filter, category) {
     if (category === "language") isLanguage = true;
 
     const correctCountry = await fetchCorrectCountry(regions, filter, isLanguage)
-    const alternatives = await fetchAlternatives(regions, correctCountry[0].CountryID )
-    const answers = [...correctCountry, ...alternatives]
+    const alternatives = await fetchAlternatives(regions, correctCountry.CountryID)
+    const answers = [correctCountry, ...alternatives]
 
-
-    console.log("Answers: ", answers)
     return {
         "correctIndex": 0,
         "countries": answers
@@ -25,12 +23,12 @@ async function getRandom(regions, filter, category) {
 }
 
 async function fetchAlternatives(regions, correctCountryID) {
-    const { sql, params } = buildSqlParams(regions, false, false, correctCountryID )
+    const { sql, params } = buildSqlParams(regions, false, false, correctCountryID)
     let retries = 3
     do {
-        const rows = await dbConnect.query(sql, params);
-        if (rows.length === 2) {
-            return rows[0]
+        const [rows] = await dbConnect.query(sql, params);
+        if (rows.length > 1) {
+            return rows
         }
         retries--
     } while (retries > 0)
@@ -39,13 +37,11 @@ async function fetchAlternatives(regions, correctCountryID) {
 
 async function fetchCorrectCountry(regions, filter, isLanguage) {
     const { sql, params } = buildSqlParams(regions, filter, isLanguage, false);
-    console.log("Getting correct country..")
     let retries = 3
     do {
-        const row = await dbConnect.query(sql, params);
-        if (row.length > 0) {
-            console.log("Returning rows: ", row[0])
-            return row[0]
+        const [rows] = await dbConnect.query(sql, params);
+        if (rows.length > 0) {
+            return rows[0]
         }
         retries--
     } while (retries > 0)
