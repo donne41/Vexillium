@@ -94,7 +94,9 @@ exports.joinRoom = async (req, res) => {
             .trim()
             .toUpperCase();
 
-        const guestName = req.body.guestName;
+        const guestName = req.user
+            ? req.user.username
+            : req.body?.guestName;
 
         if (!/^[A-Z0-9]{6}$/.test(inviteCode)) {
             return res.status(400).json({
@@ -141,7 +143,9 @@ exports.joinRoom = async (req, res) => {
 exports.joinPublicRoom = async (req, res) => {
     try {
         const roomId = Number(req.params.roomId);
-        const guestName = req.body?.guestName;
+        const guestName = req.user
+            ? req.user.username
+            : req.body?.guestName;
 
         if (!Number.isSafeInteger(roomId) || roomId <= 0) {
             return res.status(400).json({

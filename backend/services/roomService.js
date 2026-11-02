@@ -20,7 +20,7 @@ async function createRoom(roomName, userId, isPublic) {
         try {
             const [result] = await db.execute(
                 `INSERT INTO Rooms
-                     (RoomAdminID, RoomName, InviteCode, IsPublic)
+                     (OwnerUserID, RoomName, InviteCode, IsPublic)
                  VALUES (?, ?, ?, ?)`,
                 [userId, roomName, inviteCode, isPublic]
             );
@@ -229,7 +229,7 @@ async function deleteRoom(roomId, userId) {
     try {
         await connection.beginTransaction();
         const [rooms] = await connection.execute(
-            `SELECT RoomAdminID, RoomStatus
+            `SELECT OwnerUserID, RoomStatus
              FROM Rooms
              WHERE RoomID = ?
              FOR UPDATE`,
@@ -243,7 +243,7 @@ async function deleteRoom(roomId, userId) {
             return 'not_found';
         }
 
-        if (Number(room.RoomAdminID) !== Number(userId)) {
+        if (Number(room.OwnerUserID) !== Number(userId)) {
             await connection.rollback();
             return 'forbidden';
         }

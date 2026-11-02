@@ -11,7 +11,7 @@ const props = defineProps({
   // För JWT: skicka { Authorization: `Bearer ${token}` } från auth-lösningen.
   authHeaders: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
 })
 
@@ -65,9 +65,7 @@ async function createRoom() {
       const data = await response.json().catch(() => null)
 
       errorMessage.value =
-          typeof data?.error === 'string'
-              ? data.error
-              : 'Kontrollera uppgifterna och försök igen.'
+        typeof data?.error === 'string' ? data.error : 'Kontrollera uppgifterna och försök igen.'
 
       return
     }
@@ -90,7 +88,7 @@ async function deleteRoom() {
   if (!createdRoom.value || isDeleting.value) return
 
   const confirmed = window.confirm(
-      'Vill du avbryta quizrummet? Alla deltagare tas bort från rummet.'
+    'Vill du avbryta quizrummet? Alla deltagare tas bort från rummet.',
   )
 
   if (!confirmed) return
@@ -99,16 +97,13 @@ async function deleteRoom() {
   deleteError.value = ''
 
   try {
-    const response = await fetch(
-        `http://localhost:3000/api/rooms/${createdRoom.value.id}`,
-        {
-          method: 'DELETE',
-          credentials: 'include',
-          headers: {
-            ...props.authHeaders,
-          },
-        }
-    )
+    const response = await fetch(`http://localhost:3000/api/rooms/${createdRoom.value.id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        ...props.authHeaders,
+      },
+    })
 
     if (response.status === 204 || response.status === 404) {
       resetForm()
@@ -123,12 +118,10 @@ async function deleteRoom() {
     }
 
     deleteError.value =
-        messages[response.status] ||
-        'Kunde inte ta bort quizrummet. Försök igen senare.'
+      messages[response.status] || 'Kunde inte ta bort quizrummet. Försök igen senare.'
   } catch (error) {
     console.error('Fel vid borttagning av quizrum:', error)
-    deleteError.value =
-        'Kunde inte ta bort quizrummet. Försök igen senare.'
+    deleteError.value = 'Kunde inte ta bort quizrummet. Försök igen senare.'
   } finally {
     isDeleting.value = false
   }
@@ -152,13 +145,9 @@ function resetForm() {
         <p>Skapa ett konto eller logga in för att kunna skapa ett quizrum.</p>
 
         <div class="create-room-actions">
-          <RouterLink to="/register" class="create-room-button">
-            Skapa ett konto
-          </RouterLink>
+          <RouterLink to="/register" class="create-room-button"> Skapa ett konto </RouterLink>
 
-          <RouterLink to="/login" class="create-room-login">
-            Logga in
-          </RouterLink>
+          <RouterLink to="/login" class="create-room-login"> Logga in </RouterLink>
         </div>
       </div>
 
@@ -167,26 +156,26 @@ function resetForm() {
 
         <p>Rumsnamn: {{ createdRoom.name }}</p>
         <p>
-          {{ createdRoom.isPublic ? 'Offentligt rum' : 'Privat rum'}}
+          {{ createdRoom.isPublic ? 'Offentligt rum' : 'Privat rum' }}
         </p>
 
-        <p>Inbjudningskod:</p>
-        <strong class="create-room-code">
-          {{ createdRoom.inviteCode }}
-        </strong>
+        <div v-if="!createdRoom.isPublic">
+          <p>Inbjudningskod:</p>
 
-        <p>Dela koden med dem du vill bjuda in.</p>
+          <strong class="create-room-code">
+            {{ createdRoom.inviteCode }}
+          </strong>
+
+          <p>Dela koden med dem du vill bjuda in.</p>
+        </div>
+
+        <p v-else>Rummet visas nu bland tillgängliga quizrum.</p>
 
         <p v-if="deleteError" class="create-room-error" role="alert">
           {{ deleteError }}
         </p>
 
-        <button
-          type="button"
-          class="create-room-button"
-          :disabled="isDeleting"
-          @click="deleteRoom"
-        >
+        <button type="button" class="create-room-button" :disabled="isDeleting" @click="deleteRoom">
           {{ isDeleting ? 'Avbryter quizrummet...' : 'Avbryt quizrum' }}
         </button>
       </div>
@@ -197,45 +186,31 @@ function resetForm() {
         <label for="create-room-name">Rumsnamn</label>
 
         <input
-            id="create-room-name"
-            v-model="roomName"
-            type="text"
-            placeholder="Ange ett rumsnamn"
-            minlength="3"
-            maxlength="100"
-            required
-            :disabled="isCreating"
+          id="create-room-name"
+          v-model="roomName"
+          type="text"
+          placeholder="Ange ett rumsnamn"
+          minlength="3"
+          maxlength="100"
+          required
+          :disabled="isCreating"
         />
 
         <label for="create-room-visibility">Vem kan hitta rummet?</label>
 
-        <select
-            id="create-room-visibility"
-            v-model="isPublic"
-            :disabled="isCreating"
-        >
-          <option :value="false">
-            Privat – gå med via inbjudningskod
-          </option>
-          <option :value="true">
-            Offentligt – syns bland tillgängliga quizrum
-          </option>
+        <select id="create-room-visibility" v-model="isPublic" :disabled="isCreating">
+          <option :value="false">Privat – gå med via inbjudningskod</option>
+          <option :value="true">Offentligt – syns bland tillgängliga quizrum</option>
         </select>
 
         <p v-if="errorMessage" class="create-room-error" role="alert">
           {{ errorMessage }}
         </p>
 
-        <button
-          type="submit"
-          class="create-room-button"
-          :disabled="isCreating"
-        >
-          {{ isCreating ? 'Skapar quizrum...' : 'Skapa quizrum'}}
+        <button type="submit" class="create-room-button" :disabled="isCreating">
+          {{ isCreating ? 'Skapar quizrum...' : 'Skapa quizrum' }}
         </button>
       </form>
     </div>
   </section>
 </template>
-
-

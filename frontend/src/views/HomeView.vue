@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useAuth } from '../composables/useAuth'
 import HeroSection from '../components/HeroSection.vue'
 import QuizCategories from '../components/QuizCategories.vue'
 import RecentGames from '../components/RecentGames.vue'
@@ -16,11 +17,9 @@ const showCreateRoom = computed(() =>
 )
 const showQuizCategories = computed(() => route.hash === '#quiz')
 
+const { currentUser } = useAuth()
+
 defineProps({
-  currentUser: {
-    type: Object,
-    default: null,
-  },
   authHeaders: {
     type: Object,
     default: () => ({}),
