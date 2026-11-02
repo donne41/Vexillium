@@ -18,9 +18,6 @@ const roomRoutes = require('./routes/roomRoutes');
 const questionRoutes = require('./routes/questionroutes');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
-const attachUser = require('./middleware/attachUser');
-const leaderboardRoutes = require('./routes/leaderboardRoutes');
-
 
 const app = express();
 
@@ -54,7 +51,6 @@ app.use(session({
         secure: process.env.NODE_ENV === 'production'
     }
 }));
-app.use(attachUser);
 app.use(express.static('public'));
 
 
@@ -62,7 +58,6 @@ app.use('/api/achievements', achievementRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/leaderboard', leaderboardRoutes);
 app.use(questionRoutes);
 
 async function testDatabaseConnection() {
