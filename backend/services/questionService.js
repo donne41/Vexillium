@@ -11,35 +11,45 @@ async function getRandom(regions, filter, category) {
 
     let isLanguage = false;
     if (category === "language") isLanguage = true;
-    let answers = [];
-    let correctCountry = [];
-    const { sql, params } = buildSqlParams(regions, filter, isLanguage, true);
-    try {
-        correctCountry = await getFilteredCountry(sql, params)
-    } catch (error) {
-        throw new Error(`Kunde inte hitta ett land som inte redan har varit! Detaljer: ${error.message}`)
-    }
-    answers.push(correctCountry[0])
-    let { sql: sql2, params: params2 } = buildSqlParams(regions, filter, isLanguage, false);
-    params2.push(correctCountry[0].CountryID)
-    const [alternatives] = await dbConnect.query(sql2, params2);
-    alternatives.forEach(c => answers.push(c))
+
+    const correctCountry = await fetchCorrectCountry(regions, filter, isLanguage)
+    const alternatives = await fetchAlternatives(regions, correctCountry[0].CountryID )
+    const answers = [...correctCountry, ...alternatives]
+
+
+    console.log("Answers: ", answers)
     return {
         "correctIndex": 0,
         "countries": answers
     }
 }
 
-async function getFilteredCountry(sql, params) {
+async function fetchAlternatives(regions, correctCountryID) {
+    const { sql, params } = buildSqlParams(regions, false, false, correctCountryID )
     let retries = 3
     do {
-        const [row] = await dbConnect.query(sql, params);
-        if (row.length > 0) {
-            return row
+        const rows = await dbConnect.query(sql, params);
+        if (rows.length === 2) {
+            return rows[0]
         }
         retries--
     } while (retries > 0)
-    throw new Error("För många försök till databasen!")
+    throw new Error("Kunde inte hämnta alternativ från databasen!")
+}
+
+async function fetchCorrectCountry(regions, filter, isLanguage) {
+    const { sql, params } = buildSqlParams(regions, filter, isLanguage, false);
+    console.log("Getting correct country..")
+    let retries = 3
+    do {
+        const row = await dbConnect.query(sql, params);
+        if (row.length > 0) {
+            console.log("Returning rows: ", row[0])
+            return row[0]
+        }
+        retries--
+    } while (retries > 0)
+    throw new Error("Kunde inte hitta ett land i databasen som inte redan har varit!")
 }
 
 async function getRegions() {
@@ -48,7 +58,7 @@ async function getRegions() {
     return rows
 }
 
-function buildSqlParams(regions, filter, isLanguage, getFirst) {
+function buildSqlParams(regions, filter, isLanguage, correctID) {
     let sql = "SELECT * FROM Countries";
     const params = []
     if (regions) {
@@ -59,7 +69,7 @@ function buildSqlParams(regions, filter, isLanguage, getFirst) {
         sql += ` WHERE RegionID IN (?)`
         params.push(regionFilter)
     }
-    if (getFirst) {
+    if (!correctID) {
         if (filter !== 0) {
             params.push(filter.split(','))
 
@@ -73,6 +83,7 @@ function buildSqlParams(regions, filter, isLanguage, getFirst) {
     } else {
         sql += " AND CountryID NOT IN (?)"
         sql += " ORDER BY RAND() LIMIT 3"
+        params.push(correctID)
 
     }
     return {
