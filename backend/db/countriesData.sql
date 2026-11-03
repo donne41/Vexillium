@@ -21,7 +21,7 @@ values ('Danmark', 'Köpenhamn', 'https://flagpedia.net/data/flags/w1160/dk.webp
        ('Sverige', 'Stockholm', 'https://flagpedia.net/data/flags/w1160/se.webp', 1, 'swedish'),
        ('Åland', 'Mariehamn', 'https://flagpedia.net/data/flags/w1160/ax.webp', 1, 'swedish'),
        ('Färöarna', 'Tórshavn', 'https://flagpedia.net/data/flags/w1160/fo.webp', 1, ''),
-       ('Grönland', 'Nuuk', 'https://flagpedia.net/data/flags/w1160/gl.webp', 1, '');
+       ('Grönland', 'Nuuk', 'https://flagpedia.net/data/flags/w1160/gl.webp', 1, 'greenlandic');
 
 ## Europe
 INSERT INTO Countries(Countryname, Capital, Flag, RegionID, Language)
