@@ -254,7 +254,7 @@ function quizEnd() {
   hasEnded = true
   setTimeout(async () => {
     let list = loadFromLocal('quizData') || []
-    if(list.length > 50) list = list.slice(-50)
+    if (list.length > 50) list = list.slice(-50)
     list.push(quizStatsData.value)
     try {
       saveToLocal('quizData', list)
@@ -271,11 +271,11 @@ function getButtonClass(option) {
   let correctArray = []
   let isOptionCorrect = null
   let isSelected = false
-  if(isLanguage || quizType === "flags" || quizType === "capitals"){
-  correctArray = getCorrectArray()
-  isOptionCorrect = checkCorrect(option, correctArray)
-  isSelected = selectedAnswer.value === option
-  }else {
+  if (isLanguage || quizType === "flags" || quizType === "capitals") {
+    correctArray = getCorrectArray()
+    isOptionCorrect = checkCorrect(option, correctArray)
+    isSelected = selectedAnswer.value === option
+  } else {
     const correct = quizData.value.countries[quizData.value.correctIndex].Countryname
     isOptionCorrect = option.Countryname === correct
     isSelected = selectedAnswer.value === option
