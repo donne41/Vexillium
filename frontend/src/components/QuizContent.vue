@@ -101,7 +101,6 @@ function getLatestFilter(regions) {
   if (quizStatsData.value?.history.length >= split)
     lateHistory = quizStatsData.value.history.slice(split * -1).map((item) => item.correctID)
   else lateHistory = quizStatsData.value.history.map((item) => item.correctID)
-  console.log("Recent history: ", lateHistory)
   return lateHistory
 }
 

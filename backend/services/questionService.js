@@ -57,7 +57,6 @@ async function getRegions() {
 function buildSqlParams(regions, filter, isLanguage, correctID) {
     let sql = "SELECT * FROM Countries";
     const params = []
-    console.log("Filter: ", filter, " CorrectID: ", correctID)
     if (regions) {
         let regionFilter = []
         regionFilter = regions.split(',')
