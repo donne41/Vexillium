@@ -206,7 +206,9 @@ function submit(answer) {
     isCorrect = checkCorrect(answer, correctArray)
     correctIDs = correctArray.map(c => c.CountryID)
   } else {
-    isCorrect = answer.Countryname === quizData.value.countries[quizData.value.correctIndex].Countryname
+    const correctObj = quizData.value.countries[quizData.value.correctIndex]
+    isCorrect = answer.Countryname === correctObj.Countryname
+    correctArray.push(correctObj)
   }
 
   playAnswerSound(isCorrect)
@@ -252,6 +254,7 @@ function quizEnd() {
   hasEnded = true
   setTimeout(async () => {
     let list = loadFromLocal('quizData') || []
+    if(list.length > 50) list = list.slice(-50)
     list.push(quizStatsData.value)
     try {
       saveToLocal('quizData', list)

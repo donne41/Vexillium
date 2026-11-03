@@ -50,7 +50,6 @@ function goToSettings() {
 }
 
 const formatAnswers = (answers) => {
-  console.log("svar som formaters: ", answers)
   if(answers.length === 1) return answers[0].Countryname
   if(answers.length === 2) return `${answers[0].Countryname} och ${answers[1].Countryname}`
 }
