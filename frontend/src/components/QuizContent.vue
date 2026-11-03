@@ -95,12 +95,13 @@ function getLatestFilter(regions) {
     else split = 7
   }
   if (regions.length === 1 && regions.includes(5)) {
-    split = 6
+    split = 5 
   }
   let lateHistory = []
   if (quizStatsData.value?.history.length >= split)
     lateHistory = quizStatsData.value.history.slice(split * -1).map((item) => item.correctID)
   else lateHistory = quizStatsData.value.history.map((item) => item.correctID)
+  console.log("Recent history: ", lateHistory)
   return lateHistory
 }
 
@@ -198,15 +199,13 @@ function submit(answer) {
   if (isChecking.value || hasEnded) return
   isChecking.value = true
   selectedAnswer.value = answer
+  const correctObj = quizData.value.countries[quizData.value.correctIndex]
   let isCorrect = false
-  let correctIDs = []
   let correctArray = [];
   if (isLanguage || quizType === "flags" || quizType === "capitals") {
     correctArray = getCorrectArray()
     isCorrect = checkCorrect(answer, correctArray)
-    correctIDs = correctArray.map(c => c.CountryID)
   } else {
-    const correctObj = quizData.value.countries[quizData.value.correctIndex]
     isCorrect = answer.Countryname === correctObj.Countryname
     correctArray.push(correctObj)
   }
@@ -221,7 +220,7 @@ function submit(answer) {
   quizStatsData.value.history.push({
     userAnswer: answer,
     correctCountry: correctArray,
-    correctID: correctIDs,
+    correctID: correctObj.CountryID,
     isCorrect: isCorrect,
   })
   if (infinite && !isCorrect) {

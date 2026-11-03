@@ -50,8 +50,9 @@ function goToSettings() {
 }
 
 const formatAnswers = (answers) => {
-  if(answers.length === 1) return answers[0].Countryname
-  if(answers.length === 2) return `${answers[0].Countryname} och ${answers[1].Countryname}`
+  const countries = answers.map(answer => answer.Countryname)
+  if(countries.length <= 1) return countries[0]
+  return countries.slice(0, -1).join(", ") + " och " + countries.at(-1)
 }
 
 onMounted(() => {})
