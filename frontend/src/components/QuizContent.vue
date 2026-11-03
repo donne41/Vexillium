@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import '@/assets/css/QuizGame.css'
 
@@ -26,6 +26,7 @@ const emit = defineEmits(['finished', 'error'])
 let isLoading = ref(true)
 let showFlagQuiz = ref(false)
 let showCaptialQuiz = ref(false)
+let showLanguageQuiz = ref(false)
 let flagurl = ref(null)
 let capitalName = ref(null)
 let buttonChoise = ref(null)
@@ -36,10 +37,27 @@ let nextQuestion = ref(null)
 let errorFirstFetch = ref(false)
 const route = useRoute()
 const quizType = route.params.quizType
+const isLanguage = quizType === "language"
 const maxLen = props.settings.length
 const infinite = maxLen === 'first'
 const isTimed = maxLen === 'time'
 const delayTime = isTimed ? 500 : 2000
+const audioPlayer = ref(null)
+const currentLanguage = ref(null)
+const audioFile = computed(() => {
+  return `/speech/${currentLanguage.value}.mp3`
+})
+
+const changeLanguage = async (lang) => {
+  currentLanguage.value = lang
+  await nextTick()
+
+  if (audioPlayer.value) {
+    audioPlayer.value.play().catch(error => {
+      console.error("Autoplay har blockerats av webbläsaren: ", error)
+    })
+  }
+}
 
 const lengthString = computed(() => {
   if (infinite) return 'Oändligt'
@@ -73,7 +91,11 @@ function playAnswerSound(isCorrect) {
 function getLatestFilter(regions) {
   let split = 10
   if (regions.length === 1 && regions.includes(1)) {
-    split = 4
+    if (isLanguage) split = 3
+    else split = 7
+  }
+  if (regions.length === 1 && regions.includes(5)) {
+    split = 5 
   }
   let lateHistory = []
   if (quizStatsData.value?.history.length >= split)
@@ -119,6 +141,11 @@ async function presentQuestion() {
     flagQuiz()
     showFlagQuiz.value = true
     showCaptialQuiz.value = false
+  } else if (isLanguage) {
+    languageQuiz()
+    showLanguageQuiz.value = true
+    showFlagQuiz.value = false
+    showFlagQuiz.value = false
   } else if (quizType === 'neighbours' || quizType === 'population' || quizType === 'area') {
     buttonChoise.value = [...quizData.value.countries].sort(() => 0.5 - Math.random())
     showFlagQuiz.value = false
@@ -141,13 +168,50 @@ function flagQuiz() {
   flagurl.value = quizData.value.countries[quizData.value.correctIndex].Flag
 }
 
+
+function languageQuiz() {
+  const speech = quizData.value.countries[quizData.value.correctIndex].Language
+  changeLanguage(speech)
+  buttonChoise.value = [...quizData.value.countries].sort(() => 0.5 - Math.random())
+}
+
+function getCorrectArray() {
+  let correctAnswers = []
+  if (isLanguage) {
+    const correctSpeech = quizData.value.countries[quizData.value.correctIndex].Language
+    quizData.value.countries.forEach(c => {
+      if (c.Language === correctSpeech) correctAnswers.push({ ...c })
+    })
+  } else {
+    correctAnswers.push({ ...quizData.value.countries[quizData.value.correctIndex] })
+  }
+  return correctAnswers
+}
+
+function checkCorrect(options, correctArray) {
+  const arrayIds = correctArray.map(c => c.CountryID)
+  return arrayIds.includes(options.CountryID)
+}
+
+
 function submit(answer) {
   if (isChecking.value || hasEnded) return
   isChecking.value = true
   selectedAnswer.value = answer
-
-  const correctAnswer = quizData.value.countries[quizData.value.correctIndex]
-  const isCorrect = answer === correctAnswer.Countryname
+  if(audioPlayer.value){
+    audioPlayer.value.pause()
+    audioPlayer.value.currentTime = 0
+  }
+  const correctObj = quizData.value.countries[quizData.value.correctIndex]
+  let isCorrect = false
+  let correctArray = [];
+  if (isLanguage || quizType === "flags" || quizType === "capitals") {
+    correctArray = getCorrectArray()
+    isCorrect = checkCorrect(answer, correctArray)
+  } else {
+    isCorrect = answer.Countryname === correctObj.Countryname
+    correctArray.push(correctObj)
+  }
 
   playAnswerSound(isCorrect)
 
@@ -158,8 +222,8 @@ function submit(answer) {
   }
   quizStatsData.value.history.push({
     userAnswer: answer,
-    correctCountry: correctAnswer.Countryname,
-    correctID: correctAnswer.CountryID,
+    correctCountry: correctArray,
+    correctID: correctObj.CountryID,
     isCorrect: isCorrect,
   })
   if (infinite && !isCorrect) {
@@ -193,6 +257,7 @@ function quizEnd() {
   setTimeout(async () => {
     let list = loadFromLocal('quizData') || []
     list.push(quizStatsData.value)
+    if (list.length > 50) list = list.slice(-50)
     try {
       saveToLocal('quizData', list)
     } catch (error) {
@@ -205,9 +270,18 @@ function quizEnd() {
 
 function getButtonClass(option) {
   if (!selectedAnswer.value) return ''
-  const correctCountryname = quizData.value.countries[quizData.value.correctIndex].Countryname
-  const isOptionCorrect = option === correctCountryname
-  const isSelected = selectedAnswer.value === option
+  let correctArray = []
+  let isOptionCorrect = null
+  let isSelected = false
+  if (isLanguage || quizType === "flags" || quizType === "capitals") {
+    correctArray = getCorrectArray()
+    isOptionCorrect = checkCorrect(option, correctArray)
+    isSelected = selectedAnswer.value === option
+  } else {
+    const correct = quizData.value.countries[quizData.value.correctIndex].Countryname
+    isOptionCorrect = option.Countryname === correct
+    isSelected = selectedAnswer.value === option
+  }
 
   if (isOptionCorrect) return 'correct'
   if (isSelected && !isOptionCorrect) return 'wrong'
@@ -240,15 +314,9 @@ onMounted(() => {
 
         <strong>{{ questionNumber }}</strong>
 
-        <div
-          v-if="!infinite && !isTimed"
-          class="progress-track"
-          role="progressbar"
-          :aria-valuenow="questionNumber"
-          :aria-valuemin="0"
-          :aria-valuemax="maxLen"
-          :aria-label="`Framsteg: ${questionNumber} av ${lengthString} frågor`"
-        >
+        <div v-if="!infinite && !isTimed" class="progress-track" role="progressbar" :aria-valuenow="questionNumber"
+          :aria-valuemin="0" :aria-valuemax="maxLen"
+          :aria-label="`Framsteg: ${questionNumber} av ${lengthString} frågor`">
           <div class="progress-fill" :style="{ width: `${progressPercent}%` }"></div>
         </div>
       </div>
@@ -264,28 +332,20 @@ onMounted(() => {
         <strong>{{ props.timer }} s</strong>
       </div>
     </div>
-    <img
-      v-if="showFlagQuiz"
-      class="flag-img"
-      :src="flagurl"
-      alt="Flag of country"
-      width="400"
-      height="300"
-    />
+    <img v-if="showFlagQuiz" class="flag-img" :src="flagurl" alt="Flag of country" width="400" height="300" />
     <h1 v-if="showCaptialQuiz">
-      Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName }}</span
-      >?
+      Vilket land tillhör huvudstaden <span class="captialname">{{ capitalName }}</span>?
     </h1>
     <h1 v-if="quizType === 'neighbours' || quizType === 'population' || quizType === 'area'">
       {{ quizData.prompt }}
     </h1>
+    <h1 v-if="showLanguageQuiz">I vilket land pratar man detta spåket? <audio ref="audioPlayer" controls autoplay
+        :src="audioFile">
+        <source :src="audioFile">
+      </audio></h1>
     <div class="button-container">
-      <button
-        v-for="option in buttonChoise"
-        :key="option.Countryname"
-        :class="getButtonClass(option.Countryname)"
-        @click="submit(option.Countryname)"
-      >
+      <button v-for="option in buttonChoise" :key="option.Countryname" :class="getButtonClass(option)"
+        @click="submit(option)">
         {{ option.Countryname }}
       </button>
     </div>

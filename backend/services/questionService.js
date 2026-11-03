@@ -9,12 +9,43 @@ async function getRandom(regions, filter, category) {
         return getStatisticsQuestion(regions, filter, category);
     }
 
-    const { sql, params } = buildSqlParams(regions, filter)
-    const [rows] = await dbConnect.query(sql, params)
+    let isLanguage = false;
+    if (category === "language") isLanguage = true;
+
+    const correctCountry = await fetchCorrectCountry(regions, filter, isLanguage)
+    const alternatives = await fetchAlternatives(regions, correctCountry.CountryID)
+    const answers = [correctCountry, ...alternatives]
+
     return {
-        "correctIndex": Math.floor(Math.random() * 4),
-        "countries": rows
+        "correctIndex": 0,
+        "countries": answers
     }
+}
+
+async function fetchAlternatives(regions, correctCountryID) {
+    const { sql, params } = buildSqlParams(regions, false, false, correctCountryID)
+    let retries = 3
+    do {
+        const [rows] = await dbConnect.query(sql, params);
+        if (rows.length > 1) {
+            return rows
+        }
+        retries--
+    } while (retries > 0)
+    throw new Error("Kunde inte hämnta alternativ från databasen!")
+}
+
+async function fetchCorrectCountry(regions, filter, isLanguage) {
+    const { sql, params } = buildSqlParams(regions, filter, isLanguage, false);
+    let retries = 3
+    do {
+        const [rows] = await dbConnect.query(sql, params);
+        if (rows.length > 0) {
+            return rows[0]
+        }
+        retries--
+    } while (retries > 0)
+    throw new Error("Kunde inte hitta ett land i databasen som inte redan har varit!")
 }
 
 async function getRegions() {
@@ -23,7 +54,7 @@ async function getRegions() {
     return rows
 }
 
-function buildSqlParams(regions, filter){
+function buildSqlParams(regions, filter, isLanguage, correctID) {
     let sql = "SELECT * FROM Countries";
     const params = []
     if (regions) {
@@ -34,16 +65,23 @@ function buildSqlParams(regions, filter){
         sql += ` WHERE RegionID IN (?)`
         params.push(regionFilter)
     }
+    if (!correctID) {
+        if (filter !== 0) {
+            params.push(filter.split(','))
 
-    if (filter !== 0) {
-        params.push(filter.split(','))
+            sql += regions
+                ? ' AND CountryID NOT IN (?)'
+                : ' WHERE CountryID NOT IN (?)'
+        }
+        if (isLanguage) sql += " AND Language != ''"
 
-        sql += regions
-            ? ' AND CountryID NOT IN (?)'
-            : ' WHERE CountryID NOT IN (?)'
+        sql += " ORDER BY RAND() LIMIT 1"
+    } else {
+        sql += " AND CountryID NOT IN (?)"
+        sql += " ORDER BY RAND() LIMIT 3"
+        params.push(correctID)
+
     }
-    sql += " ORDER BY RAND() LIMIT 4"
-
     return {
         sql: sql,
         params: params

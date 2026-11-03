@@ -4,5 +4,46 @@ Backend setup instructions:
 DB_NAME, SESSION_SECRET, NODE_ENV
    Generate SESSION_SECRET with:
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
 3. Run db/01_schema.sql, then db/02_seed.sql.
-5. node app.js
+4. node app.js
+5. Before starting the updated backend, run db/06_user_roles.sql once.
+   This adds the role column required by the authorization code.
+   For an existing database, apply only the missing migration.
+6. Start the backend with node app.js.
+
+### Provision the first administrator
+
+All accounts receive the role `user` by default.
+Registration cannot assign the admin role.
+
+Before using the administrator routes:
+
+1. Create the intended administrator account through registration.
+2. Open MySQL using an authorized database account.
+3. Find and verify the intended account:
+
+   ```sql
+   SELECT id, username, email, role
+   FROM users
+   WHERE username = 'YOUR_ADMIN_USERNAME';
+   ```
+
+4. Replace YOUR_ADMIN_ID with the verified numeric ID and run:
+
+   ```sql
+   UPDATE users
+   SET role = 'admin'
+   WHERE id = YOUR_ADMIN_ID;
+   ```
+
+5. Verify the role:
+
+   ```sql
+   SELECT id, username, role
+   FROM users
+   WHERE id = YOUR_ADMIN_ID;
+   ```
+
+Complete this step when setting up an installation that needs administrator access.
+Never automatically promote the first registered user.

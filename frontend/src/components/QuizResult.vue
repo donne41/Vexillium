@@ -49,6 +49,12 @@ function goToSettings() {
   emit('goToSettings')
 }
 
+const formatAnswers = (answers) => {
+  const countries = answers.map(answer => answer.Countryname)
+  if(countries.length <= 1) return countries[0]
+  return countries.slice(0, -1).join(", ") + " och " + countries.at(-1)
+}
+
 onMounted(() => {})
 </script>
 
@@ -61,8 +67,8 @@ onMounted(() => {})
         <li v-for="(item, index) in quizStatsData.history" :key="index">
           <p>
             Du svarade
-            <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer }}</span>
-            rätt svar var {{ item.correctCountry }}
+            <span :class="item.isCorrect ? 'text-green' : 'text-red'"> {{ item.userAnswer.Countryname }}</span>
+            rätt svar var {{ formatAnswers(item.correctCountry) }}
           </p>
         </li>
       </ol>
