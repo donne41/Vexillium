@@ -7,6 +7,7 @@ import LoginView from '../views/LoginView.vue'
 import QuizGameView from "@/views/QuizGameView.vue"
 import AchievementsView from '../views/AchievementsView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import { useAuth } from '@/composables/useAuth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,6 +65,25 @@ const router = createRouter({
     },
   ],
 
+})
+
+/**
+ * Inloggningsskydd som körs före varje navigering:
+ * - Utloggade som går till en sida med meta.requiresAuth skickas till inloggningen,
+ *   med sidan som ?redirect= så att de kommer tillbaka efteråt.
+ * - Inloggade som går till inloggning eller registrering stannar där de är, eller
+ *   skickas till startsidan om sidan öppnades direkt via adressfältet.
+ */
+router.beforeEach((to, from) => {
+  const { currentUser } = useAuth()
+
+  if (to.meta.requiresAuth && !currentUser.value) {
+    return { name: 'login', query: { redirect: to.fullPath } }
+  }
+
+  if ((to.name === 'login' || to.name === 'register') && currentUser.value) {
+    return from.matched.length > 0 ? false : { name: 'home' }
+  }
 })
 
 export default router

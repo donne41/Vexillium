@@ -4,10 +4,11 @@ import NavIcon from './NavIcon.vue'
 import {useAuth} from '@/composables/useAuth'
 
 import {computed, ref, watch} from 'vue'
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 
 const isMenuOpen = ref(false)
 const route = useRoute()
+const router = useRouter()
 
 // "Logga in" tar med nuvarande sida som ?redirect=, så att användaren kommer tillbaka
 // hit efter inloggningen. På inloggnings- och registreringssidan behövs ingen redirect.
@@ -38,6 +39,9 @@ async function handleLogout() {
   try {
     await logout()
     closeMenu()
+    if (route.meta.requiresAuth) {
+      router.replace({ name: 'home' })
+    }
   } catch (error) {
     logoutError.value = error.message
   } finally {
