@@ -1,7 +1,9 @@
 import { ref, readonly } from 'vue'
 
 const API_URL = 'http://localhost:3000/api/auth'
+const USERS_URL = 'http://localhost:3000/api/users'
 const SERVER_UNREACHABLE = 'Kunde inte nå servern. Försök igen senare.'
+const REQUEST_TIMEOUT_MS = 10000
 
 // Skapas en gång när filen laddas och delas därför av alla komponenter som anropar useAuth().
 const currentUser = ref(null)
@@ -36,6 +38,7 @@ async function login(identifier, password) {
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ identifier, password }),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     })
   } catch {
     throw new Error(SERVER_UNREACHABLE)
@@ -57,7 +60,11 @@ async function login(identifier, password) {
 async function logout() {
   let response
   try {
-    response = await fetch(`${API_URL}/logout`, { method: 'POST', credentials: 'include' })
+    response = await fetch(`${API_URL}/logout`, {
+      method: 'POST',
+      credentials: 'include',
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    })
   } catch {
     throw new Error(SERVER_UNREACHABLE)
   }
@@ -70,6 +77,36 @@ async function logout() {
 }
 
 /**
+ * register skapar ett nytt konto och loggar sedan in med samma uppgifter, så att
+ * användaren är inloggad direkt. Misslyckas något kastas ett fel med ett svenskt
+ * meddelande, precis som i login.
+ */
+async function register(username, email, password) {
+  let response
+  try {
+    response = await fetch(USERS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password }),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    })
+  } catch {
+    throw new Error(SERVER_UNREACHABLE)
+  }
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null)
+    throw new Error(data?.error ?? 'Kontot kunde inte skapas')
+  }
+
+  try {
+    return await login(username, password)
+  } catch {
+    throw new Error('Kontot skapades, men inloggningen misslyckades. Logga in på inloggningssidan.')
+  }
+}
+
+/**
  * useAuth ger komponenter tillgång till den inloggade användaren och funktionerna
  * som ändrar den. currentUser är skrivskyddad utanför den här filen.
  */
@@ -79,5 +116,6 @@ export function useAuth() {
     fetchMe,
     login,
     logout,
+    register,
   }
 }
