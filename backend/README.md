@@ -6,3 +6,4 @@ DB_NAME, SESSION_SECRET, NODE_ENV
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 3. Run db/01_schema.sql, then db/02_seed.sql.
 5. node app.js
+6. If databse is old without language, update by running sql db/languageUpdateDB.sql
