@@ -236,19 +236,18 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: var(--text);
-    font-size: 16px;
+    max-width: 220px;
     font-weight: 500;
 }
 
+.navbar-username-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .mobile-username {
-    margin: 8px 16px 0;
-    color: var(--muted);
-    font-size: 15px;
     overflow-wrap: anywhere;
 }
 

@@ -87,10 +87,10 @@ watch(() => route.fullPath, () => {
         Logga in
       </RouterLink>
       <div v-else class="navbar-account desktop-login">
-        <span class="navbar-username" :title="currentUser.username">
+        <RouterLink :to="{ name: 'profile' }" class="navbar-username" :title="currentUser.username">
           <NavIcon name="user" />
-          {{ currentUser.username }}
-        </span>
+          <span class="navbar-username-text">{{ currentUser.username }}</span>
+        </RouterLink>
         <button
             type="button"
             class="login-button desktop-login"
@@ -148,9 +148,10 @@ watch(() => route.fullPath, () => {
         Logga in
       </RouterLink>
       <template v-else>
-        <p class="mobile-username">
-          Inloggad som <NavIcon name="user" /> <strong>{{ currentUser.username }}</strong>
-        </p>
+        <RouterLink :to="{ name: 'profile' }" class="mobile-username" @click="closeMenu">
+          <NavIcon name="user" />
+          {{ currentUser.username }}
+        </RouterLink>
         <button
             type="button"
             class="mobile-login"
