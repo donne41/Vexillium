@@ -223,3 +223,27 @@
     font-size: 14px;
     text-align: center;
 }
+
+/* Inloggad användare */
+
+.navbar-account {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.navbar-username {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.mobile-username {
+    margin: 8px 16px 0;
+    color: var(--muted);
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}

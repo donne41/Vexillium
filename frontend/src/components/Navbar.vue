@@ -87,16 +87,20 @@ watch(() => route.fullPath, () => {
         <NavIcon name="user" />
         Logga in
       </RouterLink>
-      <button
-          v-else
-          type="button"
-          class="login-button desktop-login"
-          :disabled="isLoggingOut"
-          @click="handleLogout"
-      >
-        <NavIcon name="user" />
-        Logga ut
-      </button>
+      <div v-else class="navbar-account desktop-login">
+        <span class="navbar-username" :title="currentUser.username">
+          {{ currentUser.username }}
+        </span>
+        <button
+            type="button"
+            class="login-button desktop-login"
+            :disabled="isLoggingOut"
+            @click="handleLogout"
+        >
+          <NavIcon name="user" />
+          Logga ut
+        </button>
+      </div>
 
       <button
           class="hamburger-button"
@@ -145,16 +149,20 @@ watch(() => route.fullPath, () => {
         <NavIcon name="user" />
         Logga in
       </RouterLink>
-      <button
-          v-else
-          type="button"
-          class="mobile-login"
-          :disabled="isLoggingOut"
-          @click="handleLogout"
-      >
-        <NavIcon name="user" />
-        Logga ut
-      </button>
+      <template v-else>
+        <p class="mobile-username">
+          Inloggad som <strong>{{ currentUser.username }}</strong>
+        </p>
+        <button
+            type="button"
+            class="mobile-login"
+            :disabled="isLoggingOut"
+            @click="handleLogout"
+        >
+          <NavIcon name="user" />
+          Logga ut
+        </button>
+      </template>
     </nav>
   </header>
 </template>
