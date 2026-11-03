@@ -84,11 +84,11 @@ watch(() => route.fullPath, () => {
       </nav>
 
       <RouterLink v-if="!currentUser" :to="loginLink" class="login-button desktop-login">
-        <NavIcon name="user" />
         Logga in
       </RouterLink>
       <div v-else class="navbar-account desktop-login">
         <span class="navbar-username" :title="currentUser.username">
+          <NavIcon name="user" />
           {{ currentUser.username }}
         </span>
         <button
@@ -97,7 +97,6 @@ watch(() => route.fullPath, () => {
             :disabled="isLoggingOut"
             @click="handleLogout"
         >
-          <NavIcon name="user" />
           Logga ut
         </button>
       </div>
@@ -146,12 +145,11 @@ watch(() => route.fullPath, () => {
         Quizrum
       </RouterLink>
       <RouterLink v-if="!currentUser" :to="loginLink" class="mobile-login" @click="closeMenu">
-        <NavIcon name="user" />
         Logga in
       </RouterLink>
       <template v-else>
         <p class="mobile-username">
-          Inloggad som <strong>{{ currentUser.username }}</strong>
+          Inloggad som <NavIcon name="user" /> <strong>{{ currentUser.username }}</strong>
         </p>
         <button
             type="button"
@@ -159,7 +157,6 @@ watch(() => route.fullPath, () => {
             :disabled="isLoggingOut"
             @click="handleLogout"
         >
-          <NavIcon name="user" />
           Logga ut
         </button>
       </template>
