@@ -141,7 +141,7 @@ async function presentQuestion() {
     flagQuiz()
     showFlagQuiz.value = true
     showCaptialQuiz.value = false
-  } if (isLanguage) {
+  } else if (isLanguage) {
     languageQuiz()
     showLanguageQuiz.value = true
     showFlagQuiz.value = false
@@ -272,7 +272,7 @@ function getButtonClass(option) {
   let isOptionCorrect = null
   let isSelected = false
   if(isLanguage || quizType === "flags" || quizType === "capitals"){
-  correctArray.push(getCorrectArray())
+  correctArray = getCorrectArray()
   isOptionCorrect = checkCorrect(option, correctArray)
   isSelected = selectedAnswer.value === option
   }else {
