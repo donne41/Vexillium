@@ -15,7 +15,7 @@ values ('Norden', 1),
 ## Nordic
 insert into Countries(Countryname, Capital, Flag, RegionID, Language)
 values ('Danmark', 'Köpenhamn', 'https://flagpedia.net/data/flags/w1160/dk.webp', 1, ''),
-       ('Finland', 'Helsinki', 'https://flagpedia.net/data/flags/w1160/fi.webp', 1, 'finish'),
+       ('Finland', 'Helsinki', 'https://flagpedia.net/data/flags/w1160/fi.webp', 1, 'finnish'),
        ('Island', 'Reykjavik', 'https://flagpedia.net/data/flags/w1160/is.webp', 1, 'icelandic'),
        ('Norge', 'Oslo', 'https://flagpedia.net/data/flags/w1160/no.webp', 1, 'norwegian'),
        ('Sverige', 'Stockholm', 'https://flagpedia.net/data/flags/w1160/se.webp', 1, 'swedish'),

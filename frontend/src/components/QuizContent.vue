@@ -199,6 +199,10 @@ function submit(answer) {
   if (isChecking.value || hasEnded) return
   isChecking.value = true
   selectedAnswer.value = answer
+  if(audioPlayer.value){
+    audioPlayer.value.pause()
+    audioPlayer.value.currentTime = 0
+  }
   const correctObj = quizData.value.countries[quizData.value.correctIndex]
   let isCorrect = false
   let correctArray = [];
@@ -253,8 +257,8 @@ function quizEnd() {
   hasEnded = true
   setTimeout(async () => {
     let list = loadFromLocal('quizData') || []
-    if (list.length > 50) list = list.slice(-50)
     list.push(quizStatsData.value)
+    if (list.length > 50) list = list.slice(-50)
     try {
       saveToLocal('quizData', list)
     } catch (error) {
