@@ -1,6 +1,7 @@
 <script setup>
 import '@/assets/css/Navbar.css'
 import NavIcon from './NavIcon.vue'
+import {useAuth} from '@/composables/useAuth'
 
 import {computed, ref, watch} from 'vue'
 import {useRoute} from 'vue-router'
@@ -21,11 +22,37 @@ function toggleMenu() {
   isMenuOpen.value = !isMenuOpen.value
 }
 
+const { currentUser, logout } = useAuth()
+const isLoggingOut = ref(false)
+const logoutError = ref('')
+
+/**
+ * handleLogout loggar ut via useAuth och stänger menyn. Misslyckas utloggningen
+ * förblir användaren inloggad och felmeddelandet visas under menyraden.
+ */
+async function handleLogout() {
+  if (isLoggingOut.value) return
+
+  logoutError.value = ''
+  isLoggingOut.value = true
+  try {
+    await logout()
+    closeMenu()
+  } catch (error) {
+    logoutError.value = error.message
+  } finally {
+    isLoggingOut.value = false
+  }
+}
+
 function closeMenu() {
   isMenuOpen.value = false
 }
 
-watch(() => route.fullPath, closeMenu)
+watch(() => route.fullPath, () => {
+  closeMenu()
+  logoutError.value = ''
+})
 
 </script>
 
@@ -56,10 +83,20 @@ watch(() => route.fullPath, closeMenu)
         </RouterLink>
       </nav>
 
-      <RouterLink :to="loginLink" class="login-button desktop-login">
+      <RouterLink v-if="!currentUser" :to="loginLink" class="login-button desktop-login">
         <NavIcon name="user" />
         Logga in
       </RouterLink>
+      <button
+          v-else
+          type="button"
+          class="login-button desktop-login"
+          :disabled="isLoggingOut"
+          @click="handleLogout"
+      >
+        <NavIcon name="user" />
+        Logga ut
+      </button>
 
       <button
           class="hamburger-button"
@@ -75,6 +112,9 @@ watch(() => route.fullPath, closeMenu)
       </button>
 
     </div>
+    <p v-if="logoutError" class="logout-error" role="alert">
+      {{ logoutError }}
+    </p>
 
     <nav
         id="mobile-navigation"
@@ -101,10 +141,20 @@ watch(() => route.fullPath, closeMenu)
         <NavIcon name="group" />
         Quizrum
       </RouterLink>
-      <RouterLink :to="loginLink" class="mobile-login" @click="closeMenu">
+      <RouterLink v-if="!currentUser" :to="loginLink" class="mobile-login" @click="closeMenu">
         <NavIcon name="user" />
         Logga in
       </RouterLink>
+      <button
+          v-else
+          type="button"
+          class="mobile-login"
+          :disabled="isLoggingOut"
+          @click="handleLogout"
+      >
+        <NavIcon name="user" />
+        Logga ut
+      </button>
     </nav>
   </header>
 </template>

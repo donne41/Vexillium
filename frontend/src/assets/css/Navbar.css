@@ -196,3 +196,30 @@
         color: #000;;
     }
 }
+
+/* Logga ut-knappen ska se ut som inloggningslänken */
+
+.navbar button.mobile-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar button.login-button,
+.navbar button.mobile-login {
+    cursor: pointer;
+}
+
+.navbar button.login-button:disabled,
+.navbar button.mobile-login:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.logout-error {
+    margin: 0;
+    padding: 8px 20px;
+    color: #ffaaaa;
+    font-size: 14px;
+    text-align: center;
+}
