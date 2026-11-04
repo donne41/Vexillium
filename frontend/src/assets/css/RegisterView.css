@@ -67,10 +67,6 @@
     outline: none;
 }
 
-.form-group input:focus {
-    border-color: var(--teal);
-}
-
 .form-group input::placeholder {
     color: var(--muted);
 }
