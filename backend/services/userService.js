@@ -2,7 +2,9 @@ const pool = require('../connectionMySQL');
 const bcrypt = require('bcryptjs');
 
 const SALT_ROUNDS = 10;
-const PUBLIC_COLUMNS = 'id, username, role, created_at, last_login_at';
+// Kolumner som ägaren av kontot (och admin) får se. Används bara bakom
+// requireOwnerOrAdmin/requireAdmin och visas aldrig publikt.
+const ACCOUNT_COLUMNS = 'id, username, email, role, created_at, last_login_at';
 
 async function createUser(username, password, email) {
     const hash = await bcrypt.hash(password, SALT_ROUNDS);
@@ -14,13 +16,13 @@ async function createUser(username, password, email) {
 }
 
 async function getAllUsers() {
-    const [rows] = await pool.execute(`SELECT ${PUBLIC_COLUMNS} FROM users`);
+    const [rows] = await pool.execute(`SELECT ${ACCOUNT_COLUMNS} FROM users`);
     return rows;
 }
 
 async function getUserById(id) {
     const [rows] = await pool.execute(
-        `SELECT ${PUBLIC_COLUMNS} FROM users WHERE id = ?`,
+        `SELECT ${ACCOUNT_COLUMNS} FROM users WHERE id = ?`,
         [id]
     );
     return rows[0] ?? null;
@@ -28,7 +30,7 @@ async function getUserById(id) {
 
 async function getUserByUsername(username) {
     const [rows] = await pool.execute(
-        `SELECT ${PUBLIC_COLUMNS} FROM users WHERE username = ?`,
+        `SELECT ${ACCOUNT_COLUMNS} FROM users WHERE username = ?`,
         [username]
     );
     return rows[0] ?? null;
@@ -36,7 +38,7 @@ async function getUserByUsername(username) {
 
 async function getUserByEmail(email) {
     const [rows] = await pool.execute(
-        `SELECT ${PUBLIC_COLUMNS} FROM users WHERE email = ?`,
+        `SELECT ${ACCOUNT_COLUMNS} FROM users WHERE email = ?`,
         [email]
     );
     return rows[0] ?? null;
