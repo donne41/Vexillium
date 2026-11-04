@@ -1,3 +1,10 @@
+Before starting the multiplayer backend, apply db/07_room_owners.sql once.
+Do not rerun it if OwnerUserID already exists.
+
+Quiz rooms are temporary. Starting the backend removes existing rooms
+and their participants, including rooms without an owner.
+User accounts and saved game results are preserved.
+
 Backend setup instructions:
 1. npm install
 2. Create a .env file with DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, 
