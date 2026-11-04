@@ -114,6 +114,8 @@ function makeQuestion(data, category) {
 }
 
 async function advance(game, io) {
+    if (game.finishing) return;
+
     const now = Date.now();
 
     if (
@@ -145,12 +147,18 @@ async function advance(game, io) {
         const finished = nextIndex >= game.questions.length;
 
         if (finished) {
-            await db.execute(
-                `UPDATE Rooms
-                 SET RoomStatus = 'finished'
-                 WHERE RoomID = ?`,
-                [game.roomId]
-            );
+            game.finishing = true;
+
+            try {
+                await db.execute(
+                    `UPDATE Rooms
+                     SET RoomStatus = 'finished'
+                     WHERE RoomID = ?`,
+                    [game.roomId]
+                );
+            } finally {
+                game.finishing = false;
+            }
         }
 
         game.index = nextIndex;
@@ -314,7 +322,7 @@ async function start(roomId, user, category, count, io) {
         fail(409, 'En quizomgång pågår redan.');
     }
 
-    const preparingGame = { phase: 'preparing', deadline: Date.now() + 20000 };
+    const preparingGame = { phase: 'preparing', deadline: null };
 
     games.set(roomId, preparingGame);
 
@@ -345,6 +353,13 @@ async function start(roomId, user, category, count, io) {
                 data.countries[data.correctIndex].CountryID
             );
         }
+
+        if (games.get(roomId) !== preparingGame) {
+            fail(404, 'Quizrummet har avslutats.');
+        }
+
+        preparingGame.deadline = Date.now() + 20000;
+        io.emit('rooms:updated');
 
         await new Promise(resolve => {
             setTimeout(resolve, Math.max(0, preparingGame.deadline - Date.now()));
@@ -414,16 +429,16 @@ async function start(roomId, user, category, count, io) {
         if (games.get(roomId) === preparingGame) {
             const status = previousGame ? 'finished' : 'waiting';
 
-            await db.execute(
-                'UPDATE Rooms SET RoomStatus = ? WHERE RoomID = ?',
-                [status, roomId]
-            );
-
             if (previousGame) {
                 games.set(roomId, previousGame);
             } else {
                 games.delete(roomId);
             }
+
+            await db.execute(
+                'UPDATE Rooms SET RoomStatus = ? WHERE RoomID = ?',
+                [status, roomId]
+            );
 
             io.emit('rooms:updated');
         }
@@ -472,7 +487,12 @@ async function answer(roomId, user, token, index, choice, roundId, io) {
 async function removePlayer(roomId, guestId) {
     const game = games.get(roomId);
 
-    if (!game || !game.players || game.phase === 'finished') {
+    if (
+        !game ||
+        !game.players ||
+        game.phase === 'finished' ||
+        game.finishing
+    ) {
         return;
     }
 

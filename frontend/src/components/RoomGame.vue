@@ -258,7 +258,11 @@ onUnmounted(() => {
       class="room-close-dialog room-countdown"
       aria-label="Nedräkning till quizstart"
     >
-      <h2>Quizet börjar om {{ secondsLeft }} sekunder</h2>
+      <h2 v-if="!state?.deadline">Förbereder quizet...</h2>
+
+      <h2 v-else-if="secondsLeft > 0">Quizet börjar om {{ secondsLeft }} sekunder</h2>
+
+      <h2 v-else>Startar quizet...</h2>
       <p>Fler spelare kan gå med tills quizet börjar.</p>
     </dialog>
     <p v-if="errorMessage" role="alert">
