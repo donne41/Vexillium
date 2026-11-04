@@ -1,4 +1,5 @@
 const roomService = require('../services/roomService');
+const roomGameService = require('../services/roomGameService');
 
 exports.createRoom = async (req, res) => {
     try {
@@ -31,6 +32,8 @@ exports.createRoom = async (req, res) => {
             req.user.id,
             isPublic
         );
+
+        roomGameService.keepHostAlive(room.id, req.user.id, req.app.get('io'));
 
         if (room.isPublic) {
             req.app.get('io').emit('rooms:updated');
@@ -168,7 +171,10 @@ exports.joinPublicRoom = async (req, res) => {
             guestName.trim()
         );
 
+        req.app.get('io').emit('rooms:updated');
+
         return res.status(201).json(result);
+
     } catch (error) {
         if (error.message === 'Rummet finns inte.') {
             return res.status(404).json({
@@ -240,13 +246,17 @@ exports.leaveRoom = async (req, res) => {
             });
         }
 
-        const removed = await roomService.leaveRoom(roomId, guestToken);
+        const guestId = await roomService.leaveRoom(roomId, guestToken);
 
-        if (!removed) {
+        if (guestId === null) {
             return res.status(404).json({
                 error: 'Spelaren hittades inte i rummet.'
             });
         }
+
+        await roomGameService.removePlayer(roomId, guestId);
+
+        req.app.get('io').emit('rooms:updated');
 
         return res.json({
             message: 'Du har lämnat rummet.'
@@ -328,15 +338,9 @@ exports.deleteRoom = async (req, res) => {
             });
         }
 
-        if (result === 'not_waiting') {
-            return res.status(409).json({
-                error: 'Du kan bara avbryta ett quizrum innan quizet har startat.'
-            });
-        }
-
-        req.app.get('io')?.emit('rooms:updated');
-
-        return res.status(204).send();
+        roomGameService.removeGame(roomId);
+        req.app.get('io').emit('rooms:updated');
+        return res.status(204).send()
     } catch (error) {
         console.error('Kunde inte ta bort quizrum:', error);
 
