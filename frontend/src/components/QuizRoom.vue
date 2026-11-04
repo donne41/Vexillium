@@ -1,8 +1,10 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { io } from 'socket.io-client'
 import '@/assets/css/QuizRoom.css'
 import { useAuth } from '../composables/useAuth'
+import RoomGame from './RoomGame.vue'
+import RoomConfirmDialog from './RoomConfirmDialog.vue'
 
 const availableRooms = ref([])
 const inviteCode = ref('')
@@ -16,53 +18,37 @@ const errorMessage = ref('')
 const waitingRoomError = ref('')
 const isJoining = ref(false)
 const isLeaving = ref(false)
+const leaveRoomDialog = ref(null)
 const joinedRoom = ref(null)
-const roomPlayers = ref([])
+const emit = defineEmits(['room-active'])
+const gamePhase = ref('waiting')
 
-let playersInterval = null
+watch(
+  joinedRoom,
+  (room) => {
+    emit('room-active', Boolean(room))
+  },
+  { immediate: true },
+)
+
 let socket = null
 
 const guestSessionKey = 'vexillium-guest-room'
 
-function startPlayersInterval() {
-  stopPlayersInterval()
-
-  playersInterval = setInterval(() => {
-    fetchRoomPlayers()
-  }, 5000)
+function stopRoomUpdates() {
+  leaveRoomDialog.value?.close()
+  sessionStorage.removeItem(guestSessionKey)
+  waitingRoomError.value = ''
 }
 
-async function fetchRoomPlayers() {
-  if (!joinedRoom.value) return
+function handleRoomClosed() {
+  sessionStorage.removeItem(guestSessionKey)
 
-  const roomId = joinedRoom.value.roomId
+  joinedRoom.value = null
+  waitingRoomError.value = ''
+  errorMessage.value = ''
 
-  try {
-    const response = await fetch(`http://localhost:3000/api/rooms/${roomId}/players`, {
-      headers: {
-        'X-Guest-Token': joinedRoom.value.guestToken,
-      },
-    })
-
-    if (!response.ok) {
-      throw new Error('Kunde inte hämta spelare.')
-    }
-
-    const data = await response.json()
-
-    if (joinedRoom.value?.roomId === roomId) {
-      roomPlayers.value = [...data.accounts, ...data.guests]
-    }
-  } catch (error) {
-    console.error('Fel vid hämtning av spelare:', error)
-  }
-}
-
-function stopPlayersInterval() {
-  if (playersInterval) {
-    clearInterval(playersInterval)
-    playersInterval = null
-  }
+  fetchRooms()
 }
 
 function getErrorMessage(error, fallback) {
@@ -93,16 +79,15 @@ async function leaveWaitingRoom() {
       }),
     })
 
-    const data = await response.json()
+    const data = await response.json().catch(() => ({}))
 
     if (!response.ok && response.status !== 404) {
       throw new Error(data.error || 'Kunde inte lämna rummet.')
     }
 
-    stopPlayersInterval()
+    leaveRoomDialog.value.close()
     sessionStorage.removeItem(guestSessionKey)
     joinedRoom.value = null
-    roomPlayers.value = []
     errorMessage.value = ''
     waitingRoomError.value = ''
 
@@ -187,9 +172,6 @@ async function joinPublicRoom() {
     selectedPublicRoom.value = null
     publicGuestName.value = ''
     waitingRoomError.value = ''
-
-    await fetchRoomPlayers()
-    startPlayersInterval()
   } catch (error) {
     if (loggedInUser.value) {
       selectedPublicRoom.value = null
@@ -260,9 +242,6 @@ async function joinRoom() {
     joinedRoom.value = data
     sessionStorage.setItem(guestSessionKey, JSON.stringify(data))
     waitingRoomError.value = ''
-
-    await fetchRoomPlayers()
-    startPlayersInterval()
   } catch (error) {
     errorMessage.value = getErrorMessage(error, 'Kunde inte gå med i rummet.')
   } finally {
@@ -327,8 +306,6 @@ onMounted(async () => {
     }
 
     joinedRoom.value = session
-    await fetchRoomPlayers()
-    startPlayersInterval()
   } catch (error) {
     console.error('Kunde inte återställa gästsessionen:', error)
     errorMessage.value = 'Kunde inte återställa väntrummet. Försök ladda om sidan.'
@@ -336,8 +313,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  stopPlayersInterval()
-
   if (socket) {
     socket.disconnect()
     socket = null
@@ -346,9 +321,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section id="quiz-rooms" class="quiz-room-section">
+  <section id="quiz-rooms" class="quiz-room-section" :class="{ 'room-session': joinedRoom }">
     <div class="quiz-room-container">
-      <div class="quiz-room-heading">
+      <div v-if="!joinedRoom" class="quiz-room-heading">
         <h2>Hitta och gå med i ett quizrum</h2>
 
         <p>
@@ -407,7 +382,10 @@ onUnmounted(() => {
 
           <div v-else class="rooms-list">
             <div v-for="room in availableRooms" :key="room.id" class="room-item">
-              <span>{{ room.name }}</span>
+              <div class="room-item-info">
+                <span>{{ room.name }}</span>
+                <small>{{ room.playerCount }} deltagare</small>
+              </div>
 
               <button
                 type="button"
@@ -427,28 +405,33 @@ onUnmounted(() => {
       </div>
 
       <div v-else class="waiting-room-card">
-        <h3>Väntrum – {{ joinedRoom.roomName }}</h3>
-
-        <p>Väntar på att värden ska starta quizet.</p>
-
-        <h4>Spelare ({{ roomPlayers.length }})</h4>
-
-        <div class="waiting-room-players">
-          <div
-            v-for="(player, index) in roomPlayers"
-            :key="`${player.id}-${index}`"
-            class="waiting-room-player"
-          >
-            {{ player.name }}
-          </div>
-        </div>
+        <RoomGame
+          :key="joinedRoom.roomId"
+          :room-id="joinedRoom.roomId"
+          :guest-token="joinedRoom.guestToken"
+          :room-name="joinedRoom.roomName"
+          @phase="gamePhase = $event"
+          @room-closed="stopRoomUpdates"
+          @closed="handleRoomClosed"
+        />
 
         <p v-if="waitingRoomError" class="room-error" role="alert">
           {{ waitingRoomError }}
         </p>
 
-        <button class="join-room-button" :disabled="isLeaving" @click="leaveWaitingRoom">
-          {{ isLeaving ? 'Lämnar rummet...' : 'Lämna väntrummet' }}
+        <button
+          v-if="gamePhase !== 'closed'"
+          class="join-room-button"
+          :disabled="isLeaving"
+          @click="leaveRoomDialog.showModal()"
+        >
+          {{
+            isLeaving
+              ? 'Lämnar...'
+              : gamePhase === 'finished'
+                ? 'Tillbaka till quizrum'
+                : 'Lämna quizrum'
+          }}
         </button>
       </div>
     </div>
@@ -498,5 +481,16 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
+    <RoomConfirmDialog
+      ref="leaveRoomDialog"
+      title="Vill du lämna quizrummet?"
+      description="Du kommer tillbaka till listan med quizrum. De andra deltagarna kan fortsätta spela."
+      :error="waitingRoomError"
+      :busy="isLeaving"
+      cancel-text="Stanna kvar"
+      :confirm-text="isLeaving ? 'Lämnar...' : 'Ja, lämna rummet'"
+      @open="waitingRoomError = ''"
+      @confirm="leaveWaitingRoom"
+    />
   </section>
 </template>

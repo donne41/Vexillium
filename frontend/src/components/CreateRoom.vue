@@ -1,7 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import '@/assets/css/CreateRoom.css'
+import RoomGame from './RoomGame.vue'
+import RoomConfirmDialog from './RoomConfirmDialog.vue'
 
 const props = defineProps({
   currentUser: {
@@ -22,6 +24,42 @@ const errorMessage = ref('')
 const createdRoom = ref(null)
 const isDeleting = ref(false)
 const deleteError = ref('')
+const emit = defineEmits(['room-active'])
+const gamePhase = ref('waiting')
+const roomClosed = ref(false)
+const closeRoomDialog = ref(null)
+
+const hostRoomKey = 'vexillium-host-room'
+
+watch(
+  createdRoom,
+  (room) => {
+    emit('room-active', Boolean(room))
+
+    if (room && props.currentUser) {
+      localStorage.setItem(hostRoomKey, JSON.stringify({ userId: props.currentUser.id, room }))
+    }
+  },
+  { immediate: true },
+)
+
+watch(
+  () => props.currentUser?.id,
+  (userId) => {
+    if (!userId) return
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(hostRoomKey) || 'null')
+
+      if (saved?.userId === userId && Number.isSafeInteger(saved.room?.id) && saved.room.id > 0) {
+        createdRoom.value = saved.room
+      }
+    } catch {
+      localStorage.removeItem(hostRoomKey)
+    }
+  },
+  { immediate: true },
+)
 
 async function createRoom() {
   if (isCreating.value) return
@@ -87,12 +125,6 @@ async function createRoom() {
 async function deleteRoom() {
   if (!createdRoom.value || isDeleting.value) return
 
-  const confirmed = window.confirm(
-    'Vill du avbryta quizrummet? Alla deltagare tas bort från rummet.',
-  )
-
-  if (!confirmed) return
-
   isDeleting.value = true
   deleteError.value = ''
 
@@ -106,7 +138,8 @@ async function deleteRoom() {
     })
 
     if (response.status === 204 || response.status === 404) {
-      resetForm()
+      closeRoomDialog.value.close()
+      roomClosed.value = true
       return
     }
 
@@ -114,7 +147,6 @@ async function deleteRoom() {
       400: 'Ogiltigt rums-ID.',
       401: 'Du behöver logga in för att ta bort quizrummet.',
       403: 'Bara den som skapade quizrummet får ta bort det.',
-      409: 'Du kan bara avbryta ett quizrum innan quizet har startat.',
     }
 
     deleteError.value =
@@ -128,6 +160,10 @@ async function deleteRoom() {
 }
 
 function resetForm() {
+  localStorage.removeItem(hostRoomKey)
+
+  roomClosed.value = false
+  gamePhase.value = 'waiting'
   createdRoom.value = null
   roomName.value = ''
   isPublic.value = false
@@ -137,9 +173,9 @@ function resetForm() {
 </script>
 
 <template>
-  <section id="create-room" class="create-room-section">
+  <section id="create-room" class="create-room-section" :class="{ 'room-session': createdRoom }">
     <div class="create-room-card">
-      <h2>Skapa quizrum</h2>
+      <h2 v-if="!createdRoom">Skapa quizrum</h2>
 
       <div v-if="!currentUser">
         <p>Skapa ett konto eller logga in för att kunna skapa ett quizrum.</p>
@@ -151,32 +187,35 @@ function resetForm() {
         </div>
       </div>
 
-      <div v-else-if="createdRoom" role="status">
-        <h3>Quizrummet har skapats!</h3>
-
-        <p>Rumsnamn: {{ createdRoom.name }}</p>
-        <p>
-          {{ createdRoom.isPublic ? 'Offentligt rum' : 'Privat rum' }}
-        </p>
-
-        <div v-if="!createdRoom.isPublic">
-          <p>Inbjudningskod:</p>
-
-          <strong class="create-room-code">
-            {{ createdRoom.inviteCode }}
-          </strong>
-
-          <p>Dela koden med dem du vill bjuda in.</p>
-        </div>
-
-        <p v-else>Rummet visas nu bland tillgängliga quizrum.</p>
+      <div v-else-if="createdRoom">
+        <RoomGame
+          :key="createdRoom.id"
+          :room-id="createdRoom.id"
+          :room-name="createdRoom.name"
+          :invite-code="createdRoom.isPublic ? '' : createdRoom.inviteCode"
+          :room-closed="roomClosed"
+          @phase="gamePhase = $event"
+          @closed="resetForm"
+        />
 
         <p v-if="deleteError" class="create-room-error" role="alert">
           {{ deleteError }}
         </p>
 
-        <button type="button" class="create-room-button" :disabled="isDeleting" @click="deleteRoom">
-          {{ isDeleting ? 'Avbryter quizrummet...' : 'Avbryt quizrum' }}
+        <button
+          v-if="gamePhase !== 'closed'"
+          type="button"
+          class="create-room-button"
+          :disabled="isDeleting"
+          @click="closeRoomDialog.showModal()"
+        >
+          {{
+            isDeleting
+              ? 'Stänger...'
+              : gamePhase === 'finished'
+                ? 'Stäng quizrum'
+                : 'Avbryt quizrum'
+          }}
         </button>
       </div>
 
@@ -212,5 +251,18 @@ function resetForm() {
         </button>
       </form>
     </div>
+
+    <RoomConfirmDialog
+      ref="closeRoomDialog"
+      label="Avsluta sessionen"
+      title="Vill du avsluta quizrummet?"
+      description="Rummet stängs för alla deltagare och ni kan inte starta fler quiz i det här rummet."
+      :error="deleteError"
+      :busy="isDeleting"
+      cancel-text="Fortsätt spela"
+      :confirm-text="isDeleting ? 'Avslutar...' : 'Avsluta quizrum'"
+      @open="deleteError = ''"
+      @confirm="deleteRoom"
+    />
   </section>
 </template>
