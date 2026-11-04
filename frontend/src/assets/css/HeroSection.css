@@ -2,16 +2,18 @@
 /* Hero */
 
 .hero {
-    padding: 80px 32px;
+    padding: 1% 5%;
+    height: fit-content;
 }
 
 .hero-content {
-    max-width: 1300px;
+    max-width: 95%;
+    height: fit-content;
     margin: auto;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
-    gap: 48px;
+    gap: 6%;
 }
 
 .hero-dashboard {
@@ -56,15 +58,15 @@
 }
 
 .hero h2 {
-    max-width: 650px;
+    max-width: 100%;
     margin: 20px 0;
     color: var(--teal);
-    font-size: 56px;
+    font-size: 42px;
     line-height: 1.1;
 }
 
 .hero-description {
-    max-width: 570px;
+    max-width: 100%;
     color: var(--muted);
     font-size: 16px;
     line-height: 1.6;
@@ -90,7 +92,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: stretch;
-    gap: 16px;
+    gap: 3%;
     margin-top: 24px;
 }
 

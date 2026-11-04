@@ -2,14 +2,14 @@
 /* Quizsektionen */
 
 .quiz-section {
-    padding: 70px 32px;
+    padding: 5% 8%;
     background: var(--section);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
 }
 
 .quiz-container {
-    max-width: 1300px;
+    max-width: 100%;
     margin: 0 auto;
 }
 
