@@ -1,9 +1,6 @@
 const pool = require('../connectionMySQL');
 
 
-/**/
-
-/**/
 async function getLeaderboard({ limit = 10 } = {}) {
     const [rows] = await pool.execute(
         `

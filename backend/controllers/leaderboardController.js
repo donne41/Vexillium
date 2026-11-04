@@ -3,8 +3,7 @@ const leaderboardService = require('../services/leaderboardService');
 function parseLimit(value, defaultValue = 10) {
     const n = Number(value);
     if (!Number.isInteger(n) || n <= 0) return defaultValue;
-    return Math.min(n, 100); // enkel maxgräns
-}
+    return Math.min(n, 100);
 
 exports.getLeaderboard = async (req, res) => {
     try {
