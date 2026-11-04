@@ -4,6 +4,19 @@ import '@/assets/css/RecentGames.css'
 
 // Hämtas från backend längre fram.
 const recentGames = []
+
+function categoryName(category) {
+  const categories = {
+    flags: 'Flaggor',
+    capitals: 'Huvudstäder'
+  };
+
+  return categories[category] || category;
+}
+
+function formatDate(date) {
+  return new Date(date).toLocaleDateString('sv-SE');
+}
 </script>
 
 <template>
@@ -36,11 +49,12 @@ const recentGames = []
           class="recent-game-item"
       >
         <div>
-          <h3>{{ game.category }}</h3>
-          <p>{{ game.date }}</p>
+          <h3>{{ game.username }}</h3>
+          <p>{{ categoryName(game.category) }}</p>
+          <p>{{ formatDate(game.completedAt) }}</p>
         </div>
 
-        <strong>{{ game.score }} poäng</strong>
+        <strong>{{ game.score }}/{{ game.maxScore }}</strong>
       </div>
     </div>
 

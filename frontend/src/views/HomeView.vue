@@ -8,6 +8,7 @@ import Leaderboard from '../components/Leaderboard.vue'
 import QuizRoom from '../components/QuizRoom.vue'
 import CreateRoom from '../components/CreateRoom.vue'
 
+
 const route = useRoute()
 
 const showJoinRoom = computed(() => route.hash === '#quiz-rooms')
@@ -34,6 +35,9 @@ defineProps({
     <!-- Översta delen av startsidan -->
     <HeroSection>
       <RecentGames />
+      <RouterLink to="/games/history">
+        Visa alla matcher →
+      </RouterLink>
       <Leaderboard />
     </HeroSection>
 
