@@ -34,6 +34,16 @@ const props = defineProps({
 const emit = defineEmits(['closed', 'phase', 'room-closed'])
 const router = useRouter()
 const state = ref(null)
+const clock = ref(Date.now())
+const receivedAt = ref(Date.now())
+
+watch(
+  state,
+  () => {
+    receivedAt.value = Date.now()
+  },
+  { flush: 'sync' },
+)
 watch(
   () => state.value?.phase,
   (phase) => {
@@ -57,7 +67,10 @@ let requestNumber = 0
 const secondsLeft = computed(() => {
   if (!state.value?.deadline) return 0
 
-  return Math.max(0, Math.ceil((state.value.deadline - state.value.serverTime) / 1000))
+  const elapsed = Math.max(0, clock.value - receivedAt.value)
+  const remaining = state.value.deadline - state.value.serverTime - elapsed
+
+  return Math.max(0, Math.ceil(remaining / 1000))
 })
 
 async function request(path = '', body) {
@@ -221,7 +234,10 @@ onMounted(() => {
 
   refresh()
 
-  interval = setInterval(refresh, 1000)
+  interval = setInterval(() => {
+    clock.value = Date.now()
+    refresh()
+  }, 1000)
 
   socket = io('http://localhost:3000')
   socket.on('rooms:updated', refresh)

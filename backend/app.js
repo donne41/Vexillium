@@ -11,7 +11,6 @@ if (!process.env.SESSION_SECRET) {
     process.exit(1);
 }
 
-const db = require('./connectionMySQL');
 const roomService = require('./services/roomService');
 
 const achievementRoutes = require('./routes/achievementRoutes');
@@ -64,13 +63,7 @@ app.use(questionRoutes);
 
 async function startServer() {
     try {
-        const [rooms] = await db.execute(
-            'SELECT RoomID, OwnerUserID FROM Rooms WHERE OwnerUserID IS NOT NULL'
-        );
-
-        for (const room of rooms) {
-            await roomService.deleteRoom(room.RoomID, room.OwnerUserID);
-        }
+        await roomService.clearRooms();
 
         server.listen(3000, () => {
             console.log('Server running on port 3000');

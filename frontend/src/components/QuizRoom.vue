@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { io } from 'socket.io-client'
 import '@/assets/css/QuizRoom.css'
 import { useAuth } from '../composables/useAuth'
@@ -11,6 +11,7 @@ const inviteCode = ref('')
 const guestName = ref('')
 const { currentUser: loggedInUser } = useAuth()
 const selectedPublicRoom = ref(null)
+const publicRoomDialog = ref(null)
 const publicGuestName = ref('')
 const publicRoomError = ref('')
 
@@ -124,12 +125,17 @@ async function openPublicRoom(room) {
 
   if (loggedInUser.value) {
     await joinPublicRoom()
+    return
   }
+
+  await nextTick()
+  publicRoomDialog.value.showModal()
 }
 
 function closePublicRoom() {
   if (isJoining.value) return
 
+  publicRoomDialog.value.close()
   selectedPublicRoom.value = null
   publicGuestName.value = ''
   publicRoomError.value = ''
@@ -169,6 +175,7 @@ async function joinPublicRoom() {
     joinedRoom.value = data
     sessionStorage.setItem(guestSessionKey, JSON.stringify(data))
 
+    publicRoomDialog.value.close()
     selectedPublicRoom.value = null
     publicGuestName.value = ''
     waitingRoomError.value = ''
@@ -436,17 +443,14 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div
-      v-if="selectedPublicRoom && !loggedInUser"
+    <dialog
+      ref="publicRoomDialog"
       class="public-room-modal-overlay"
+      aria-labelledby="public-room-modal-title"
       @click.self="closePublicRoom"
+      @cancel.prevent="closePublicRoom"
     >
-      <div
-        class="public-room-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="public-room-modal-title"
-      >
+      <div v-if="selectedPublicRoom" class="public-room-modal">
         <h3 id="public-room-modal-title">Gå med i {{ selectedPublicRoom.name }}</h3>
 
         <p>Välj ett spelarnamn för att gå med i quizrummet.</p>
@@ -455,6 +459,7 @@ onUnmounted(() => {
 
         <input
           id="public-guest-name"
+          autofocus
           v-model="publicGuestName"
           type="text"
           placeholder="Välj ett spelarnamn"
@@ -480,7 +485,7 @@ onUnmounted(() => {
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
     <RoomConfirmDialog
       ref="leaveRoomDialog"
       title="Vill du lämna quizrummet?"

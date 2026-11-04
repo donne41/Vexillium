@@ -264,10 +264,11 @@
 
 .room-game .lobby-start:focus-visible,
 .room-game .lobby-field select:focus-visible,
-.room-session .create-room-card > button:focus-visible,
-.room-session .waiting-room-card > button:focus-visible,
+.room-session .create-room-button:focus-visible,
+.room-session .join-room-button:focus-visible,
 .room-close-dialog button:focus-visible {
-    outline: none;
+    outline: 2px solid #4caf50;
+    outline-offset: 3px;
 }
 
 /* Deltagarnas väntetext */

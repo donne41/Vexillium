@@ -53,7 +53,8 @@
 .create-room-card select:focus-visible,
 .create-room-button:focus-visible,
 .create-room-login:focus-visible {
-    outline: none;
+    outline: 2px solid #4caf50;
+    outline-offset: 3px;
 }
 
 .create-room-actions {

@@ -68,7 +68,8 @@ defineProps({
     />
 
     <QuizRoom
-      v-show="!hosting && (participating || (!roomActive && showJoinRoom))"
+      v-if="!hosting"
+      v-show="participating || (!roomActive && showJoinRoom)"
       @room-active="participating = $event"
     />
   </main>

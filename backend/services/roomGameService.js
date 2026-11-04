@@ -140,23 +140,24 @@ async function advance(game, io) {
         game.phase === 'reveal' &&
         now >= game.deadline
     ) {
-        game.index++;
-        game.answers.clear();
 
-        if (game.index >= game.questions.length) {
-            game.phase = 'finished';
-            game.deadline = null;
+        const nextIndex = game.index + 1;
+        const finished = nextIndex >= game.questions.length;
 
+        if (finished) {
             await db.execute(
                 `UPDATE Rooms
                  SET RoomStatus = 'finished'
                  WHERE RoomID = ?`,
                 [game.roomId]
             );
-        } else {
-            game.phase = 'playing';
-            game.deadline = now + 20000;
         }
+
+        game.index = nextIndex;
+        game.answers.clear();
+
+        game.phase = finished ? 'finished' : 'playing';
+        game.deadline = finished ? null : Date.now() + 20000;
 
         io.emit('rooms:updated');
     }
@@ -325,15 +326,24 @@ async function start(roomId, user, category, count, io) {
         io.emit('rooms:updated');
 
         const questions = [];
+        const usedCountryIds = [];
 
         for (let i = 0; i < count; i++) {
+            const filter = usedCountryIds.length
+                ? usedCountryIds.join(',')
+                : 0;
+
             const data = await questionService.getRandom(
                 undefined,
-                0,
+                filter,
                 category
             );
 
             questions.push(makeQuestion(data, category));
+
+            usedCountryIds.push(
+                data.countries[data.correctIndex].CountryID
+            );
         }
 
         await new Promise(resolve => {
@@ -402,11 +412,19 @@ async function start(roomId, user, category, count, io) {
 
     } catch (error) {
         if (games.get(roomId) === preparingGame) {
-            games.delete(roomId);
+            const status = previousGame ? 'finished' : 'waiting';
+
             await db.execute(
-                "UPDATE Rooms SET RoomStatus = 'waiting' WHERE RoomID = ?",
-                [roomId]
+                'UPDATE Rooms SET RoomStatus = ? WHERE RoomID = ?',
+                [status, roomId]
             );
+
+            if (previousGame) {
+                games.set(roomId, previousGame);
+            } else {
+                games.delete(roomId);
+            }
+
             io.emit('rooms:updated');
         }
 

@@ -310,7 +310,8 @@
 
 .hero-feature-card:focus-visible,
 .hero-actions a:focus-visible {
-    outline: none;
+    outline: 2px solid #4caf50;
+    outline-offset: 4px;
 }
 
 /* Surfplatta */

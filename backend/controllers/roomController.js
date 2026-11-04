@@ -119,11 +119,18 @@ exports.joinRoom = async (req, res) => {
 
         const result = await roomService.joinRoom(
             inviteCode,
-            guestName.trim()
+            guestName.trim(),
+            req.user?.id
         );
 
         return res.status(201).json(result);
     } catch (error) {
+        if (error.status === 403) {
+            return res.status(403).json({
+                error: error.message
+            });
+        }
+
         if (
             error.message === 'Rummet finns inte.' ||
             error.message === 'Quizet har redan startat eller avslutats.' ||
@@ -168,7 +175,8 @@ exports.joinPublicRoom = async (req, res) => {
 
         const result = await roomService.joinPublicRoom(
             roomId,
-            guestName.trim()
+            guestName.trim(),
+            req.user?.id
         );
 
         req.app.get('io').emit('rooms:updated');
@@ -176,6 +184,12 @@ exports.joinPublicRoom = async (req, res) => {
         return res.status(201).json(result);
 
     } catch (error) {
+        if (error.status === 403) {
+            return res.status(403).json({
+                error: error.message
+            });
+        }
+
         if (error.message === 'Rummet finns inte.') {
             return res.status(404).json({
                 error: error.message

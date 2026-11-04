@@ -159,6 +159,10 @@ async function deleteRoom() {
   }
 }
 
+function clearSavedRoom() {
+  localStorage.removeItem(hostRoomKey)
+}
+
 function resetForm() {
   localStorage.removeItem(hostRoomKey)
 
@@ -195,6 +199,7 @@ function resetForm() {
           :invite-code="createdRoom.isPublic ? '' : createdRoom.inviteCode"
           :room-closed="roomClosed"
           @phase="gamePhase = $event"
+          @room-closed="clearSavedRoom"
           @closed="resetForm"
         />
 
