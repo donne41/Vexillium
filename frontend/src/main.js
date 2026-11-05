@@ -14,5 +14,3 @@ fetchMe().finally(() => {
     app.use(router)
     app.mount('#app')
 })
-import { useToast } from './composables/useToast'
-window.toast = useToast()
