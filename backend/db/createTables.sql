@@ -15,6 +15,7 @@ CREATE TABLE Countries
     Flag VARCHAR(100),
     Capital VARCHAR(250),
     RegionID INT,
+    Language VARCHAR(50),
     FOREIGN KEY (RegionID) REFERENCES Regions (RegionsID)
 );
 

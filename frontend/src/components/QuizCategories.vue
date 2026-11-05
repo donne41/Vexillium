@@ -42,6 +42,7 @@ const categories = [
   {
     title: 'Språk',
     background: languagesBackground,
+    quizPath: "/quiz/language",
     description: 'Hitta den geografiska hemvisten för globala tungomål och dialekter.',
   },
 ]

@@ -196,3 +196,62 @@
         color: #000;;
     }
 }
+
+/* Logga ut-knappen ska se ut som inloggningslänken */
+
+.navbar button.mobile-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar button.login-button,
+.navbar button.mobile-login {
+    cursor: pointer;
+}
+
+.navbar button.login-button:disabled,
+.navbar button.mobile-login:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.logout-error {
+    margin: 0;
+    padding: 8px 20px;
+    color: #ffaaaa;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Inloggad användare */
+
+.navbar-account {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.navbar-username {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 220px;
+    font-weight: 500;
+}
+
+.navbar-username-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mobile-username {
+    overflow-wrap: anywhere;
+}
+
+.mobile-username strong {
+    color: var(--text);
+    font-size: 17px;
+}

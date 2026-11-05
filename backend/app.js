@@ -10,10 +10,11 @@ if (!process.env.SESSION_SECRET) {
     process.exit(1);
 }
 
-const db = require('./connectionMySQL');
+const roomService = require('./services/roomService');
 
 const achievementRoutes = require('./routes/achievementRoutes');
 const roomRoutes = require('./routes/roomRoutes');
+const roomGameRoutes = require('./routes/roomGameRoutes');
 const questionRoutes = require('./routes/questionroutes');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
@@ -57,20 +58,25 @@ app.use(express.static('public'));
 
 app.use('/api/achievements', achievementRoutes);
 app.use('/api/rooms', roomRoutes);
+app.use('/api/rooms', roomGameRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use(questionRoutes);
 
-async function testDatabaseConnection() {
+async function startServer() {
     try {
-        const [results] = await db.query('SELECT 1');
+        await roomService.clearRooms();
 
-        console.log('Database connected:', results);
+        server.listen(3000, () => {
+            console.log('Server running on port 3000');
+        });
     } catch (error) {
-        console.error('Anslutningen till databasen misslyckades:', error);
+        console.error('Kunde inte starta backend:', error);
+        process.exit(1);
     }
 }
+
 
 testDatabaseConnection();
 
@@ -79,3 +85,5 @@ const port = 3000;
 server.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+=======
+startServer();
