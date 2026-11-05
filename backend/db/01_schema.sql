@@ -71,3 +71,4 @@ ALTER TABLE achievements
     ADD COLUMN trigger_type VARCHAR(50) NOT NULL,
     ADD COLUMN threshold INT NOT NULL,
     ADD COLUMN category VARCHAR(50) NULL;
+

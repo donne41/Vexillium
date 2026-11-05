@@ -1,4 +1,3 @@
-
 const express = require('express');
 const session = require('express-session');
 const http = require('http');
@@ -19,6 +18,8 @@ const roomGameRoutes = require('./routes/roomGameRoutes');
 const questionRoutes = require('./routes/questionroutes');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
+const attachUser = require('./middleware/attachUser');
+const leaderboardRoutes = require('./routes/leaderboardRoutes');
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use(session({
         secure: process.env.NODE_ENV === 'production'
     }
 }));
+app.use(attachUser);
 app.use(express.static('public'));
 
 app.use('/api/achievements', achievementRoutes);
@@ -59,6 +61,7 @@ app.use('/api/rooms', roomRoutes);
 app.use('/api/rooms', roomGameRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
 app.use(questionRoutes);
 
 async function startServer() {
@@ -74,4 +77,13 @@ async function startServer() {
     }
 }
 
+
+testDatabaseConnection();
+
+const port = 3000;
+
+server.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
+=======
 startServer();
