@@ -1,6 +1,6 @@
 import { useAuth } from './useAuth'
 
-const API_URL = 'http://localhost:3000/api'
+const API_URL = '/api'
 const SERVER_UNREACHABLE = 'Kunde inte nå servern. Försök igen senare.'
 const REQUEST_TIMEOUT_MS = 10000
 
@@ -34,6 +34,9 @@ async function request(path, options = {}) {
         const error = new Error(data?.error ?? 'Något gick fel. Försök igen.')
         error.status = response.status
         throw error
+    }
+    if (data === null) {
+        throw new Error('Oväntat svar från servern. Försök igen.')
     }
 
     return data

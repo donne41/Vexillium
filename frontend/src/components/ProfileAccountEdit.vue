@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useProfile } from '../composables/useProfile'
 import { useToast } from '../composables/useToast'
 import '@/assets/css/RegisterView.css'
@@ -12,6 +12,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['updated', 'close'])
+
+// Spärr som delas av alla formulär, så att två sparningar inte kan pågå samtidigt.
+const isAnySaving = ref(false)
 
 const { updateAccount } = useProfile()
 const { showToast } = useToast()
@@ -42,10 +45,12 @@ const passwordForm = reactive({
  * hamnar i formulärets egen error. Returnerar true om sparandet lyckades.
  */
 async function save(form, changes, successMessage) {
-  if (form.isSaving) return false
+  if (isAnySaving.value) return false
 
   form.error = ''
   form.isSaving = true
+  isAnySaving.value = true
+
   try {
     const account = await updateAccount(props.userId, changes)
     emit('updated', account)
@@ -56,6 +61,7 @@ async function save(form, changes, successMessage) {
     return false
   } finally {
     form.isSaving = false
+    isAnySaving.value = false
   }
 }
 

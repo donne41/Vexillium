@@ -97,8 +97,7 @@ async function handleDelete() {
         <button type="submit" class="profile-delete-button" :disabled="isDeleting">
           {{ isDeleting ? 'Raderar…' : 'Radera permanent' }}
         </button>
-        <button type="button" class="profile-account-toggle" @click="cancel">
-          Avbryt
+        <button type="button" class="profile-account-toggle" :disabled="isDeleting" @click="cancel">          Avbryt
         </button>
       </div>
     </form>

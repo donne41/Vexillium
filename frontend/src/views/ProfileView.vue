@@ -19,6 +19,7 @@ const profile = ref(null)
 const isLoading = ref(false)
 const notFound = ref(false)
 const errorMessage = ref('')
+let latestRequest = 0
 
 // Vems profil som visas: id:t i adressen (/profile/11), annars den inloggades egen (/profile).
 const profileId = computed(() => route.params.id ?? currentUser.value?.id)
@@ -42,8 +43,12 @@ const isAdminViewingOther = computed(() =>
  * användaren saknas (404/400) och övriga fel.
  */
 async function loadProfile() {
+  const requestNumber = ++latestRequest
   const requestedId = profileId.value
-  if (!requestedId) return
+  if (!requestedId) {
+    isLoading.value = false
+    return
+  }
 
   isLoading.value = true
   notFound.value = false
@@ -51,10 +56,10 @@ async function loadProfile() {
 
   try {
     const data = await getProfile(requestedId)
-    if (requestedId !== profileId.value) return
+    if (requestNumber !== latestRequest) return
     profile.value = data
   } catch (error) {
-    if (requestedId !== profileId.value) return
+    if (requestNumber !== latestRequest) return
     profile.value = null
     if (error.status === 404 || error.status === 400) {
       notFound.value = true
@@ -62,7 +67,9 @@ async function loadProfile() {
       errorMessage.value = error.message
     }
   } finally {
-    isLoading.value = false
+    if (requestNumber === latestRequest) {
+      isLoading.value = false
+    }
   }
 }
 
