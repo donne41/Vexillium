@@ -70,6 +70,7 @@ router.delete(
     '/:id',
     requireAuth,
     requireOwnerOrAdmin,
+    updateUserLimiter,
     userController.deleteUser
 );
 
