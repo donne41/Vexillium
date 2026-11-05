@@ -1,0 +1,505 @@
+/* Gemensam styling för rumsspelet */
+
+.room-game {
+    margin-top: 24px;
+}
+
+.room-game .flag-img {
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.room-game .button-container {
+    min-width: 0;
+    width: min(100%, 600px);
+}
+
+.room-game .button-container button[aria-pressed='true']:not(.correct):not(.wrong):not(.dimmed) {
+    background: var(--teal);
+    color: var(--background);
+    filter: none;
+}
+
+.room-game .button-container button:disabled {
+    cursor: default;
+}
+
+/* Väntrummets rubrik och jordklot */
+
+.room-game .room-lobby {
+    width: 100%;
+    color: var(--text);
+}
+
+.room-game .lobby-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 28px;
+}
+
+.room-game .lobby-header > div {
+    min-width: 0;
+}
+
+.room-game .lobby-status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(8, 181, 198, 0.12);
+    color: var(--teal);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.room-game .lobby-header h2 {
+    margin: 16px 0 10px;
+    color: var(--text);
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    overflow-wrap: anywhere;
+}
+
+.room-game .room-lobby p {
+    margin: 8px 0 0;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.room-game .lobby-header > .lobby-logo {
+    position: relative;
+    flex-shrink: 0;
+    width: 260px;
+    height: 260px;
+}
+
+.room-game .lobby-globe {
+    position: absolute;
+    width: 68%;
+    height: 68%;
+    left: 16%;
+    top: 16%;
+    object-fit: contain;
+    animation: lobby-globe-spin 35s linear infinite;
+}
+
+.room-game .lobby-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    object-fit: contain;
+    z-index: 2;
+}
+
+/* Inbjudningskod */
+
+.room-game .lobby-code {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-top: 20px;
+    padding: 12px 18px;
+    border: 1px dashed var(--teal);
+    border-radius: 12px;
+}
+
+.room-game .lobby-code span {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.room-game .lobby-code strong {
+    color: var(--teal);
+    font-size: 1.4rem;
+    letter-spacing: 0.12em;
+    overflow-wrap: anywhere;
+}
+
+/* Kort för deltagare och quizval */
+
+.room-game .lobby-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.room-game .lobby-card {
+    min-width: 0;
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--card);
+}
+
+.room-game .lobby-card h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.2rem;
+}
+
+.room-game .lobby-card-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.room-game .lobby-count {
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(8, 181, 198, 0.12);
+    color: var(--teal);
+    font-weight: 700;
+}
+
+/* Deltagarlista */
+
+.room-game .lobby-players,
+.room-game .results-list {
+    display: grid;
+    gap: 12px;
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.room-game .lobby-players li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.room-game .lobby-avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(8, 181, 198, 0.15);
+    color: var(--teal);
+    font-weight: 700;
+}
+
+.room-game .lobby-player-name,
+.room-game .results-name {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.room-game .results-name {
+    font-weight: 600;
+}
+
+.room-game .lobby-host {
+    color: var(--teal);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* Värdens quizinställningar */
+
+.room-game .lobby-settings {
+    display: grid;
+    gap: 24px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+.room-game .lobby-field {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    font-weight: 600;
+}
+
+.room-game .lobby-field select {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #171c23;
+    color: var(--text);
+    font: inherit;
+}
+
+.room-game .lobby-start {
+    width: 100%;
+    min-height: 50px;
+    margin: 0;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #4caf50;
+    color: #101810;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.room-game .lobby-start:hover:not(:disabled) {
+    background: #66bb6a;
+}
+
+.room-game .lobby-start:disabled,
+.room-session .create-room-card > button:disabled,
+.room-session .waiting-room-card > button:disabled,
+.room-close-dialog button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.room-game .lobby-start:focus-visible,
+.room-game .lobby-field select:focus-visible,
+.room-session .create-room-button:focus-visible,
+.room-session .join-room-button:focus-visible,
+.room-close-dialog button:focus-visible {
+    outline: 2px solid #4caf50;
+    outline-offset: 3px;
+}
+
+/* Deltagarnas väntetext */
+
+.room-game .lobby-waiting h3 {
+    margin-top: 20px;
+}
+
+/* Jordklotets rotation */
+
+@keyframes lobby-globe-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Mobil */
+
+@media (max-width: 650px) {
+    .room-game .lobby-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .room-game .lobby-header {
+        gap: 16px;
+    }
+
+    .room-game .lobby-header > .lobby-logo {
+        width: 120px;
+        height: 120px;
+    }
+
+    .room-game .lobby-card {
+        padding: 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .room-game .lobby-globe {
+        animation: none;
+    }
+}
+
+/* Resultatsidan */
+
+.room-game .results-list li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.room-game .results-position {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(8, 181, 198, 0.12);
+    color: var(--teal);
+    font-weight: 700;
+}
+
+.room-game .results-score {
+    flex-shrink: 0;
+    color: var(--teal);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.room-game .results-message {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.room-game .results-message h3,
+.room-game .results-message p {
+    margin: 0;
+}
+
+.room-game .results-message .lobby-start {
+    margin-top: 8px;
+}
+
+@media (max-width: 400px) {
+    .room-game .results-list li {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .room-game .results-score {
+        margin-left: auto;
+    }
+}
+
+/* Bekräftelse när värden avslutar rummet */
+
+.room-close-dialog {
+    box-sizing: border-box;
+    width: min(480px, calc(100% - 32px));
+    max-height: calc(100dvh - 48px);
+    margin: auto;
+    padding: 32px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+}
+
+.room-close-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+.room-close-dialog .room-close-label {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(248, 113, 113, 0.12);
+    color: #f87171;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.room-close-dialog h2 {
+    margin: 20px 0 12px;
+    color: var(--text);
+    font-size: 1.5rem;
+    line-height: 1.3;
+}
+
+.room-close-dialog p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.room-close-dialog .room-close-error {
+    margin-top: 16px;
+    color: #f87171;
+}
+
+.room-close-dialog .room-close-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.room-close-dialog button {
+    flex: 1;
+    min-height: 48px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.room-close-dialog .room-close-cancel {
+    background: transparent;
+    color: var(--text);
+}
+
+.room-close-dialog .room-close-cancel:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.room-close-dialog .room-close-confirm {
+    border-color: #ef4444;
+    background: #ef4444;
+    color: white;
+}
+
+.room-close-dialog .room-close-confirm:hover:not(:disabled) {
+    border-color: #dc2626;
+    background: #dc2626;
+}
+
+@media (max-width: 480px) {
+    .room-close-dialog {
+        padding: 24px;
+    }
+
+    .room-close-dialog .room-close-actions {
+        flex-direction: column;
+    }
+}
+
+.waiting-dots::after {
+    content: '.';
+    animation: waiting-dots 1.5s step-end infinite;
+}
+
+@keyframes waiting-dots {
+    33% { content: '..'; }
+    66% { content: '...'; }
+}
+
+.room-countdown {
+    position: fixed;
+    top: 20%;
+    z-index: 1000;
+    text-align: center;
+}
+
+.room-game .room-countdown h2 {
+    margin: 0 0 16px;
+    color: #08b5c6;
+    font-size: 1.5rem;
+    line-height: 1.3;
+}
+
+.room-game .room-countdown p {
+    margin: 0;
+    color: #a5afbb;
+    font-size: 16px;
+    line-height: 1.6;
+}

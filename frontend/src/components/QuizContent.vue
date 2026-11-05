@@ -108,7 +108,7 @@ async function getQuiz() {
   try {
     const regions = props.settings.regions.join(',')
     const answeredCountries = getLatestFilter(regions)
-    let url = 'http://localhost:3000/api/random?category=' + quizType
+    let url = '/api/random?category=' + quizType
     if (regions.length > 0) {
       url += `&regions=${regions}`
     }
