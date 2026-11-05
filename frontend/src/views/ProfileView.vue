@@ -5,6 +5,9 @@ import { useAuth } from '../composables/useAuth'
 import { useProfile } from '../composables/useProfile'
 import { formatDate } from '../utils/formatDate'
 import '@/assets/css/ProfileView.css'
+import ProfileRecentResults from '../components/ProfileRecentResults.vue'
+import ProfileCategoryStats from '../components/ProfileCategoryStats.vue'
+import ProfileAchievements from '../components/ProfileAchievements.vue'
 
 const route = useRoute()
 const { currentUser } = useAuth()
@@ -72,7 +75,11 @@ watch(profileId, loadProfile, { immediate: true })
         </p>
       </header>
 
-      <!-- Panelerna läggs till i nästa steg -->
+      <div class="profile-panels">
+        <ProfileRecentResults :results="profile.recentResults" />
+        <ProfileCategoryStats :stats="profile.categoryStats" />
+        <ProfileAchievements :achievements="profile.recentAchievements" />
+      </div>
     </template>
 
   </main>
