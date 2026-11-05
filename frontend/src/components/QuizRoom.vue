@@ -70,7 +70,7 @@ async function leaveWaitingRoom() {
   const guestToken = joinedRoom.value.guestToken
 
   try {
-    const response = await fetch(`http://localhost:3000/api/rooms/${roomId}/leave`, {
+    const response = await fetch(`/api/rooms/${roomId}/leave`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ async function leaveWaitingRoom() {
 
 async function fetchRooms() {
   try {
-    const response = await fetch('http://localhost:3000/api/rooms')
+    const response = await fetch('/api/rooms')
 
     if (!response.ok) {
       throw new Error('Kunde inte hämta quizrum.')
@@ -157,7 +157,7 @@ async function joinPublicRoom() {
   isJoining.value = true
 
   try {
-    const response = await fetch(`http://localhost:3000/api/rooms/${roomId}/join-public`, {
+    const response = await fetch(`/api/rooms/${roomId}/join-public`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -212,7 +212,7 @@ async function joinRoom() {
   isJoining.value = true
 
   try {
-    const roomResponse = await fetch(`http://localhost:3000/api/rooms/${code}`)
+    const roomResponse = await fetch(`/api/rooms/${code}`)
 
     const room = await roomResponse.json()
 
@@ -228,7 +228,7 @@ async function joinRoom() {
       throw new Error('Quizet har redan startat eller avslutats.')
     }
 
-    const response = await fetch('http://localhost:3000/api/rooms/join', {
+    const response = await fetch('/api/rooms/join', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -257,7 +257,7 @@ async function joinRoom() {
 }
 
 onMounted(async () => {
-  socket = io('http://localhost:3000')
+  socket = io()
 
   socket.on('rooms:updated', fetchRooms)
 
@@ -288,18 +288,15 @@ onMounted(async () => {
   }
 
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/rooms/${session.roomId}/validate-session`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          guestToken: session.guestToken,
-        }),
+    const response = await fetch(`/api/rooms/${session.roomId}/validate-session`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    )
+      body: JSON.stringify({
+        guestToken: session.guestToken,
+      }),
+    })
 
     if (!response.ok) {
       throw new Error('Kunde inte kontrollera gästsessionen.')

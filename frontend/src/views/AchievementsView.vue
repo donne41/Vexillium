@@ -9,7 +9,7 @@ const errorMessage = ref('')
 onMounted(async () => {
   try {
     const response = await fetch(
-        'http://localhost:3000/api/achievements'
+        '/api/achievements'
     )
 
     if (!response.ok) {

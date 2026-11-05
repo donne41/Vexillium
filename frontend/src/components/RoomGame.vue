@@ -84,7 +84,7 @@ async function request(path = '', body) {
     headers['Content-Type'] = 'application/json'
   }
 
-  const response = await fetch('http://localhost:3000/api/rooms/' + props.roomId + '/game' + path, {
+  const response = await fetch('/api/rooms/' + props.roomId + '/game' + path, {
     method: body === undefined ? 'GET' : 'POST',
     credentials: 'include',
     headers,
@@ -239,7 +239,7 @@ onMounted(() => {
     refresh()
   }, 1000)
 
-  socket = io('http://localhost:3000')
+  socket = io()
   socket.on('rooms:updated', refresh)
 })
 

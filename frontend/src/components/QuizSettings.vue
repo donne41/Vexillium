@@ -50,7 +50,7 @@ function setLengthButton(len) {
 
 async function getRegions() {
     try {
-        const resp = await fetch("http://localhost:3000/api/regions")
+        const resp = await fetch("/api/regions")
         if (!resp.ok)
             throw new Error(`Kunde inte hämta regioner från databasen: ${resp.status}`)
         const data = await resp.json()
