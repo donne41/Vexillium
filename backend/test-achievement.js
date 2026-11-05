@@ -1,6 +1,6 @@
 const {
     evaluateAchievements
-} = require('./service/achievementService.js');
+} = require('./services/achievementService.js');
 
 async function main() {
     const userId = 4; // Byt till test123:s faktiska ID
