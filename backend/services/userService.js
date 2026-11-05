@@ -83,14 +83,6 @@ async function deleteUser(id) {
         );
 
         await connection.execute(
-            `DELETE FROM AccountsRooms
-             WHERE RoomID IN (
-                 SELECT RoomID FROM Rooms WHERE OwnerUserID = ?
-             )`,
-            [id]
-        );
-
-        await connection.execute(
             `DELETE FROM RoomGuests
              WHERE RoomID IN (
                  SELECT RoomID FROM Rooms WHERE OwnerUserID = ?
