@@ -2,7 +2,7 @@
 import '@/assets/css/Leaderboard.css'
 import { ref, onMounted } from 'vue'
 
-// Riktiga användare och poäng hämtas från backend senare.
+// Spelarna hämtas från backend (summan av varje användares quizresultat).
 const players = ref([])
 
 async function fetchLeaderboard() {
@@ -23,6 +23,8 @@ async function fetchLeaderboard() {
     console.error('Error fetching leaderboard:', error)
   }
 }
+
+onMounted(fetchLeaderboard)
 </script>
 
 <template>
@@ -50,10 +52,12 @@ async function fetchLeaderboard() {
           {{ index + 1 }}
         </span>
 
-        <span class="leaderboard-name">
+        <RouterLink
+            :to="{ name: 'user-profile', params: { id: player.id } }"
+            class="leaderboard-name"
+        >
           {{ player.username }}
-        </span>
-
+        </RouterLink>
         <strong class="leaderboard-score"> {{ player.score }} poäng </strong>
       </div>
     </div>
