@@ -1,4 +1,6 @@
 const connectionMySQL = require('../connectionMySQL');
+const achievementService = require('../services/achievementService');
+const LOGIN_FAILED = 'Fel användarnamn, e-post eller lösenord';
 
 
 

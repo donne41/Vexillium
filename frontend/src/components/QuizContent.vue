@@ -286,7 +286,10 @@ function quizEnd() {
     } catch (error) {
       console.error(`Kunde inte spara lokalt: ${error}`)
     } finally {
-      emit('finished', quizStatsData.value)
+      emit('finished', {
+        ...quizStatsData.value,
+        category: quizType
+      })
     }
   }, delayTime)
 }

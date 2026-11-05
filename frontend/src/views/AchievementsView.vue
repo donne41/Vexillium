@@ -13,7 +13,10 @@ onMounted(async () => {
     })
 
     if (!response.ok) {
+      console.log(response)
+      console.error('HTTP error! status: ${response.status}')
       throw new Error('Kunde inte hämta prestationer')
+
     }
 
     achievements.value = await response.json()

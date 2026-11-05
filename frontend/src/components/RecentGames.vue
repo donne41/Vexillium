@@ -43,6 +43,7 @@ function loadFromLocal(name) {
       <div>
         <p class="recent-games-label">DIN AKTIVITET</p>
         <h2>Senaste spel</h2>
+        <RouterLink to="/recent-games">Alla senaste spel</RouterLink>
       </div>
     </div>
 
@@ -51,6 +52,7 @@ function loadFromLocal(name) {
       <span class="recent-games-icon">◷</span>
 
       <h3>Inga spel ännu</h3>
+
 
       <p>
         Dina senaste quiz kommer att visas här
