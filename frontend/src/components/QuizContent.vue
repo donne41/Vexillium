@@ -21,6 +21,22 @@ watch(
     if (timer <= 0 && isTimed) quizEnd()
   },
 )
+const quizClass = (type) => {
+  switch (type) {
+    case 'FLAGS':
+      return "Flaggor"
+    case 'CAPITALS':
+      return "Huvudstäder"
+    case 'NEIGHBOURS':
+      return "Grannländer"
+    case 'POPULATION':
+      return "Befolkning"
+    case 'AREA':
+      return "Yta"
+    default:
+      return null
+  }
+}
 
 const emit = defineEmits(['finished', 'error'])
 let isLoading = ref(true)
@@ -37,6 +53,7 @@ let nextQuestion = ref(null)
 let errorFirstFetch = ref(false)
 const route = useRoute()
 const quizType = route.params.quizType
+const quizString = quizClass(route.params.quizType.toUpperCase())
 const isLanguage = quizType === "language"
 const maxLen = props.settings.length
 const infinite = maxLen === 'first'
@@ -47,6 +64,8 @@ const currentLanguage = ref(null)
 const audioFile = computed(() => {
   return `/speech/${currentLanguage.value}.mp3`
 })
+
+
 
 const changeLanguage = async (lang) => {
   currentLanguage.value = lang
@@ -72,6 +91,8 @@ const progressPercent = computed(() =>
 const quizStatsData = ref({
   totalQuestions: 0,
   correctAnswers: 0,
+  type: quizString,
+  timeStamp: new Date(),
   history: [],
 })
 
@@ -95,7 +116,7 @@ function getLatestFilter(regions) {
     else split = 7
   }
   if (regions.length === 1 && regions.includes(5)) {
-    split = 5 
+    split = 5
   }
   let lateHistory = []
   if (quizStatsData.value?.history.length >= split)
@@ -198,7 +219,7 @@ function submit(answer) {
   if (isChecking.value || hasEnded) return
   isChecking.value = true
   selectedAnswer.value = answer
-  if(audioPlayer.value){
+  if (audioPlayer.value) {
     audioPlayer.value.pause()
     audioPlayer.value.currentTime = 0
   }
@@ -256,8 +277,10 @@ function quizEnd() {
   hasEnded = true
   setTimeout(async () => {
     let list = loadFromLocal('quizData') || []
+    quizStatsData.value.type = quizString
+    quizStatsData.value.timeStamp = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm' })
     list.push(quizStatsData.value)
-    if (list.length > 50) list = list.slice(-50)
+    if (list.length > 10) list = list.slice(-10)
     try {
       saveToLocal('quizData', list)
     } catch (error) {

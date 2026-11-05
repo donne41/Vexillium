@@ -227,9 +227,9 @@
 /* Inloggad användare */
 
 .navbar-account {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 16px;
 }
 
 .navbar-username {
@@ -237,7 +237,14 @@
     align-items: center;
     gap: 8px;
     max-width: 220px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
     font-weight: 500;
+    cursor: pointer;
 }
 
 .navbar-username-text {
@@ -254,4 +261,65 @@
 .mobile-username strong {
     color: var(--text);
     font-size: 17px;
+}
+
+.account-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 170px;
+    padding: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px #0005;
+}
+
+.navbar .account-dropdown a,
+.navbar .account-dropdown button {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.navbar .account-dropdown a:hover,
+.navbar .account-dropdown button:hover {
+    background: var(--background);
+    color: var(--teal);
+}
+
+.navbar-username:focus-visible,
+.account-dropdown a:focus-visible,
+.account-dropdown button:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+}
+
+.account-dropdown button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+@media (max-width: 768px) {
+    .navbar-content {
+        gap: 12px;
+    }
+
+    .navbar-username {
+        max-width: 110px;
+    }
+}
+
+.navbar-username:hover,
+.navbar-username[aria-expanded='true'] {
+    background: var(--card);
+    color: var(--teal);
 }
