@@ -88,6 +88,15 @@ function makeQuestion(data, category) {
     }
 
     const correct = data.countries[data.correctIndex];
+    const answers = [...data.countries];
+
+    for (let i = answers.length - 1; i > 0; i--) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+
+        const temporaryAnswer = answers[i];
+        answers[i] = answers[randomIndex];
+        answers[randomIndex] = temporaryAnswer;
+    }
 
     let prompt = data.prompt;
     let image = null;
@@ -106,10 +115,10 @@ function makeQuestion(data, category) {
         prompt,
         image,
         capital: category === 'capitals' ? correct.Capital : null,
-        options: data.countries.map(function (country) {
+        options: answers.map(function (country) {
             return country.Countryname;
         }),
-        correctIndex: data.correctIndex
+        correctIndex: answers.indexOf(correct)
     };
 }
 
