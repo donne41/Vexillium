@@ -8,6 +8,7 @@ import '@/assets/css/ProfileView.css'
 import ProfileRecentResults from '../components/ProfileRecentResults.vue'
 import ProfileCategoryStats from '../components/ProfileCategoryStats.vue'
 import ProfileAchievements from '../components/ProfileAchievements.vue'
+import ProfileAccount from '../components/ProfileAccount.vue'
 
 const route = useRoute()
 const { currentUser } = useAuth()
@@ -20,6 +21,13 @@ const errorMessage = ref('')
 
 // Vems profil som visas: id:t i adressen (/profile/11), annars den inloggades egen (/profile).
 const profileId = computed(() => route.params.id ?? currentUser.value?.id)
+
+// Om profilen som visas tillhör den inloggade användaren (styr kontodelen).
+const isOwnProfile = computed(() =>
+    currentUser.value !== null
+    && profile.value !== null
+    && profile.value.user.id === currentUser.value.id,
+)
 
 /**
  * loadProfile hämtar profilen för profileId och hanterar lägena laddar,
@@ -74,6 +82,8 @@ watch(profileId, loadProfile, { immediate: true })
           Medlem sedan {{ formatDate(profile.user.createdAt) }}
         </p>
       </header>
+
+      <ProfileAccount v-if="isOwnProfile" :user-id="profile.user.id" />
 
       <div class="profile-panels">
         <ProfileRecentResults :results="profile.recentResults" />
