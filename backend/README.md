@@ -1,3 +1,10 @@
+Before starting the multiplayer backend, apply db/07_room_owners.sql once.
+Do not rerun it if OwnerUserID already exists.
+
+Quiz rooms are temporary. Starting the backend removes existing rooms
+and their participants, including rooms without an owner.
+User accounts and saved game results are preserved.
+
 Backend setup instructions:
 1. npm install
 2. Create a .env file with DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, 
@@ -6,10 +13,11 @@ DB_NAME, SESSION_SECRET, NODE_ENV
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 3. Run db/01_schema.sql, then db/02_seed.sql.
-4. Before starting the updated backend, run db/06_user_roles.sql once.
+4. node app.js
+5. Before starting the updated backend, run db/06_user_roles.sql once.
    This adds the role column required by the authorization code.
    For an existing database, apply only the missing migration.
-5. Start the backend with node app.js.
+6. Start the backend with node app.js.
 
 ### Provision the first administrator
 

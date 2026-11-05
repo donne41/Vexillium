@@ -20,7 +20,7 @@ async function createRoom(roomName, userId, isPublic) {
         try {
             const [result] = await db.execute(
                 `INSERT INTO Rooms
-                     (RoomAdminID, RoomName, InviteCode, IsPublic)
+                     (OwnerUserID, RoomName, InviteCode, IsPublic)
                  VALUES (?, ?, ?, ?)`,
                 [userId, roomName, inviteCode, isPublic]
             );
@@ -45,13 +45,19 @@ async function createRoom(roomName, userId, isPublic) {
 async function getPublicRooms() {
     const [rooms] = await db.execute(
         `SELECT
-            RoomID AS id,
-            RoomName AS name,
-            RoomStatus AS status,
-            CreatedAt AS createdAt
+             RoomID AS id,
+             RoomName AS name,
+             RoomStatus AS status,
+             CreatedAt AS createdAt,
+             1 + (
+                 SELECT COUNT(*)
+                 FROM RoomGuests
+                 WHERE RoomGuests.RoomID = Rooms.RoomID
+             ) AS playerCount
          FROM Rooms
          WHERE IsPublic = TRUE
-         AND RoomStatus = 'waiting'
+           AND RoomStatus = 'waiting'
+           AND OwnerUserID IS NOT NULL
          ORDER BY CreatedAt DESC`
     );
 
@@ -65,16 +71,18 @@ async function getRoomByCode(inviteCode) {
             RoomName AS name,
             InviteCode AS inviteCode,
             RoomStatus AS status,
-            IsPublic AS isPublic
+            IsPublic AS isPublic,
+            OwnerUserID AS ownerUserId
          FROM Rooms
-         WHERE InviteCode = ?`,
+         WHERE InviteCode = ?
+           AND OwnerUserID IS NOT NULL`,
         [inviteCode]
     );
 
     return rooms[0] || null;
 }
 
-async function joinRoom(inviteCode, guestName) {
+async function joinRoom(inviteCode, guestName, userId) {
     const room = await getRoomByCode(inviteCode);
 
     if (!room) {
@@ -89,6 +97,12 @@ async function joinRoom(inviteCode, guestName) {
         throw new Error('Quizet har redan startat eller avslutats.');
     }
 
+    if (userId && Number(room.ownerUserId) === Number(userId)) {
+        const error = new Error('Du är redan värd för det här rummet.');
+        error.status = 403;
+        throw error;
+    }
+
     const guestToken = crypto.randomBytes(32).toString('hex');
 
     const guestTokenHash = crypto
@@ -97,11 +111,17 @@ async function joinRoom(inviteCode, guestName) {
         .digest('hex');
 
     const [result] = await db.execute(
-        `INSERT INTO RoomGuests
-         (RoomID, GuestName, GuestTokenHash)
-         VALUES (?, ?, ?)`,
-        [room.id, guestName, guestTokenHash]
+        `INSERT INTO RoomGuests (RoomID, GuestName, GuestTokenHash)
+         SELECT RoomID, ?, ? FROM Rooms
+         WHERE RoomID = ?
+           AND RoomStatus = 'waiting'
+           AND OwnerUserID IS NOT NULL`,
+        [guestName, guestTokenHash, room.id]
     );
+
+    if (result.affectedRows === 0) {
+        throw new Error('Quizet har redan startat eller avslutats.');
+    }
 
     return {
         roomId: room.id,
@@ -112,15 +132,17 @@ async function joinRoom(inviteCode, guestName) {
     };
 }
 
-async function joinPublicRoom(roomId, guestName) {
+async function joinPublicRoom(roomId, guestName, userId) {
     const [rooms] = await db.execute(
         `SELECT
             RoomID AS id,
             RoomName AS name,
-            RoomStatus AS status
+            RoomStatus AS status,
+            OwnerUserID AS ownerUserId
          FROM Rooms
          WHERE RoomID = ?
-         AND IsPublic = TRUE`,
+           AND IsPublic = TRUE
+           AND OwnerUserID IS NOT NULL`,
         [roomId]
     );
 
@@ -134,6 +156,12 @@ async function joinPublicRoom(roomId, guestName) {
         throw new Error('Quizet har redan startat eller avslutats.');
     }
 
+    if (userId && Number(room.ownerUserId) === Number(userId)) {
+        const error = new Error('Du är redan värd för det här rummet.');
+        error.status = 403;
+        throw error;
+    }
+
     const guestToken = crypto.randomBytes(32).toString('hex');
 
     const guestTokenHash = crypto
@@ -142,11 +170,17 @@ async function joinPublicRoom(roomId, guestName) {
         .digest('hex');
 
     const [result] = await db.execute(
-        `INSERT INTO RoomGuests
-         (RoomID, GuestName, GuestTokenHash)
-         VALUES (?, ?, ?)`,
-        [room.id, guestName, guestTokenHash]
+        `INSERT INTO RoomGuests (RoomID, GuestName, GuestTokenHash)
+         SELECT RoomID, ?, ? FROM Rooms
+         WHERE RoomID = ?
+           AND RoomStatus = 'waiting'
+           AND OwnerUserID IS NOT NULL`,
+        [guestName, guestTokenHash, room.id]
     );
+
+    if (result.affectedRows === 0) {
+        throw new Error('Quizet har redan startat eller avslutats.');
+    }
 
     return {
         roomId: room.id,
@@ -169,12 +203,12 @@ async function getRoomPlayers(roomId) {
 
     const [accounts] = await db.execute(
         `SELECT
-            Accounts.AccountID AS id,
-            Accounts.Username AS name
-         FROM AccountsRooms
-         JOIN Accounts
-         ON AccountsRooms.AccountID = Accounts.AccountID
-         WHERE AccountsRooms.RoomID = ?`,
+             users.id AS id,
+             users.username AS name
+         FROM Rooms
+                  JOIN users
+                       ON Rooms.OwnerUserID = users.id
+         WHERE Rooms.RoomID = ?`,
         [roomId]
     );
 
@@ -213,6 +247,20 @@ async function leaveRoom(roomId, guestToken) {
         .update(guestToken)
         .digest('hex');
 
+    const [guests] = await db.execute(
+        `SELECT GuestID
+         FROM RoomGuests
+         WHERE RoomID = ?
+         AND GuestTokenHash = ?`,
+        [roomId, guestTokenHash]
+    );
+
+    if (guests.length === 0) {
+        return null;
+    }
+
+    const guestId = guests[0].GuestID;
+
     const [result] = await db.execute(
         `DELETE FROM RoomGuests
          WHERE RoomID = ?
@@ -220,7 +268,11 @@ async function leaveRoom(roomId, guestToken) {
         [roomId, guestTokenHash]
     );
 
-    return result.affectedRows > 0;
+    if (result.affectedRows === 0) {
+        return null;
+    }
+
+    return guestId;
 }
 
 async function deleteRoom(roomId, userId) {
@@ -229,7 +281,7 @@ async function deleteRoom(roomId, userId) {
     try {
         await connection.beginTransaction();
         const [rooms] = await connection.execute(
-            `SELECT RoomAdminID, RoomStatus
+            `SELECT OwnerUserID, RoomStatus
              FROM Rooms
              WHERE RoomID = ?
              FOR UPDATE`,
@@ -243,14 +295,9 @@ async function deleteRoom(roomId, userId) {
             return 'not_found';
         }
 
-        if (Number(room.RoomAdminID) !== Number(userId)) {
+        if (Number(room.OwnerUserID) !== Number(userId)) {
             await connection.rollback();
             return 'forbidden';
-        }
-
-        if (room.RoomStatus !== 'waiting') {
-            await connection.rollback();
-            return 'not_waiting';
         }
 
         await connection.execute(
@@ -278,7 +325,27 @@ async function deleteRoom(roomId, userId) {
     }
 }
 
+async function clearRooms() {
+    const connection = await db.getConnection();
+
+    try {
+        await connection.beginTransaction();
+
+        await connection.execute('DELETE FROM AccountsRooms');
+        await connection.execute('DELETE FROM RoomGuests');
+        await connection.execute('DELETE FROM Rooms');
+
+        await connection.commit();
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    } finally {
+        connection.release();
+    }
+}
+
 module.exports = {
+    clearRooms,
     createRoom,
     getPublicRooms,
     getRoomByCode,

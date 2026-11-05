@@ -1,6 +1,7 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch, nextTick, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
+import { useAuth } from '../composables/useAuth'
 import HeroSection from '../components/HeroSection.vue'
 import QuizCategories from '../components/QuizCategories.vue'
 import RecentGames from '../components/RecentGames.vue'
@@ -11,17 +12,39 @@ import CreateRoom from '../components/CreateRoom.vue'
 
 const route = useRoute()
 
-const showJoinRoom = computed(() => route.hash === '#quiz-rooms')
-const showCreateRoom = computed(() =>
-    route.hash === '#quiz-rooms' || route.hash === '#create-room'
+const emit = defineEmits(['room-active'])
+
+const hosting = ref(false)
+const participating = ref(false)
+
+const roomActive = computed(() => {
+  return hosting.value || participating.value
+})
+
+watch(
+  roomActive,
+  async (active) => {
+    emit('room-active', active)
+
+    if (active) {
+      await nextTick()
+      window.scrollTo(0, 0)
+    }
+  },
+  { immediate: true },
 )
+
+onBeforeUnmount(() => {
+  emit('room-active', false)
+})
+
+const showJoinRoom = computed(() => route.hash === '#quiz-rooms')
+const showCreateRoom = computed(() => route.hash === '#quiz-rooms' || route.hash === '#create-room')
 const showQuizCategories = computed(() => route.hash === '#quiz')
 
+const { currentUser } = useAuth()
+
 defineProps({
-  currentUser: {
-    type: Object,
-    default: null,
-  },
   authHeaders: {
     type: Object,
     default: () => ({}),
@@ -31,9 +54,7 @@ defineProps({
 
 <template>
   <main>
-
-    <!-- Översta delen av startsidan -->
-    <HeroSection>
+    <HeroSection v-show="!roomActive">
       <RecentGames />
       <RouterLink to="/games/history">
         Visa alla matcher →
@@ -41,16 +62,19 @@ defineProps({
       <Leaderboard />
     </HeroSection>
 
-    <!-- Våra sex quizkategorier -->
-    <QuizCategories v-show="showQuizCategories" />
+    <QuizCategories v-show="!roomActive && showQuizCategories" />
 
     <CreateRoom
-        v-show="showCreateRoom"
-        :current-user="currentUser"
-        :auth-headers="authHeaders"
+      v-show="hosting || (!roomActive && showCreateRoom)"
+      :current-user="currentUser"
+      :auth-headers="authHeaders"
+      @room-active="hosting = $event"
     />
 
-    <QuizRoom v-show="showJoinRoom" />
-
+    <QuizRoom
+      v-if="!hosting"
+      v-show="participating || (!roomActive && showJoinRoom)"
+      @room-active="participating = $event"
+    />
   </main>
 </template>

@@ -194,3 +194,21 @@
     background: var(--teal);
     transition: width 0.2s ease;
 }
+
+.create-room-section.room-session,
+.quiz-room-section.room-session {
+    max-width: 1000px;
+    min-height: 100dvh;
+    margin: 0 auto;
+    padding: 32px 24px;
+    background: var(--background);
+    border: none;
+}
+
+.room-session .create-room-card,
+.room-session .waiting-room-card {
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}

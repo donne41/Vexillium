@@ -1,14 +1,17 @@
-
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { io } from 'socket.io-client'
 import '@/assets/css/QuizRoom.css'
+import { useAuth } from '../composables/useAuth'
+import RoomGame from './RoomGame.vue'
+import RoomConfirmDialog from './RoomConfirmDialog.vue'
 
 const availableRooms = ref([])
 const inviteCode = ref('')
 const guestName = ref('')
-const loggedInUser = ref(null)
+const { currentUser: loggedInUser } = useAuth()
 const selectedPublicRoom = ref(null)
+const publicRoomDialog = ref(null)
 const publicGuestName = ref('')
 const publicRoomError = ref('')
 
@@ -16,59 +19,37 @@ const errorMessage = ref('')
 const waitingRoomError = ref('')
 const isJoining = ref(false)
 const isLeaving = ref(false)
+const leaveRoomDialog = ref(null)
 const joinedRoom = ref(null)
-const roomPlayers = ref([])
+const emit = defineEmits(['room-active'])
+const gamePhase = ref('waiting')
 
-let playersInterval = null
+watch(
+  joinedRoom,
+  (room) => {
+    emit('room-active', Boolean(room))
+  },
+  { immediate: true },
+)
+
 let socket = null
 
 const guestSessionKey = 'vexillium-guest-room'
 
-function startPlayersInterval() {
-  stopPlayersInterval()
-
-  playersInterval = setInterval(() => {
-    fetchRoomPlayers()
-  }, 5000)
+function stopRoomUpdates() {
+  leaveRoomDialog.value?.close()
+  sessionStorage.removeItem(guestSessionKey)
+  waitingRoomError.value = ''
 }
 
-async function fetchRoomPlayers() {
-  if (!joinedRoom.value) return
+function handleRoomClosed() {
+  sessionStorage.removeItem(guestSessionKey)
 
-  const roomId = joinedRoom.value.roomId
+  joinedRoom.value = null
+  waitingRoomError.value = ''
+  errorMessage.value = ''
 
-  try {
-    const response = await fetch(
-        `http://localhost:3000/api/rooms/${roomId}/players`,
-        {
-          headers: {
-            'X-Guest-Token': joinedRoom.value.guestToken,
-          }
-        }
-    )
-
-    if (!response.ok) {
-      throw new Error('Kunde inte hämta spelare.')
-    }
-
-    const data = await response.json()
-
-    if (joinedRoom.value?.roomId === roomId) {
-      roomPlayers.value = [
-        ...data.accounts,
-        ...data.guests
-      ]
-    }
-  } catch (error) {
-    console.error('Fel vid hämtning av spelare:', error)
-  }
-}
-
-function stopPlayersInterval() {
-  if (playersInterval) {
-    clearInterval(playersInterval)
-    playersInterval = null
-  }
+  fetchRooms()
 }
 
 function getErrorMessage(error, fallback) {
@@ -89,38 +70,31 @@ async function leaveWaitingRoom() {
   const guestToken = joinedRoom.value.guestToken
 
   try {
-    const response = await fetch(
-        `http://localhost:3000/api/rooms/${roomId}/leave`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            guestToken
-          })
-        }
-    )
+    const response = await fetch(`/api/rooms/${roomId}/leave`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        guestToken,
+      }),
+    })
 
-    const data = await response.json()
+    const data = await response.json().catch(() => ({}))
 
     if (!response.ok && response.status !== 404) {
       throw new Error(data.error || 'Kunde inte lämna rummet.')
     }
 
-    stopPlayersInterval()
+    leaveRoomDialog.value.close()
     sessionStorage.removeItem(guestSessionKey)
     joinedRoom.value = null
-    roomPlayers.value = []
     errorMessage.value = ''
     waitingRoomError.value = ''
 
     await fetchRooms()
   } catch (error) {
-    waitingRoomError.value = getErrorMessage(
-        error,
-        'Kunde inte lämna rummet.'
-    )
+    waitingRoomError.value = getErrorMessage(error, 'Kunde inte lämna rummet.')
 
     console.error('Fel vid lämnande av rum:', error)
   } finally {
@@ -130,7 +104,7 @@ async function leaveWaitingRoom() {
 
 async function fetchRooms() {
   try {
-    const response = await fetch('http://localhost:3000/api/rooms')
+    const response = await fetch('/api/rooms')
 
     if (!response.ok) {
       throw new Error('Kunde inte hämta quizrum.')
@@ -142,22 +116,26 @@ async function fetchRooms() {
   }
 }
 
-function openPublicRoom(room) {
+async function openPublicRoom(room) {
+  if (isJoining.value) return
+
   publicRoomError.value = ''
+  publicGuestName.value = ''
+  selectedPublicRoom.value = room
 
   if (loggedInUser.value) {
-    publicRoomError.value =
-        'Anslutning för inloggade användare är inte kopplad ännu.'
+    await joinPublicRoom()
     return
   }
 
-  selectedPublicRoom.value = room
-  publicGuestName.value = ''
+  await nextTick()
+  publicRoomDialog.value.showModal()
 }
 
 function closePublicRoom() {
   if (isJoining.value) return
 
+  publicRoomDialog.value.close()
   selectedPublicRoom.value = null
   publicGuestName.value = ''
   publicRoomError.value = ''
@@ -168,30 +146,25 @@ async function joinPublicRoom() {
 
   publicRoomError.value = ''
 
-  const playerName = publicGuestName.value.trim()
+  const playerName = loggedInUser.value ? loggedInUser.value.username : publicGuestName.value.trim()
   const roomId = selectedPublicRoom.value.id
 
-  if (playerName.length < 2 || playerName.length > 50) {
-    publicRoomError.value =
-        'Spelarnamnet måste vara mellan 2 och 50 tecken.'
+  if (!loggedInUser.value && (playerName.length < 2 || playerName.length > 50)) {
+    publicRoomError.value = 'Spelarnamnet måste vara mellan 2 och 50 tecken.'
     return
   }
 
   isJoining.value = true
 
   try {
-    const response = await fetch(
-        `http://localhost:3000/api/rooms/${roomId}/join-public`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            guestName: playerName
-          })
-        }
-    )
+    const response = await fetch(`/api/rooms/${roomId}/join-public`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(loggedInUser.value ? {} : { guestName: playerName }),
+    })
 
     const data = await response.json()
 
@@ -202,17 +175,16 @@ async function joinPublicRoom() {
     joinedRoom.value = data
     sessionStorage.setItem(guestSessionKey, JSON.stringify(data))
 
+    publicRoomDialog.value.close()
     selectedPublicRoom.value = null
     publicGuestName.value = ''
     waitingRoomError.value = ''
-
-    await fetchRoomPlayers()
-    startPlayersInterval()
   } catch (error) {
-    publicRoomError.value = getErrorMessage(
-        error,
-        'Kunde inte gå med i rummet'
-    )
+    if (loggedInUser.value) {
+      selectedPublicRoom.value = null
+    }
+
+    publicRoomError.value = getErrorMessage(error, 'Kunde inte gå med i rummet')
   } finally {
     isJoining.value = false
   }
@@ -225,9 +197,7 @@ async function joinRoom() {
 
   const code = inviteCode.value.trim().toUpperCase()
 
-  const playerName = loggedInUser.value
-      ? loggedInUser.value.username
-      : guestName.value.trim()
+  const playerName = loggedInUser.value ? loggedInUser.value.username : guestName.value.trim()
 
   if (!/^[A-Z0-9]{6}$/.test(code)) {
     errorMessage.value = 'Ange en giltig inbjudningskod med 6 tecken.'
@@ -242,9 +212,7 @@ async function joinRoom() {
   isJoining.value = true
 
   try {
-    const roomResponse = await fetch(
-        `http://localhost:3000/api/rooms/${code}`
-    )
+    const roomResponse = await fetch(`/api/rooms/${code}`)
 
     const room = await roomResponse.json()
 
@@ -253,32 +221,24 @@ async function joinRoom() {
     }
 
     if (room.isPublic) {
-      throw new Error(
-          'Detta är ett offentligt rum. Välj det i listan till höger.'
-      )
+      throw new Error('Detta är ett offentligt rum. Välj det i listan till höger.')
     }
 
     if (room.status !== 'waiting') {
       throw new Error('Quizet har redan startat eller avslutats.')
     }
 
-    if (loggedInUser.value) {
-      throw new Error('Anslutning för inloggade användare är inte kopplad ännu.')
-    }
-
-    const response = await fetch(
-        'http://localhost:3000/api/rooms/join',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            inviteCode: code,
-            guestName: playerName
-          })
-        }
-    )
+    const response = await fetch('/api/rooms/join', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        inviteCode: code,
+        guestName: loggedInUser.value ? undefined : playerName,
+      }),
+    })
 
     const data = await response.json()
 
@@ -289,21 +249,15 @@ async function joinRoom() {
     joinedRoom.value = data
     sessionStorage.setItem(guestSessionKey, JSON.stringify(data))
     waitingRoomError.value = ''
-
-    await fetchRoomPlayers()
-    startPlayersInterval()
   } catch (error) {
-    errorMessage.value = getErrorMessage(
-        error,
-        'Kunde inte gå med i rummet.'
-    )
+    errorMessage.value = getErrorMessage(error, 'Kunde inte gå med i rummet.')
   } finally {
     isJoining.value = false
   }
 }
 
 onMounted(async () => {
-  socket = io('http://localhost:3000')
+  socket = io()
 
   socket.on('rooms:updated', fetchRooms)
 
@@ -324,28 +278,25 @@ onMounted(async () => {
   }
 
   if (
-      !Number.isSafeInteger(session?.roomId) ||
-      session.roomId <= 0 ||
-      typeof session.guestToken !== 'string' ||
-      !/^[a-f0-9]{64}$/.test(session.guestToken)
+    !Number.isSafeInteger(session?.roomId) ||
+    session.roomId <= 0 ||
+    typeof session.guestToken !== 'string' ||
+    !/^[a-f0-9]{64}$/.test(session.guestToken)
   ) {
     sessionStorage.removeItem(guestSessionKey)
     return
   }
 
   try {
-    const response = await fetch(
-        `http://localhost:3000/api/rooms/${session.roomId}/validate-session`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            guestToken: session.guestToken
-          })
-        }
-    )
+    const response = await fetch(`/api/rooms/${session.roomId}/validate-session`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        guestToken: session.guestToken,
+      }),
+    })
 
     if (!response.ok) {
       throw new Error('Kunde inte kontrollera gästsessionen.')
@@ -359,18 +310,13 @@ onMounted(async () => {
     }
 
     joinedRoom.value = session
-    await fetchRoomPlayers()
-    startPlayersInterval()
   } catch (error) {
     console.error('Kunde inte återställa gästsessionen:', error)
     errorMessage.value = 'Kunde inte återställa väntrummet. Försök ladda om sidan.'
   }
 })
 
-
 onUnmounted(() => {
-  stopPlayersInterval()
-
   if (socket) {
     socket.disconnect()
     socket = null
@@ -379,215 +325,174 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section id="quiz-rooms" class="quiz-room-section">
+  <section id="quiz-rooms" class="quiz-room-section" :class="{ 'room-session': joinedRoom }">
     <div class="quiz-room-container">
-
-      <div class="quiz-room-heading">
+      <div v-if="!joinedRoom" class="quiz-room-heading">
         <h2>Hitta och gå med i ett quizrum</h2>
 
         <p>
-          Bläddra bland offentliga quizrum eller gå med i ett
-          privat quizrum med en inbjudningskod.
+          Bläddra bland offentliga quizrum eller gå med i ett privat quizrum med en inbjudningskod.
         </p>
       </div>
 
       <div v-if="!joinedRoom" class="quiz-room-grid">
-
         <div class="quiz-room-left">
-
           <div class="join-room-card">
             <h3>Gå med i privat quizrum</h3>
 
-            <label for="invite-code">
-              Inbjudningskod
-            </label>
+            <label for="invite-code"> Inbjudningskod </label>
 
             <input
-                id="invite-code"
-                v-model="inviteCode"
-                type="text"
-                placeholder="Ange din inbjudningskod"
-                minlength="6"
-                maxlength="6"
+              id="invite-code"
+              v-model="inviteCode"
+              type="text"
+              placeholder="Ange din inbjudningskod"
+              minlength="6"
+              maxlength="6"
             />
 
             <div v-if="!loggedInUser">
-              <label for="guest-name">
-                Ditt spelarnamn
-              </label>
+              <label for="guest-name"> Ditt spelarnamn </label>
 
               <input
-                  id="guest-name"
-                  v-model="guestName"
-                  type="text"
-                  placeholder="Välj ett spelarnamn"
-                  minlength="2"
-                  maxlength="50"
+                id="guest-name"
+                v-model="guestName"
+                type="text"
+                placeholder="Välj ett spelarnamn"
+                minlength="2"
+                maxlength="50"
               />
             </div>
 
-            <p
-                v-if="errorMessage"
-                class="room-error"
-                role="alert"
-            >
+            <p v-if="errorMessage" class="room-error" role="alert">
               {{ errorMessage }}
             </p>
 
-            <button
-                class="join-room-button"
-                :disabled="isJoining"
-                @click="joinRoom"
-            >
+            <button class="join-room-button" :disabled="isJoining" @click="joinRoom">
               {{ isJoining ? 'Ansluter...' : 'Gå med i rummet' }}
             </button>
           </div>
-
         </div>
 
         <div class="available-rooms-card">
-
           <div class="available-rooms-header">
             <h3>Tillgängliga quizrum</h3>
             <span>OFFENTLIGA RUM</span>
           </div>
 
-          <div
-              v-if="availableRooms.length === 0"
-              class="rooms-empty"
-          >
+          <div v-if="availableRooms.length === 0" class="rooms-empty">
             <p>Inga quizrum att visa ännu.</p>
           </div>
 
           <div v-else class="rooms-list">
-            <div
-                v-for="room in availableRooms"
-                :key="room.id"
-                class="room-item"
-            >
-              <span>{{ room.name }}</span>
+            <div v-for="room in availableRooms" :key="room.id" class="room-item">
+              <div class="room-item-info">
+                <span>{{ room.name }}</span>
+                <small>{{ room.playerCount }} deltagare</small>
+              </div>
 
               <button
-                  type="button"
-                  class="public-room-join-button"
-                  :disabled="isJoining"
-                  @click="openPublicRoom(room)"
+                type="button"
+                class="public-room-join-button"
+                :disabled="isJoining"
+                @click="openPublicRoom(room)"
               >
                 Gå med i quizrum
               </button>
             </div>
           </div>
 
-          <p
-              v-if="publicRoomError && !selectedPublicRoom"
-              class="room-error"
-              role="alert"
-          >
+          <p v-if="publicRoomError && !selectedPublicRoom" class="room-error" role="alert">
             {{ publicRoomError }}
           </p>
-
         </div>
-
       </div>
 
       <div v-else class="waiting-room-card">
-        <h3>Väntrum – {{ joinedRoom.roomName }}</h3>
+        <RoomGame
+          :key="joinedRoom.roomId"
+          :room-id="joinedRoom.roomId"
+          :guest-token="joinedRoom.guestToken"
+          :room-name="joinedRoom.roomName"
+          @phase="gamePhase = $event"
+          @room-closed="stopRoomUpdates"
+          @closed="handleRoomClosed"
+        />
 
-        <p>
-          Väntar på att värden ska starta quizet.
-        </p>
-
-        <h4>Spelare ({{ roomPlayers.length }})</h4>
-
-        <div class="waiting-room-players">
-          <div
-              v-for="(player, index) in roomPlayers"
-              :key="`${player.id}-${index}`"
-              class="waiting-room-player"
-          >
-            {{ player.name }}
-          </div>
-        </div>
-
-        <p
-            v-if="waitingRoomError"
-            class="room-error"
-            role="alert"
-        >
+        <p v-if="waitingRoomError" class="room-error" role="alert">
           {{ waitingRoomError }}
         </p>
 
         <button
-            class="join-room-button"
-            :disabled="isLeaving"
-            @click="leaveWaitingRoom"
+          v-if="gamePhase !== 'closed'"
+          class="join-room-button"
+          :disabled="isLeaving"
+          @click="leaveRoomDialog.showModal()"
         >
-          {{ isLeaving ? 'Lämnar rummet...' : 'Lämna väntrummet' }}
+          {{
+            isLeaving
+              ? 'Lämnar...'
+              : gamePhase === 'finished'
+                ? 'Tillbaka till quizrum'
+                : 'Lämna quizrum'
+          }}
         </button>
       </div>
-
     </div>
 
-
-    <div
-        v-if="selectedPublicRoom"
-        class="public-room-modal-overlay"
-        @click.self="closePublicRoom"
+    <dialog
+      ref="publicRoomDialog"
+      class="public-room-modal-overlay"
+      aria-labelledby="public-room-modal-title"
+      @click.self="closePublicRoom"
+      @cancel.prevent="closePublicRoom"
     >
-      <div
-          class="public-room-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="public-room-modal-title"
-      >
-        <h3 id="public-room-modal-title">
-          Gå med i {{ selectedPublicRoom.name }}
-        </h3>
+      <div v-if="selectedPublicRoom" class="public-room-modal">
+        <h3 id="public-room-modal-title">Gå med i {{ selectedPublicRoom.name }}</h3>
 
         <p>Välj ett spelarnamn för att gå med i quizrummet.</p>
 
-        <label for="public-guest-name">
-          Ditt spelarnamn
-        </label>
+        <label for="public-guest-name"> Ditt spelarnamn </label>
 
         <input
-            id="public-guest-name"
-            v-model="publicGuestName"
-            type="text"
-            placeholder="Välj ett spelarnamn"
-            minlength="2"
-            maxlength="50"
-            @keyup.enter="joinPublicRoom"
+          id="public-guest-name"
+          autofocus
+          v-model="publicGuestName"
+          type="text"
+          placeholder="Välj ett spelarnamn"
+          minlength="2"
+          maxlength="50"
+          @keyup.enter="joinPublicRoom"
         />
 
-        <p
-            v-if="publicRoomError"
-            class="room-error"
-            role="alert"
-        >
+        <p v-if="publicRoomError" class="room-error" role="alert">
           {{ publicRoomError }}
         </p>
 
         <div class="public-room-modal-actions">
-          <button
-              type="button"
-              :disabled="isJoining"
-              @click="closePublicRoom"
-          >
-            Avbryt
-          </button>
+          <button type="button" :disabled="isJoining" @click="closePublicRoom">Avbryt</button>
 
           <button
-              type="button"
-              class="join-room-button"
-              :disabled="isJoining"
-              @click="joinPublicRoom"
+            type="button"
+            class="join-room-button"
+            :disabled="isJoining"
+            @click="joinPublicRoom"
           >
             {{ isJoining ? 'Ansluter...' : 'Gå med i rummet' }}
           </button>
         </div>
       </div>
-    </div>
-
+    </dialog>
+    <RoomConfirmDialog
+      ref="leaveRoomDialog"
+      title="Vill du lämna quizrummet?"
+      description="Du kommer tillbaka till listan med quizrum. De andra deltagarna kan fortsätta spela."
+      :error="waitingRoomError"
+      :busy="isLeaving"
+      cancel-text="Stanna kvar"
+      :confirm-text="isLeaving ? 'Lämnar...' : 'Ja, lämna rummet'"
+      @open="waitingRoomError = ''"
+      @confirm="leaveWaitingRoom"
+    />
   </section>
 </template>

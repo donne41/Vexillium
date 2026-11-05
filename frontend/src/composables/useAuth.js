@@ -1,7 +1,7 @@
 import { ref, readonly } from 'vue'
 
-const API_URL = 'http://localhost:3000/api/auth'
-const USERS_URL = 'http://localhost:3000/api/users'
+const API_URL = '/api/auth'
+const USERS_URL = '/api/users'
 const SERVER_UNREACHABLE = 'Kunde inte nå servern. Försök igen senare.'
 const REQUEST_TIMEOUT_MS = 10000
 

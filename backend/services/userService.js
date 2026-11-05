@@ -70,8 +70,51 @@ async function updateUser(id, { username, email, password }) {
 }
 
 async function deleteUser(id) {
-    const [result] = await pool.execute('DELETE FROM users WHERE id = ?', [id]);
-    return result.affectedRows > 0;
+    const connection = await pool.getConnection();
+
+    try {
+        await connection.beginTransaction();
+
+        await connection.execute(
+            'SELECT id FROM users WHERE id = ? FOR UPDATE',
+            [id]
+        );
+
+        await connection.execute(
+            `DELETE FROM AccountsRooms
+             WHERE RoomID IN (
+                 SELECT RoomID FROM Rooms WHERE OwnerUserID = ?
+             )`,
+            [id]
+        );
+
+        await connection.execute(
+            `DELETE FROM RoomGuests
+             WHERE RoomID IN (
+                 SELECT RoomID FROM Rooms WHERE OwnerUserID = ?
+             )`,
+            [id]
+        );
+
+        await connection.execute(
+            'DELETE FROM Rooms WHERE OwnerUserID = ?',
+            [id]
+        );
+
+        const [result] = await connection.execute(
+            'DELETE FROM users WHERE id = ?',
+            [id]
+        );
+
+        await connection.commit();
+
+        return result.affectedRows > 0;
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    } finally {
+        connection.release();
+    }
 }
 
 async function verifyCurrentPassword(id, currentPassword) {

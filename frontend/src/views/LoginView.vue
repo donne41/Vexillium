@@ -21,6 +21,7 @@ function goToNextPage() {
   const isValidDestination = destination !== null
       && destination.matched.length > 0
       && destination.name !== 'login'
+      && destination.name !== 'register'
 
   router.replace(isValidDestination ? destination.fullPath : '/')
 }
