@@ -65,6 +65,8 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    padding-left: 0;
+
 }
 
 .recent-game-item {
@@ -75,6 +77,7 @@
     background: var(--section);
     border: 1px solid var(--border);
     border-radius: 8px;
+
 }
 
 .recent-game-item h3 {
