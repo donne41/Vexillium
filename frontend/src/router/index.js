@@ -72,7 +72,7 @@ const router = createRouter({
           path: '/games/history',
           name: 'game-history',
           component: GameHistoryView
-      }
+      },
 
     {
         path: '/achievements',
