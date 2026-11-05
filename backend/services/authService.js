@@ -16,7 +16,7 @@ async function verifyCredentials(identifier, password) {
     const column = identifier.includes('@') ? 'email' : 'username';
 
     const [rows] = await pool.execute(
-        `SELECT id, username, password_hash FROM users WHERE ${column} = ?`,
+        `SELECT id, username, role, password_hash FROM users WHERE ${column} = ?`,
         [identifier]
     );
     const user = rows[0];
@@ -29,8 +29,7 @@ async function verifyCredentials(identifier, password) {
         return null;
     }
 
-    return { id: user.id, username: user.username };
-}
+    return { id: user.id, username: user.username, role: user.role };}
 
 /**
  * recordLogin anropas vid en lyckad inloggning för att öka login_count med 1

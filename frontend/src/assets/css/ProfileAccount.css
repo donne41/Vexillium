@@ -78,3 +78,50 @@
 .profile-account-edit > .profile-account-toggle {
     align-self: flex-start;
 }
+
+.profile-delete h3 {
+    margin: 0 0 8px;
+    color: #ffaaaa;
+    font-size: 17px;
+}
+
+.profile-delete-warning {
+    margin: 0 0 16px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.profile-delete-button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #c0392b;
+    color: var(--text);
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.profile-delete-button:hover {
+    background: #a93226;
+}
+
+.profile-delete-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.profile-delete-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.profile-admin-card {
+    max-width: 460px;
+    margin-bottom: 32px;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid #c0392b;
+    border-radius: 12px;
+}

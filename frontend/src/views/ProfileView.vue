@@ -9,6 +9,7 @@ import ProfileRecentResults from '../components/ProfileRecentResults.vue'
 import ProfileCategoryStats from '../components/ProfileCategoryStats.vue'
 import ProfileAchievements from '../components/ProfileAchievements.vue'
 import ProfileAccount from '../components/ProfileAccount.vue'
+import ProfileDeleteAccount from '../components/ProfileDeleteAccount.vue'
 
 const route = useRoute()
 const { currentUser } = useAuth()
@@ -27,6 +28,13 @@ const isOwnProfile = computed(() =>
     currentUser.value !== null
     && profile.value !== null
     && profile.value.user.id === currentUser.value.id,
+)
+
+// Admin som tittar på någon annans profil får möjlighet att radera användaren.
+const isAdminViewingOther = computed(() =>
+    currentUser.value?.role === 'admin'
+    && profile.value !== null
+    && !isOwnProfile.value,
 )
 
 /**
@@ -92,6 +100,14 @@ watch(profileId, loadProfile, { immediate: true })
       </header>
 
       <ProfileAccount v-if="isOwnProfile" :user-id="profile.user.id" @updated="handleAccountUpdated" />
+
+      <div v-if="isAdminViewingOther" class="profile-admin-card">
+        <ProfileDeleteAccount
+            :user-id="profile.user.id"
+            :username="profile.user.username"
+            :is-own-account="false"
+        />
+      </div>
 
       <div class="profile-panels">
         <ProfileRecentResults :results="profile.recentResults" />

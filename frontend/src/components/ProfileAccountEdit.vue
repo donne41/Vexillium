@@ -4,6 +4,7 @@ import { useProfile } from '../composables/useProfile'
 import { useToast } from '../composables/useToast'
 import '@/assets/css/RegisterView.css'
 import '@/assets/css/ProfileAccount.css'
+import ProfileDeleteAccount from './ProfileDeleteAccount.vue'
 
 const props = defineProps({
   userId: { type: Number, required: true },
@@ -234,6 +235,13 @@ async function savePassword() {
         {{ passwordForm.isSaving ? 'Sparar…' : 'Byt lösenord' }}
       </button>
     </form>
+
+    <ProfileDeleteAccount
+        class="profile-account-form"
+        :user-id="userId"
+        :username="account.username"
+        :is-own-account="true"
+    />
 
     <button type="button" class="profile-account-toggle" @click="emit('close')">
       Klar
