@@ -2,27 +2,24 @@
 import '@/assets/css/Leaderboard.css'
 import { ref, onMounted } from 'vue'
 
-// Riktiga användare och poäng hämtas från backend senare.
 const players = ref([])
+const loadError = ref(false)
 
 async function fetchLeaderboard() {
+  loadError.value = false
   try {
-    const response = await fetch('http://localhost:3000/api/leaderboard', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-
+    const response = await fetch('/api/leaderboard')
     if (!response.ok) {
       throw new Error('Network response was not ok')
     }
-    const data = await response.json()
-    players.value = data
+    players.value = await response.json()
   } catch (error) {
     console.error('Error fetching leaderboard:', error)
+    loadError.value = true
   }
 }
+
+onMounted(fetchLeaderboard)
 </script>
 
 <template>
@@ -35,7 +32,13 @@ async function fetchLeaderboard() {
     </div>
 
     <!-- Visas tills vi har riktiga resultat -->
-    <div v-if="players.length === 0" class="leaderboard-empty">
+    <div v-if="loadError" class="leaderboard-empty" role="alert">
+      <span class="leaderboard-empty-icon">⚠</span>
+      <h3>Topplistan kunde inte laddas</h3>
+      <p>Försök igen genom att ladda om sidan.</p>
+    </div>
+
+    <div v-else-if="players.length === 0" class="leaderboard-empty">
       <span class="leaderboard-empty-icon">☆</span>
 
       <h3>Topplistan är tom</h3>
@@ -50,10 +53,12 @@ async function fetchLeaderboard() {
           {{ index + 1 }}
         </span>
 
-        <span class="leaderboard-name">
+        <RouterLink
+            :to="{ name: 'user-profile', params: { id: player.id } }"
+            class="leaderboard-name"
+        >
           {{ player.username }}
-        </span>
-
+        </RouterLink>
         <strong class="leaderboard-score"> {{ player.score }} poäng </strong>
       </div>
     </div>

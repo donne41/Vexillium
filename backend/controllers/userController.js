@@ -221,22 +221,40 @@ exports.updateUser = async (req, res) => {
 // ---------- DELETE ----------
 
 /**
- * deleteUser raderar en användare från databasen med service metoden
- * om det givna ID:et är korrekt formaterat och användaren existerar.
- * Användarens rader i game_results och user_achievements raderas
- * automatiskt (ON DELETE CASCADE).
+ * deleteUser raderar en användare om nuvarande lösenord (för den inloggade, dvs. ägaren
+ * eller adminen) stämmer. Användarens rader i game_results och user_achievements raderas
+ * automatiskt (ON DELETE CASCADE). Raderar man sitt eget konto avslutas även sessionen.
+ * Vid lyckad radering skickas 204 utan innehåll.
  */
 exports.deleteUser = async (req, res) => {
     const id = parseId(req);
     if (!id) {
-        return res.status(400).json({error: 'Ogiltigt användar-ID'});
+        return res.status(400).json({ error: 'Ogiltigt användar-ID' });
     }
 
+    const { currentPassword } = req.body ?? {};
+
     try {
+        const passwordIsCorrect = await userService.verifyCurrentPassword(req.user.id, currentPassword);
+        if (!passwordIsCorrect) {
+            return res.status(401).json({ error: 'Fel eller saknat nuvarande lösenord' });
+        }
+
         const deleted = await userService.deleteUser(id);
         if (!deleted) {
-            return res.status(404).json({error: 'Användaren hittades inte'});
+            return res.status(404).json({ error: 'Användaren hittades inte' });
         }
+
+        if (req.user.id === id) {
+            return req.session.destroy((error) => {
+                if (error) {
+                    console.error(error);
+                }
+                res.clearCookie('connect.sid');
+                res.status(204).send();
+            });
+        }
+
         res.status(204).send();
     } catch (error) {
         handleError(res, error);

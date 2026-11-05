@@ -114,3 +114,13 @@
         font-size: 21px;
     }
 }
+
+a.leaderboard-name {
+    color: inherit;
+    text-decoration: none;
+}
+
+a.leaderboard-name:hover {
+    color: var(--teal);
+    text-decoration: underline;
+}

@@ -1,6 +1,6 @@
 use vexilliumDB;
 
-## fix utf-8
+SET NAMES utf8mb4;
 
 insert into Regions(Regionname, RegionsID)
 values ('Norden', 1),

@@ -23,6 +23,15 @@ function closeAccountOnBlur(event) {
   }
 }
 
+/**
+ * closeAccountMenu stänger kontomenyn med Esc och flyttar fokus tillbaka till knappen,
+ * så att tangentbordsanvändare inte tappar bort var de är.
+ */
+function closeAccountMenu() {
+  isAccountOpen.value = false
+  accountButton.value?.focus()
+}
+
 onMounted(() => document.addEventListener('pointerdown', closeAccountOutside))
 onUnmounted(() => document.removeEventListener('pointerdown', closeAccountOutside))
 const route = useRoute()
@@ -173,7 +182,7 @@ watch(
         Quiz
       </RouterLink>
 
-      <RouterLink :to="{ path: '/', hash: '#leaderboard' }" @click="closeMenu">
+      <RouterLink :to="{ path: '/leaderboard', hash: '#leaderboard' }" @click="closeMenu">
         <NavIcon name="trophy" />
         Topplista
       </RouterLink>
