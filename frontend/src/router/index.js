@@ -6,8 +6,12 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import QuizGameView from "@/views/QuizGameView.vue"
 import AchievementsView from '../views/AchievementsView.vue'
+
+import Leaderboard from '../components/Leaderboard.vue'
+
 import ProfileView from '../views/ProfileView.vue'
 import { useAuth } from '@/composables/useAuth'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,6 +56,18 @@ const router = createRouter({
       name: "quiz",
       component: QuizGameView,
     },
+
+      {
+          path: '/achievements',
+          name: 'achievements',
+          component: AchievementsView,
+      },
+      {
+          path: '/leaderboard',
+          name: 'leaderboard',
+          component: Leaderboard,
+      },
+
     {
         path: '/achievements',
         name: 'achievements',
@@ -63,6 +79,7 @@ const router = createRouter({
       component: ProfileView,
       meta: { requiresAuth: true },
     },
+
   ],
 
 })
