@@ -1,12 +1,30 @@
 <script setup>
 import '@/assets/css/Navbar.css'
 import NavIcon from './NavIcon.vue'
-import {useAuth} from '@/composables/useAuth'
+import { useAuth } from '@/composables/useAuth'
 
-import {computed, ref, watch} from 'vue'
-import {useRoute, useRouter} from 'vue-router'
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const isMenuOpen = ref(false)
+const isAccountOpen = ref(false)
+const accountMenu = ref(null)
+const accountButton = ref(null)
+
+function closeAccountOutside(event) {
+  if (!accountMenu.value?.contains(event.target)) {
+    isAccountOpen.value = false
+  }
+}
+
+function closeAccountOnBlur(event) {
+  if (!accountMenu.value?.contains(event.relatedTarget)) {
+    isAccountOpen.value = false
+  }
+}
+
+onMounted(() => document.addEventListener('pointerdown', closeAccountOutside))
+onUnmounted(() => document.removeEventListener('pointerdown', closeAccountOutside))
 const route = useRoute()
 const router = useRouter()
 
@@ -51,19 +69,20 @@ async function handleLogout() {
 
 function closeMenu() {
   isMenuOpen.value = false
+  isAccountOpen.value = false
 }
-
-watch(() => route.fullPath, () => {
-  closeMenu()
-  logoutError.value = ''
-})
-
+watch(
+  () => route.fullPath,
+  () => {
+    closeMenu()
+    logoutError.value = ''
+  },
+)
 </script>
 
 <template>
   <header class="navbar">
     <div class="navbar-content">
-
       <RouterLink to="/" class="navbar-logo" @click="closeMenu">
         <h1>VEXILLIUM</h1>
       </RouterLink>
@@ -90,45 +109,60 @@ watch(() => route.fullPath, () => {
       <RouterLink v-if="!currentUser" :to="loginLink" class="login-button desktop-login">
         Logga in
       </RouterLink>
-      <div v-else class="navbar-account desktop-login">
-        <RouterLink :to="{ name: 'profile' }" class="navbar-username" :title="currentUser.username">
+      <div
+        v-else
+        ref="accountMenu"
+        class="navbar-account"
+        @mouseenter="isAccountOpen = true"
+        @mouseleave="isAccountOpen = false"
+        @focusout="closeAccountOnBlur"
+        @keydown.esc.stop="closeAccountMenu"
+      >
+        <button
+          ref="accountButton"
+          type="button"
+          class="navbar-username"
+          :title="currentUser.username"
+          :aria-expanded="isAccountOpen"
+          aria-controls="account-dropdown"
+          @click="isAccountOpen = true"
+        >
           <NavIcon name="user" />
           <span class="navbar-username-text">{{ currentUser.username }}</span>
-        </RouterLink>
-        <button
-            type="button"
-            class="login-button desktop-login"
-            :disabled="isLoggingOut"
-            @click="handleLogout"
-        >
-          Logga ut
         </button>
+
+        <div v-if="isAccountOpen" id="account-dropdown" class="account-dropdown">
+          <RouterLink :to="{ name: 'profile' }" @click="closeMenu"> Min profil </RouterLink>
+
+          <button type="button" :disabled="isLoggingOut" @click="handleLogout">
+            {{ isLoggingOut ? 'Loggar ut...' : 'Logga ut' }}
+          </button>
+        </div>
       </div>
 
       <button
-          class="hamburger-button"
-          type="button"
-          :aria-expanded="isMenuOpen"
-          aria-controls="mobile-navigation"
-          :aria-label="isMenuOpen ? 'Stäng meny' : 'Öppna meny'"
-          @click="toggleMenu"
+        class="hamburger-button"
+        type="button"
+        :aria-expanded="isMenuOpen"
+        aria-controls="mobile-navigation"
+        :aria-label="isMenuOpen ? 'Stäng meny' : 'Öppna meny'"
+        @click="toggleMenu"
       >
         <span :class="{ active: isMenuOpen }"></span>
         <span :class="{ active: isMenuOpen }"></span>
         <span :class="{ active: isMenuOpen }"></span>
       </button>
-
     </div>
     <p v-if="logoutError" class="logout-error" role="alert">
       {{ logoutError }}
     </p>
 
     <nav
-        id="mobile-navigation"
-        class="mobile-nav"
-        :class="{ 'is-open': isMenuOpen }"
-        :inert="!isMenuOpen"
-        aria-label="Mobilnavigation"
+      id="mobile-navigation"
+      class="mobile-nav"
+      :class="{ 'is-open': isMenuOpen }"
+      :inert="!isMenuOpen"
+      aria-label="Mobilnavigation"
     >
       <RouterLink to="/" @click="closeMenu">
         <NavIcon name="home" />
@@ -151,20 +185,6 @@ watch(() => route.fullPath, () => {
       <RouterLink v-if="!currentUser" :to="loginLink" class="mobile-login" @click="closeMenu">
         Logga in
       </RouterLink>
-      <template v-else>
-        <RouterLink :to="{ name: 'profile' }" class="mobile-username" @click="closeMenu">
-          <NavIcon name="user" />
-          {{ currentUser.username }}
-        </RouterLink>
-        <button
-            type="button"
-            class="mobile-login"
-            :disabled="isLoggingOut"
-            @click="handleLogout"
-        >
-          Logga ut
-        </button>
-      </template>
     </nav>
   </header>
 </template>
