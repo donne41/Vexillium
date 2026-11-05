@@ -58,6 +58,14 @@ async function loadProfile() {
   }
 }
 
+/**
+ * handleAccountUpdated uppdaterar rubriken när användaren bytt namn, utan att
+ * ladda om hela profilen (då skulle redigeringsläget stängas).
+ */
+function handleAccountUpdated(account) {
+  profile.value.user.username = account.username
+}
+
 watch(profileId, loadProfile, { immediate: true })
 </script>
 
@@ -83,7 +91,7 @@ watch(profileId, loadProfile, { immediate: true })
         </p>
       </header>
 
-      <ProfileAccount v-if="isOwnProfile" :user-id="profile.user.id" />
+      <ProfileAccount v-if="isOwnProfile" :user-id="profile.user.id" @updated="handleAccountUpdated" />
 
       <div class="profile-panels">
         <ProfileRecentResults :results="profile.recentResults" />

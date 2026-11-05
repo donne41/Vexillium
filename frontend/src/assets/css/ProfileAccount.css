@@ -53,3 +53,28 @@
     margin: 0;
     color: #ffaaaa;
 }
+
+.profile-account-edit-button {
+    margin-top: 20px;
+}
+
+.profile-account-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.profile-account-form h3 {
+    margin: 0 0 16px;
+    color: var(--text);
+    font-size: 17px;
+}
+
+.profile-account-form + .profile-account-form {
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+}
+
+.profile-account-edit > .profile-account-toggle {
+    align-self: flex-start;
+}
