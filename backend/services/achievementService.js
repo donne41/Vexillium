@@ -2,8 +2,53 @@ const connectionMySQL = require('../connectionMySQL');
 
 
 
-async function getAchievements() {
-    const [rows] = await connectionMySQL.query('SELECT * FROM achievements');
+async function getAchievements(userId = null) {
+    if (!userId) {
+        const [rows] = await connectionMySQL.query(
+            `
+            SELECT
+                id,
+                code,
+                name,
+                description,
+                icon,
+                image,
+                trigger_type,
+                threshold,
+                category,
+                false AS unlocked,
+                null AS unlocked_at
+            FROM achievements
+            ORDER BY id
+            `
+        );
+
+        return rows;
+    }
+
+    const [rows] = await connectionMySQL.query(
+        `
+        SELECT
+            a.id,
+            a.code,
+            a.name,
+            a.description,
+            a.icon,
+            a.image,
+            a.trigger_type,
+            a.threshold,
+            a.category,
+            ua.unlocked_at IS NOT NULL AS unlocked,
+            ua.unlocked_at
+        FROM achievements a
+        LEFT JOIN user_achievements ua
+            ON ua.achievement_id = a.id
+            AND ua.user_id = ?
+        ORDER BY a.id
+        `,
+        [userId]
+    );
+
     return rows;
 }
 
@@ -32,7 +77,7 @@ async function getUserAchievements(userId, event) {
         [triggerTypes]
     );
 
-    return rows;
+    return achievements;
 }
 
 async function evaluateAchievements(userId, event) {
@@ -62,10 +107,21 @@ async function evaluateAchievements(userId, event) {
         let qualifies = false;
 
         if (event.type === 'login') {
-            // Vi har bara en login-prestation: FIRST_LOGIN.
-            qualifies =
-                achievement.trigger_type === 'login' &&
-                Number(achievement.threshold) === 1;
+            if (achievement.trigger_type === 'login') {
+                const [rows] = await connectionMySQL.query(
+                    `
+                    SELECT login_count
+                    FROM users
+                    WHERE id = ?
+                    `,
+                    [userId]
+                );
+
+                const loginCount = Number(rows[0]?.login_count ?? 0);
+
+                qualifies =
+                    loginCount >= Number(achievement.threshold);
+            }
 
         } else if (event.type === 'game_completed') {
 

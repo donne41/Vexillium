@@ -56,9 +56,7 @@ defineProps({
   <main>
     <HeroSection v-show="!roomActive">
       <RecentGames />
-      <RouterLink to="/games/history">
-        Visa alla matcher →
-      </RouterLink>
+
       <Leaderboard />
     </HeroSection>
 

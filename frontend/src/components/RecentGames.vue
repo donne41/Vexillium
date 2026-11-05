@@ -26,6 +26,9 @@ function formatDate(date) {
       <div>
         <p class="recent-games-label">DIN AKTIVITET</p>
         <h2>Senaste spel</h2>
+        <RouterLink class="router" to="/games/history">
+          Visa alla matcher
+        </RouterLink>
       </div>
     </div>
 
