@@ -14,9 +14,10 @@
     width: min(100%, 600px);
 }
 
-.room-game .button-container button[aria-pressed='true'] {
-    outline: none;
-    filter: brightness(1.15);
+.room-game .button-container button[aria-pressed='true']:not(.correct):not(.wrong):not(.dimmed) {
+    background: var(--teal);
+    color: var(--background);
+    filter: none;
 }
 
 .room-game .button-container button:disabled {
