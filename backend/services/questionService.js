@@ -403,8 +403,22 @@ async function getStatisticsQuestion(regions, filter, category) {
     };
 }
 
+async function saveQuestions(questionBody){
+    const { totalQuestions, correctAnswers, category, type, userId } = questionBody;
+    const sql = "INSERT INTO game_results (user_id, category, score, max_score) VALUES (?, ?, ?, ?)";
+    const params = [userId, category, correctAnswers, totalQuestions];
+    const [result] = await dbConnect.execute(sql, params);
+    if(result.affectedRows > 0){
+        return { message: "Frågorna har sparats" };
+    }else {
+        throw new Error("Kunde inte spara frågorna i databasen", result);
+    }
+
+}
+
 module.exports = {
     getRandom,
     getRegions,
+    saveQuestions,
 
 }
