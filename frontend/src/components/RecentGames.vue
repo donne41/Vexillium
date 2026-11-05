@@ -1,21 +1,38 @@
-
 <script setup>
 import '@/assets/css/RecentGames.css'
+import { ref, onMounted, watch } from 'vue'
+import { useAuth } from '@/composables/useAuth'
 
 // Hämtas från backend längre fram.
-const recentGames = []
+const recentGames = ref([])
 
-function categoryName(category) {
-  const categories = {
-    flags: 'Flaggor',
-    capitals: 'Huvudstäder'
-  };
+const { currentUser } = useAuth()
 
-  return categories[category] || category;
+function updateRecentGames() {
+  const data = loadFromLocal("quizData")
+  recentGames.value = data.slice(-3)
 }
 
-function formatDate(date) {
-  return new Date(date).toLocaleDateString('sv-SE');
+onMounted(() => {
+  if (currentUser.value) {
+    // Använd data från databas
+  } else {
+    // Använd data från Local
+    updateRecentGames()
+  }
+})
+
+watch(currentUser, (newUser) => {
+  if (newUser) {
+    // data från databas
+  } else {
+    // data från local när man loggar ut
+    updateRecentGames()
+  }
+}, { immediate: true })
+
+function loadFromLocal(name) {
+  return JSON.parse(localStorage.getItem(name))
 }
 </script>
 
@@ -26,9 +43,6 @@ function formatDate(date) {
       <div>
         <p class="recent-games-label">DIN AKTIVITET</p>
         <h2>Senaste spel</h2>
-        <RouterLink class="router" to="/games/history">
-          Visa alla matcher
-        </RouterLink>
       </div>
     </div>
 
@@ -45,21 +59,12 @@ function formatDate(date) {
     </div>
 
     <!-- Används när vi har riktig data från backend -->
-    <div v-else class="recent-games-list">
-      <div
-          v-for="game in recentGames"
-          :key="game.id"
-          class="recent-game-item"
-      >
-        <div>
-          <h3>{{ game.username }}</h3>
-          <p>{{ categoryName(game.category) }}</p>
-          <p>{{ formatDate(game.completedAt) }}</p>
-        </div>
-
-        <strong>{{ game.score }}/{{ game.maxScore }}</strong>
-      </div>
-    </div>
-
+    <ul v-else class="recent-games-list">
+      <li v-for="(game, index) in recentGames" :key="index" class="recent-game-item">
+        <h3>{{ game.type }}</h3>
+        <h3>{{ game.timeStamp }}</h3>
+        <strong>{{ game.correctAnswers }} / {{ game.totalQuestions }} poäng</strong>
+      </li>
+    </ul>
   </section>
 </template>
