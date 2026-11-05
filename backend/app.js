@@ -20,7 +20,6 @@ const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
 const attachUser = require('./middleware/attachUser');
 const leaderboardRoutes = require('./routes/leaderboardRoutes');
-const gameRoutes = require('./routes/gameRoutes');
 
 const app = express();
 
@@ -49,6 +48,8 @@ app.use(session({
         httpOnly: true,
         sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000,
+        // Secure (endast HTTPS) i produktion, avstängd lokalt så att http://localhost fungerar.
+        // Körs appen bakom en proxy som hanterar HTTPS krävs även app.set('trust proxy', 1).
         secure: process.env.NODE_ENV === 'production'
     }
 }));
@@ -61,7 +62,6 @@ app.use('/api/rooms', roomGameRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
-app.use('/api/games', gameRoutes);
 app.use(questionRoutes);
 
 async function startServer() {
@@ -76,14 +76,5 @@ async function startServer() {
         process.exit(1);
     }
 }
-
-
-testDatabaseConnection();
-
-const port = 3000;
-
-server.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
 
 startServer();
