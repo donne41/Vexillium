@@ -1,6 +1,6 @@
 <script setup>
 import '@/assets/css/Leaderboard.css'
-import { ref, onMounted } from 'vue'import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 // Riktiga användare och poäng hämtas från backend senare.
 const players = ref([])
