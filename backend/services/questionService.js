@@ -73,14 +73,20 @@ function buildSqlParams(regions, filter, isLanguage, correctID) {
                 ? ' AND CountryID NOT IN (?)'
                 : ' WHERE CountryID NOT IN (?)'
         }
-        if (isLanguage) sql += " AND Language != ''"
+        if (isLanguage) {
+            sql += sql.includes(' WHERE ')
+                ? " AND Language != ''"
+                : " WHERE Language != ''";
+        }
 
         sql += " ORDER BY RAND() LIMIT 1"
     } else {
-        sql += " AND CountryID NOT IN (?)"
-        sql += " ORDER BY RAND() LIMIT 3"
-        params.push(correctID)
+        sql += regions
+            ? ' AND CountryID NOT IN (?)'
+            : ' WHERE CountryID NOT IN (?)';
 
+        sql += " ORDER BY RAND() LIMIT 3";
+        params.push(correctID);
     }
     return {
         sql: sql,
