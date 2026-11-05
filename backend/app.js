@@ -18,6 +18,7 @@ const roomRoutes = require('./routes/roomRoutes');
 const questionRoutes = require('./routes/questionroutes');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 
 const app = express();
 
@@ -59,6 +60,7 @@ app.use('/api/rooms', roomRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use(questionRoutes);
+app.use('/api/profiles', profileRoutes);
 
 async function testDatabaseConnection() {
     try {
