@@ -41,3 +41,7 @@ async function saveGameResult(userId, category, score, maxScore) {
         maxScore
     };
 }
+
+module.exports = {
+    completeGame
+};
