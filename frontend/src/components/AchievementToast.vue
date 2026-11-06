@@ -16,7 +16,6 @@ defineProps({
       <p>{{ achievement.name }}</p>
     </div>
   </div>
-  <p class="p">HELLO</p>
 </template>
 
 <style scoped>
