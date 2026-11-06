@@ -282,62 +282,38 @@ function delayNext() {
 
 function quizEnd() {
   if (hasEnded) return
+
   hasEnded = true
   isChecking.value = true
-  setTimeout(async () => {
 
-    let list = loadFromLocal('quizData') || []
+  setTimeout(() => {
     quizStatsData.value.type = quizString
-    quizStatsData.value.timeStamp = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm' })
+    quizStatsData.value.timeStamp = new Date().toLocaleString(
+        'sv-SE',
+        { timeZone: 'Europe/Stockholm' }
+    )
+
+    // Spara lokal quizhistorik
+    let list = loadFromLocal('quizData') || []
+
     list.push(quizStatsData.value)
-    if (list.length > 10) list = list.slice(-10)
+
+    if (list.length > 10) {
+      list = list.slice(-10)
+    }
+
     try {
       saveToLocal('quizData', list)
     } catch (error) {
       console.error(`Kunde inte spara lokalt: ${error}`)
-    } finally {
-      emit('finished', {
-        ...quizStatsData.value,
-        category: quizType
-      })
-
-    if (currentUser.value) {
-      // spara till database
-      quizStatsData.value.userId = currentUser.value.id
-      fetch("http://localhost:3000/api/questions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(quizStatsData.value),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Något gick fel vid sparandet av quizresultatet.");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Quizresultat sparat i databasen:", data);
-        })
-        .catch((error) => {
-          console.error("Fel vid sparandet av quizresultatet till databasen:", error);
-        });
-    } else {
-      // Använd data från Local
-      let list = loadFromLocal('quizData') || []
-      quizStatsData.value.type = quizString
-      quizStatsData.value.timeStamp = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm' })
-      list.push(quizStatsData.value)
-      if (list.length > 10) list = list.slice(-10)
-      try {
-        saveToLocal('quizData', list)
-      } catch (error) {
-        console.error(`Kunde inte spara lokalt: ${error}`)
-      }
-
     }
-    emit('finished', quizStatsData.value)
+
+    // Skicka resultatet till QuizView
+    emit('finished', {
+      ...quizStatsData.value,
+      category: quizType
+    })
+
   }, delayTime)
 }
 
