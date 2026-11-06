@@ -31,3 +31,17 @@ exports.getRegions = (async (req, res) => {
         });
     }
 })
+
+exports.postQuestions = (async (req, res) => {
+    const body = req.body;
+    try {
+        const saved = await questionService.saveQuestions(body);
+        res.status(201).json({ message: 'Frågorna har sparats', saved });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            error: 'Kunde inte spara frågorna'
+        });
+    }
+
+})

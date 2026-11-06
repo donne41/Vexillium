@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, onMounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 import '@/assets/css/QuizGame.css'
 
 const props = defineProps({
@@ -13,7 +14,7 @@ const props = defineProps({
     required: true,
   },
 })
-
+const { currentUser } = useAuth()
 let hasEnded = false
 watch(
   () => props.timer,
@@ -21,7 +22,7 @@ watch(
     if (timer <= 0 && isTimed) quizEnd()
   },
 )
-const quizClass = (type) => {
+const categoryClass = (type) => {
   switch (type) {
     case 'FLAGS':
       return "Flaggor"
@@ -36,6 +37,14 @@ const quizClass = (type) => {
     default:
       return null
   }
+}
+const lengthClass = (type) => {
+  if (type === "first")
+    return "Första miss"
+  else if (type === "time")
+    return "Tidsbegränsat"
+  else
+    return maxLen
 }
 
 const emit = defineEmits(['finished', 'error'])
@@ -53,7 +62,7 @@ let nextQuestion = ref(null)
 let errorFirstFetch = ref(false)
 const route = useRoute()
 const quizType = route.params.quizType
-const quizString = quizClass(route.params.quizType.toUpperCase())
+const quizString = categoryClass(route.params.quizType.toUpperCase())
 const isLanguage = quizType === "language"
 const maxLen = props.settings.length
 const infinite = maxLen === 'first'
@@ -91,8 +100,10 @@ const progressPercent = computed(() =>
 const quizStatsData = ref({
   totalQuestions: 0,
   correctAnswers: 0,
-  type: quizString,
+  category: quizString,
+  type: lengthClass(maxLen),
   timeStamp: new Date(),
+  userId: null,
   history: [],
 })
 
@@ -177,6 +188,8 @@ async function presentQuestion() {
     showFlagQuiz.value = false
   }
   isLoading.value = false
+  selectedAnswer.value = null
+  isChecking.value = false
 }
 
 function capitalQuiz() {
@@ -259,35 +272,55 @@ function submit(answer) {
 function delayNext() {
   setTimeout(async () => {
     if (hasEnded) return
-
-    selectedAnswer.value = null
-    isChecking.value = false
-
     await getQuiz()
 
     if (hasEnded || errorFirstFetch.value) return
 
     await presentQuestion()
-    isLoading.value = false
   }, delayTime)
 }
 
 function quizEnd() {
   if (hasEnded) return
   hasEnded = true
+  isChecking.value = true
   setTimeout(async () => {
-    let list = loadFromLocal('quizData') || []
-    quizStatsData.value.type = quizString
-    quizStatsData.value.timeStamp = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm' })
-    list.push(quizStatsData.value)
-    if (list.length > 10) list = list.slice(-10)
-    try {
-      saveToLocal('quizData', list)
-    } catch (error) {
-      console.error(`Kunde inte spara lokalt: ${error}`)
-    } finally {
-      emit('finished', quizStatsData.value)
+    if (currentUser.value) {
+      // spara till database
+      quizStatsData.value.userId = currentUser.value.id
+      fetch("http://localhost:3000/api/questions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(quizStatsData.value),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Något gick fel vid sparandet av quizresultatet.");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Quizresultat sparat i databasen:", data);
+        })
+        .catch((error) => {
+          console.error("Fel vid sparandet av quizresultatet till databasen:", error);
+        });
+    } else {
+      // Använd data från Local
+      let list = loadFromLocal('quizData') || []
+      quizStatsData.value.type = quizString
+      quizStatsData.value.timeStamp = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm' })
+      list.push(quizStatsData.value)
+      if (list.length > 10) list = list.slice(-10)
+      try {
+        saveToLocal('quizData', list)
+      } catch (error) {
+        console.error(`Kunde inte spara lokalt: ${error}`)
+      }
     }
+    emit('finished', quizStatsData.value)
   }, delayTime)
 }
 

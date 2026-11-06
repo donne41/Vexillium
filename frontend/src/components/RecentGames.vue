@@ -2,20 +2,40 @@
 import '@/assets/css/RecentGames.css'
 import { ref, onMounted, watch } from 'vue'
 import { useAuth } from '@/composables/useAuth'
+import { useProfile } from '../composables/useProfile'
+import { formatDate } from '../utils/formatDate'
+
 
 // Hämtas från backend längre fram.
 const recentGames = ref([])
 
 const { currentUser } = useAuth()
+const { getProfile } = useProfile()
 
 function updateRecentGames() {
   const data = loadFromLocal("quizData")
-  recentGames.value = data.slice(-3)
+  recentGames.value = data.slice(-3).sort((a,b) => a.timeStamp < b.timeStamp)
+}
+async function loadRecentFromDatabase() {
+  const data = await getProfile(currentUser.value.id)
+  const sortOnDate = [...data.recentResults.sort((a, b) => a.completedAt > b.completedAt)].slice(-3)
+  recentGames.value = adapter(sortOnDate.sort((a,b) => a.completedAt < b.completedAt))
+  console.log("recent: ", recentGames.value)
+}
+
+function adapter(data) {
+  return data.map((item) => ({
+    type: item.category,
+    timeStamp: formatDate(item.completedAt),
+    correctAnswers: item.score,
+    totalQuestions: item.maxScore,
+  }))
 }
 
 onMounted(() => {
   if (currentUser.value) {
     // Använd data från databas
+    loadRecentFromDatabase()
   } else {
     // Använd data från Local
     updateRecentGames()
@@ -23,8 +43,10 @@ onMounted(() => {
 })
 
 watch(currentUser, (newUser) => {
-  if (newUser) {
+  if (newUser || currentUser.value) {
     // data från databas
+    console.log("laddar från databas")
+    loadRecentFromDatabase()
   } else {
     // data från local när man loggar ut
     updateRecentGames()

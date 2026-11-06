@@ -4,6 +4,7 @@ const questionController = require("../controllers/questionController");
 
 router.get("/api/random", questionController.getRandomCountries);
 router.get("/api/regions", questionController.getRegions);
+router.post("/api/questions", questionController.postQuestions);
 
 
 module.exports = router;
