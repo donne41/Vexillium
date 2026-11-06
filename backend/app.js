@@ -22,6 +22,8 @@ const authRoutes = require('./routes/authRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const attachUser = require('./middleware/attachUser');
 const leaderboardRoutes = require('./routes/leaderboardRoutes');
+const gameRoutes = require('./routes/gameRoutes');
+
 
 const app = express();
 
@@ -64,8 +66,10 @@ app.use('/api/rooms', roomGameRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/games', gameRoutes);
 app.use(questionRoutes);
 app.use('/api/profiles', profileRoutes);
+
 
 async function startServer() {
     try {

@@ -2,35 +2,26 @@
 defineProps({
   achievement: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 </script>
 
 <template>
   <article class="achievement-item">
-    <div class="award-item-img-container">
-      <img
-          v-if="achievement.image"
-          class="award-item-img"
-          :src="achievement.image"
-          :alt="achievement.name"
-          width="140"
-          height="140"
-      />
+    <div class="achievement-card" :class="{ unlocked: achievement.unlocked }">
+      <span v-if="achievement.unlocked"> 🔓 </span>
 
-      <span v-else class="achievement-icon" aria-hidden="true">
-        {{ achievement.icon || '🏆' }}
-      </span>
-    </div>
+      <span v-else> 🔒 </span>
 
-    <div class="achievement-info">
-      <h2 class="achievement-name">
-        {{ achievement.name }}
-      </h2>
+      <h3>{{ achievement.name }}</h3>
+      <h1>{{ achievement.icon}}</h1>
 
-      <p class="achievement-description">
-        {{ achievement.description }}
+      <p>{{ achievement.description }}</p>
+
+      <p v-if="achievement.progress">
+        {{ achievement.progress.current }} /
+        {{ achievement.progress.threshold }}
       </p>
     </div>
   </article>
@@ -46,6 +37,7 @@ defineProps({
   border: 1px solid #2f3643;
   border-radius: 10px;
   color: #fff;
+  margin-bottom:10px;
 }
 
 .award-item-img-container {

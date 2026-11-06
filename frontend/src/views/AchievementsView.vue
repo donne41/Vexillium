@@ -8,12 +8,15 @@ const errorMessage = ref('')
 
 onMounted(async () => {
   try {
-    const response = await fetch(
-        '/api/achievements'
-    )
+    const response = await fetch('/api/achievements', {
+      credentials: 'include',
+    })
 
     if (!response.ok) {
+      console.log(response)
+      console.error('HTTP error! status: ${response.status}')
       throw new Error('Kunde inte hämta prestationer')
+
     }
 
     achievements.value = await response.json()
@@ -30,23 +33,19 @@ onMounted(async () => {
   <main class="achievements">
     <h1>Achievements 🏆</h1>
 
-    <p v-if="loading">
-      Laddar prestationer...
-    </p>
+    <p v-if="loading">Laddar prestationer...</p>
 
     <p v-else-if="errorMessage" role="alert">
       {{ errorMessage }}
     </p>
 
-    <p v-else-if="achievements.length === 0">
-      Inga prestationer finns ännu.
-    </p>
+    <p v-else-if="achievements.length === 0">Inga prestationer finns ännu.</p>
 
     <div v-else class="achievements-list">
       <AchievementCard
-          v-for="achievement in achievements"
-          :key="achievement.id"
-          :achievement="achievement"
+        v-for="achievement in achievements"
+        :key="achievement.id"
+        :achievement="achievement"
       />
     </div>
   </main>
@@ -54,23 +53,23 @@ onMounted(async () => {
 
 <style scoped>
 :root {
-  --background: #15181C;
-  --section: #1A1F26;
-  --card: #1E222A;
-  --border: #2F3643;
-  --teal: #00B8C8;
-  --green: #4CAF50;
-  --text: #FFFFFF;
-  --muted: #939EA9;
+  --background: #15181c;
+  --section: #1a1f26;
+  --card: #1e222a;
+  --border: #2f3643;
+  --teal: #00b8c8;
+  --green: #4caf50;
+  --text: #ffffff;
+  --muted: #939ea9;
 }
 
-  body {
-    font-family: Arial, sans-serif;
-    background-color: var(--background);
-    color: var(--text);
-    margin: 0;
-    padding: 0;
-  }
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+}
 
 .achievements {
   max-width: 800px;

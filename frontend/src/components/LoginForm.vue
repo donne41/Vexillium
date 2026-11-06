@@ -2,6 +2,9 @@
 import { ref } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import '@/assets/css/LoginForm.css'
+import { useAchievementToast } from '../composables/useAchievementToast'
+
+const { showAchievements } = useAchievementToast()
 
 const emit = defineEmits(['success'])
 
@@ -29,6 +32,9 @@ async function handleSubmit() {
   isSubmitting.value = true
   try {
     const user = await login(identifier.value.trim(), password.value)
+
+    showAchievements(user.newAchievements)
+
     password.value = ''
     emit('success', user)
   } catch (error) {

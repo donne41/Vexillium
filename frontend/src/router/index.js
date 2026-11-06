@@ -6,6 +6,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import QuizGameView from "@/views/QuizGameView.vue"
 import AchievementsView from '../views/AchievementsView.vue'
+import GameHistoryView from '../views/GameHistoryView.vue'
 
 import Leaderboard from '../components/Leaderboard.vue'
 
@@ -60,6 +61,16 @@ const router = createRouter({
         name: 'leaderboard',
         component: Leaderboard,
     },
+      {
+      path: '/leaderboard',
+      name: 'leaderboard',
+      component: Leaderboard,
+      },
+      {
+      path: '/games/history',
+      name: 'game-history',
+      component: GameHistoryView
+      },
 
     {
         path: '/achievements',

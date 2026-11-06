@@ -5,6 +5,9 @@ import QuizSettings from "@/components/QuizSettings.vue"
 import QuizContent from "@/components/QuizContent.vue"
 import QuizError from "@/components/QuizError.vue"
 import "@/assets/css/QuizGame.css"
+import { useAchievementToast } from '@/composables/useAchievementToast'
+
+const { showAchievements } = useAchievementToast()
 
 const gameState = ref("settings")
 
@@ -52,10 +55,38 @@ const startGame = (settings) => {
     gameState.value = "playing"
 }
 
-const finishGame = (stats) => {
-    quizStats.value = stats
-    stopTimer()
-    gameState.value = "result"
+const finishGame = async (stats) => {
+  if (gameState.value !== "playing") return
+
+  quizStats.value = stats
+  stopTimer()
+  gameState.value = "result"
+
+  try {
+    const response = await fetch('/api/games/complete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        category: stats.category,
+        score: stats.correctAnswers,
+        maxScore: stats.totalQuestions
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error(`Kunde inte spara resultatet: ${response.status}`)
+    }
+
+    const result = await response.json()
+    showAchievements(result.newAchievements)
+    console.log('Resultatet sparades:', result)
+
+  } catch (error) {
+    console.error('Fel vid sparande av spelresultat:', error)
+  }
 }
 
 const restartGame = () => {

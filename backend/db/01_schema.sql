@@ -72,3 +72,7 @@ ALTER TABLE achievements
     ADD COLUMN threshold INT NOT NULL,
     ADD COLUMN category VARCHAR(50) NULL;
 
+ALTER TABLE users
+    ADD COLUMN role VARCHAR(50) NOT NULL DEFAULT 'user';
+
+SELECT * FROM game_results ORDER BY id DESC LIMIT 5;

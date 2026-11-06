@@ -1,46 +1,41 @@
-<script>
-export default {
-  props: {
-    achievement: {
-      type: Object,
-      default: null
-    }
+<script setup>
+defineProps({
+  achievement: {
+    type: Object,
+    default: null
   }
-}
+})
 </script>
 
 <template>
-    <div v-if="achievement" class="achievement-toast">
-      <span>{{ achievement.icon }}</span>
+  <div v-if="achievement" class="achievement-toast">
+    <span>{{ achievement.icon }}</span>
 
-      <div>
-        <strong>Prestation upplåst!</strong>
-        <p>{{ achievement.name }}</p>
-      </div>
+    <div>
+      <strong>Prestation upplåst!</strong>
+      <p>{{ achievement.name }}</p>
     </div>
-
+  </div>
+  <p class="p">HELLO</p>
 </template>
 
 <style scoped>
-:root {
-  --background: #15181C;
-  --section: #1A1F26;
-  --card: #1E222A;
-  --border: #2F3643;
-  --teal: #00B8C8;
-  --green: #4CAF50;
-  --text: #FFFFFF;
-  --muted: #939EA9;
-}
 
 .achievement-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2000;
+
   display: flex;
   align-items: center;
   gap: 12px;
+
   padding: 12px 16px;
-  background: var(--green);
+  background: #4CAF50;
   border-radius: 8px;
-  color: var(--text);
+  color: white;
   width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 </style>

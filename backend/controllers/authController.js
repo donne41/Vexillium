@@ -1,5 +1,5 @@
 const authService = require('../services/authService');
-
+const achievementService = require('../services/achievementService');
 const LOGIN_FAILED = 'Fel användarnamn, e-post eller lösenord';
 
 /**
@@ -23,13 +23,34 @@ exports.login = async (req, res) => {
 
         await authService.recordLogin(user.id);
 
-        req.session.regenerate((error) => {
+        req.session.regenerate(async (error) => {
             if (error) {
                 console.error(error);
-                return res.status(500).json({ error: 'Ett internt serverfel uppstod' });
+                return res.status(500).json({
+                    error: 'Ett internt serverfel uppstod'
+                });
             }
+
             req.session.user = user;
-            res.json(user);
+
+            let newAchievements = [];
+
+            try {
+                newAchievements = await achievementService.evaluateAchievements(user.id, {
+                    type: 'login'
+                });
+            } catch (achievementError) {
+                console.error(
+                    'Could not evaluate login achievements:',
+                    achievementError
+                );
+            }
+
+            return res.json({
+                ...user,
+                newAchievements
+            });
+
         });
     } catch (error) {
         console.error(error);

@@ -9,6 +9,7 @@ import Leaderboard from '../components/Leaderboard.vue'
 import QuizRoom from '../components/QuizRoom.vue'
 import CreateRoom from '../components/CreateRoom.vue'
 
+
 const route = useRoute()
 
 const emit = defineEmits(['room-active'])
@@ -55,6 +56,7 @@ defineProps({
   <main>
     <HeroSection v-show="!roomActive">
       <RecentGames />
+
       <Leaderboard />
     </HeroSection>
 

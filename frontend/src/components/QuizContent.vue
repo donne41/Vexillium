@@ -285,6 +285,22 @@ function quizEnd() {
   hasEnded = true
   isChecking.value = true
   setTimeout(async () => {
+
+    let list = loadFromLocal('quizData') || []
+    quizStatsData.value.type = quizString
+    quizStatsData.value.timeStamp = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm' })
+    list.push(quizStatsData.value)
+    if (list.length > 10) list = list.slice(-10)
+    try {
+      saveToLocal('quizData', list)
+    } catch (error) {
+      console.error(`Kunde inte spara lokalt: ${error}`)
+    } finally {
+      emit('finished', {
+        ...quizStatsData.value,
+        category: quizType
+      })
+
     if (currentUser.value) {
       // spara till database
       quizStatsData.value.userId = currentUser.value.id
@@ -319,6 +335,7 @@ function quizEnd() {
       } catch (error) {
         console.error(`Kunde inte spara lokalt: ${error}`)
       }
+
     }
     emit('finished', quizStatsData.value)
   }, delayTime)
