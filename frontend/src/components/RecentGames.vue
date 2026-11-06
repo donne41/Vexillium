@@ -14,13 +14,13 @@ const { getProfile } = useProfile()
 
 function updateRecentGames() {
   const data = loadFromLocal("quizData")
-  recentGames.value = data.slice(-3)
+  recentGames.value = data.slice(-3).sort((a,b) => a.timeStamp < b.timeStamp)
 }
 async function loadRecentFromDatabase() {
   const data = await getProfile(currentUser.value.id)
-  console.log("data: ", data.recentResults)
-  recentGames.value = adapter(data.recentResults.slice(-3))
-
+  const sortOnDate = [...data.recentResults.sort((a, b) => a.completedAt > b.completedAt)].slice(-3)
+  recentGames.value = adapter(sortOnDate.sort((a,b) => a.completedAt < b.completedAt))
+  console.log("recent: ", recentGames.value)
 }
 
 function adapter(data) {
@@ -43,8 +43,10 @@ onMounted(() => {
 })
 
 watch(currentUser, (newUser) => {
-  if (newUser) {
+  if (newUser || currentUser.value) {
     // data från databas
+    console.log("laddar från databas")
+    loadRecentFromDatabase()
   } else {
     // data från local när man loggar ut
     updateRecentGames()

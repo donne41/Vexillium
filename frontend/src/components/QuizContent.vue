@@ -39,9 +39,9 @@ const categoryClass = (type) => {
   }
 }
 const lengthClass = (type) => {
-  if(type === "first")
+  if (type === "first")
     return "Första miss"
-  else if(type === "time")
+  else if (type === "time")
     return "Tidsbegränsat"
   else
     return maxLen
@@ -188,6 +188,8 @@ async function presentQuestion() {
     showFlagQuiz.value = false
   }
   isLoading.value = false
+  selectedAnswer.value = null
+  isChecking.value = false
 }
 
 function capitalQuiz() {
@@ -270,22 +272,18 @@ function submit(answer) {
 function delayNext() {
   setTimeout(async () => {
     if (hasEnded) return
-
-    selectedAnswer.value = null
-    isChecking.value = false
-
     await getQuiz()
 
     if (hasEnded || errorFirstFetch.value) return
 
     await presentQuestion()
-    isLoading.value = false
   }, delayTime)
 }
 
 function quizEnd() {
   if (hasEnded) return
   hasEnded = true
+  isChecking.value = true
   setTimeout(async () => {
     if (currentUser.value) {
       // spara till database
