@@ -5,6 +5,9 @@ import QuizSettings from "@/components/QuizSettings.vue"
 import QuizContent from "@/components/QuizContent.vue"
 import QuizError from "@/components/QuizError.vue"
 import "@/assets/css/QuizGame.css"
+import { useAchievementToast } from '@/composables/useAchievementToast'
+
+const { showAchievements } = useAchievementToast()
 
 const gameState = ref("settings")
 
@@ -78,6 +81,7 @@ const finishGame = async (stats) => {
     }
 
     const result = await response.json()
+    showAchievements(result.newAchievements)
     console.log('Resultatet sparades:', result)
 
   } catch (error) {

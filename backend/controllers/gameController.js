@@ -1,3 +1,5 @@
+const gameService = require('../services/gameService');
+
 exports.completeGame = async (req, res) => {
     try {
         const { category, score, maxScore } = req.body;

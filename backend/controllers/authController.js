@@ -33,8 +33,10 @@ exports.login = async (req, res) => {
 
             req.session.user = user;
 
+            let newAchievements = [];
+
             try {
-                await achievementService.evaluateAchievements(user.id, {
+                newAchievements = await achievementService.evaluateAchievements(user.id, {
                     type: 'login'
                 });
             } catch (achievementError) {
@@ -44,7 +46,10 @@ exports.login = async (req, res) => {
                 );
             }
 
-            return res.json(user);
+            return res.json({
+                ...user,
+                newAchievements
+            });
 
         });
     } catch (error) {
