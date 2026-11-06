@@ -301,11 +301,6 @@ async function deleteRoom(roomId, userId) {
         }
 
         await connection.execute(
-            'DELETE FROM AccountsRooms WHERE RoomID = ?',
-            [roomId]
-        );
-
-        await connection.execute(
             'DELETE FROM RoomGuests WHERE RoomID = ?',
             [roomId]
         );
@@ -331,7 +326,6 @@ async function clearRooms() {
     try {
         await connection.beginTransaction();
 
-        await connection.execute('DELETE FROM AccountsRooms');
         await connection.execute('DELETE FROM RoomGuests');
         await connection.execute('DELETE FROM Rooms');
 

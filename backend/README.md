@@ -1,6 +1,11 @@
 Before starting the multiplayer backend, apply db/07_room_owners.sql once.
 Do not rerun it if OwnerUserID already exists.
 
+After applying 07_room_owners.sql, run 08_remove_legacy_accounts.sql once.
+It removes Accounts, AccountsRooms and Rooms.RoomAdminID.
+Check and preserve any required legacy data before running it.
+Current user accounts are stored in users.
+
 Quiz rooms are temporary. Starting the backend removes existing rooms
 and their participants, including rooms without an owner.
 User accounts and saved game results are preserved.
