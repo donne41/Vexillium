@@ -1,3 +1,4 @@
+
 const express = require('express');
 const session = require('express-session');
 const http = require('http');
@@ -18,6 +19,7 @@ const roomGameRoutes = require('./routes/roomGameRoutes');
 const questionRoutes = require('./routes/questionroutes');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 const attachUser = require('./middleware/attachUser');
 const leaderboardRoutes = require('./routes/leaderboardRoutes');
 const gameRoutes = require('./routes/gameRoutes');
@@ -66,6 +68,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/games', gameRoutes);
 app.use(questionRoutes);
+app.use('/api/profiles', profileRoutes);
 
 
 async function startServer() {
